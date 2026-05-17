@@ -1,0 +1,29 @@
+$kind: http-request
+description: |-
+  Requires sa_token.
+
+  Returns all tenants with their associated domains. Sets tenant_id to the first result.
+url: "{{central_base_url}}/tenants"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Tenant array', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.be.an('array');
+          pm.expect(b).to.have.property('meta');
+          if (b.data.length > 0) {
+              const t = b.data[0];
+              pm.expect(t).to.have.property('id');
+              pm.expect(t).to.have.property('name');
+              pm.expect(t).to.have.property('plan');
+              pm.expect(t).to.have.property('status');
+              pm.collectionVariables.set('tenant_id', t.id);
+              console.log('tenant_id set to first result: ' + t.id);
+          }
+      });
+    language: text/javascript
+order: 1000

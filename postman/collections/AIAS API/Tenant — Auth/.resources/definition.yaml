@@ -1,0 +1,13 @@
+$kind: collection
+description: |-
+  Tenant-domain user authentication. Requests go to http://{{tenant_id}}.localhost:8088/v1.
+
+  This folder uses {{tenant_token}} Bearer auth (not sa_token).
+  Register and Login auto-save tenant_token to collection variables.
+auth:
+  - id: f5b3cfdd-b443-45d6-95c5-12ae73e69d80
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{tenant_token}}"
+order: 5000

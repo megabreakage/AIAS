@@ -1,0 +1,24 @@
+$kind: http-request
+description: |-
+  Requires sa_token (Bearer — inherited from collection).
+
+  Revokes the Passport access token and clears sa_token collection variable.
+
+  Error responses:
+    401 — Unauthenticated
+url: "{{central_base_url}}/auth/logout"
+method: POST
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Logged out', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('message', 'Logged out successfully.');
+      });
+      pm.collectionVariables.set('sa_token', '');
+      console.log('sa_token cleared.');
+    language: text/javascript
+order: 3000
