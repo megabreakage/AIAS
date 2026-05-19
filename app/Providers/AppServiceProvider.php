@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Central\SuperAdmin;
+use App\Models\Tenant\Preamble;
+use App\Policies\PreamblePolicy;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\PermissionRegistrar;
-use Stancl\Tenancy\Events\TenancyBootstrapped;
 use Stancl\Tenancy\Events\RevertedToCentralContext;
-use App\Models\Central\SuperAdmin;
+use Stancl\Tenancy\Events\TenancyBootstrapped;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Register policies
+        Gate::policy(Preamble::class, PreamblePolicy::class);
+
         // Reset Spatie permission cache when switching tenant context
         Event::listen(TenancyBootstrapped::class, function (): void {
             app(PermissionRegistrar::class)->forgetCachedPermissions();
@@ -32,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
             if ($superAdmin->hasRole('super-admin')) {
                 return true;
             }
+
             return null;
         });
     }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\PreambleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +41,12 @@ Route::prefix('v1')->group(function () {
 
     // Protected tenant routes
     Route::middleware(['auth:api', 'tenant.token'])->group(function () {
-        // Additional tenant-scoped routes will be added here as features are built
+        // Preamble routes
+        Route::get('/preambles', [PreambleController::class, 'index']);
+        Route::post('/preambles', [PreambleController::class, 'store']);
+        Route::get('/preambles/{identifier}', [PreambleController::class, 'show']);
+        Route::put('/preambles/{identifier}', [PreambleController::class, 'update']);
+        Route::delete('/preambles/{identifier}', [PreambleController::class, 'destroy']);
+        Route::post('/preambles/{identifier}/restore', [PreambleController::class, 'restore']);
     });
 });
