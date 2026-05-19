@@ -22,6 +22,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use Authenticatable;
     use Authorizable;
     use HasApiTokens;
+    use HasApiTokens;
     use HasFactory;
     use HasRoles;
     use HasUuidIdentifier;
