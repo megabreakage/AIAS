@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filters\Preambles\Filters;
+namespace App\Filters\Tenant\Preambles\Filters;
 
 use App\Filters\EloquentFilter;
 use Illuminate\Database\Eloquent\Builder;

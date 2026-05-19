@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filters\Preambles;
+namespace App\Filters\Tenant\Preambles;
 
 use App\Filters\EloquentFilter;
-use App\Filters\Preambles\Filters\IsFeaturedFilter;
-use App\Filters\Preambles\Filters\SearchTermFilter;
-use App\Filters\Preambles\Filters\StatusFilter;
+use App\Filters\Tenant\Preambles\Filters\IsFeaturedFilter;
+use App\Filters\Tenant\Preambles\Filters\SearchTermFilter;
+use App\Filters\Tenant\Preambles\Filters\StatusFilter;
 
 class PreambleFilters extends EloquentFilter
 {

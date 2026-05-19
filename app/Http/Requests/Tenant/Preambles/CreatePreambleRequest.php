@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Preambles;
+namespace App\Http\Requests\Tenant\Preambles;
 
 use App\Models\Tenant\Preamble;
 use Illuminate\Foundation\Http\FormRequest;

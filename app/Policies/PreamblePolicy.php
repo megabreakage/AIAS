@@ -17,7 +17,7 @@ class PreamblePolicy
     public function view(User $user, Preamble $preamble): bool
     {
         return $user->hasPermissionTo('preamble.view')
-            && $user->tenant_id === $preamble->tenant_id;
+            && tenant()?->id === $preamble->tenant_id;
     }
 
     public function create(User $user): bool
@@ -28,18 +28,18 @@ class PreamblePolicy
     public function update(User $user, Preamble $preamble): bool
     {
         return $user->hasPermissionTo('preamble.update')
-            && $user->tenant_id === $preamble->tenant_id;
+            && tenant()?->id === $preamble->tenant_id;
     }
 
     public function delete(User $user, Preamble $preamble): bool
     {
         return $user->hasPermissionTo('preamble.delete')
-            && $user->tenant_id === $preamble->tenant_id;
+            && tenant()?->id === $preamble->tenant_id;
     }
 
     public function restore(User $user, Preamble $preamble): bool
     {
         return $user->hasPermissionTo('preamble.restore')
-            && $user->tenant_id === $preamble->tenant_id;
+            && tenant()?->id === $preamble->tenant_id;
     }
 }

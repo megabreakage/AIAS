@@ -33,8 +33,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Super admin bypasses all gate checks
-        Gate::before(function (SuperAdmin $superAdmin, string $ability): ?bool {
-            if ($superAdmin->hasRole('super-admin')) {
+        Gate::before(function (mixed $user, string $ability): ?bool {
+            if ($user instanceof SuperAdmin && $user->hasRole('super-admin')) {
                 return true;
             }
 

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
-use App\Http\Controllers\Api\V1\PreambleController;
+use App\Http\Controllers\Api\V1\Tenant\PreambleController;
 use Illuminate\Support\Facades\Route;
 
 /*
