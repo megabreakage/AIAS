@@ -4,18 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models\Tenant;
 
-use App\Models\User;
+use App\Models\BaseModel;
 use App\Support\Concerns\HasUuidIdentifier;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Preamble extends Model
+class Preamble extends BaseModel
 {
-    use HasFactory;
     use HasUuidIdentifier;
-    use SoftDeletes;
 
     // Status constants
     public const string STATUS_DRAFT = 'draft';
@@ -65,20 +59,12 @@ class Preamble extends Model
 
     protected static function booted(): void
     {
+        parent::booted();
+
         static::created(function (self $preamble): void {
             $preamble->updateQuietly([
                 'reference_number' => $preamble->generateReferenceNumber(),
             ]);
         });
-    }
-
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function updater(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'updated_by');
     }
 }
