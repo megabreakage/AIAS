@@ -9,6 +9,9 @@ values:
   - key: tenant_id
     value: ''
     description: Active tenant slug on staging. Set after creating a tenant.
+  - key: preamble_identifier
+    value: ''
+    description: Preamble identifier captured from Create/List Preambles requests.
   - key: sa_token
     value: ''
     description: Super-admin Bearer token. Auto-set by SA Login.

@@ -1,0 +1,31 @@
+$kind: http-request
+description: |-
+  Requires tenant_token.
+
+  Lists tenant preambles with optional filtering and pagination.
+
+  Query params:
+    search     — optional text search on name/description/reference_number
+    status     — optional: draft | active | archived
+    is_featured — optional boolean
+    per_page   — optional page size
+url: "{{tenant_base_url}}/preambles"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Preambles list response', () => {
+          const b = pm.response.json();
+          pm.expect(b).to.have.property('data');
+          pm.expect(b).to.have.property('meta');
+          pm.expect(b.data).to.be.an('array');
+          if (b.data.length > 0 && b.data[0].identifier) {
+              pm.collectionVariables.set('preamble_identifier', b.data[0].identifier);
+              console.log('preamble_identifier set from first list item: ' + b.data[0].identifier);
+          }
+      });
+    language: text/javascript
+order: 1000

@@ -1,0 +1,40 @@
+$kind: http-request
+description: |-
+  Requires tenant_token.
+
+  Creates a tenant-scoped preamble and auto-saves preamble_identifier.
+
+  Error responses:
+    401 — Unauthenticated
+    403 — Forbidden (missing permission)
+    422 — Validation failed
+url: "{{tenant_base_url}}/preambles"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Operational Risk Preamble",
+      "description": "Defines baseline controls and scope for operational risk audits.",
+      "status": "draft",
+      "effective_date": "2026-05-20",
+      "is_featured": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 201', () => pm.response.to.have.status(201));
+      pm.test('Preamble created', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('name');
+          pm.expect(b.data).to.have.property('status');
+          pm.expect(b.data).to.have.property('reference_number');
+          pm.collectionVariables.set('preamble_identifier', b.data.identifier);
+          console.log('preamble_identifier auto-saved: ' + b.data.identifier);
+      });
+    language: text/javascript
+order: 2000

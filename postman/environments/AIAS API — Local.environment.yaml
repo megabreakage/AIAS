@@ -9,6 +9,9 @@ values:
   - key: tenant_id
     value: acme-corp
     description: Active tenant slug. Must match a tenant in the database.
+  - key: preamble_identifier
+    value: ''
+    description: Preamble identifier captured from Create/List Preambles requests.
   - key: sa_token
     value: ''
     description: Super-admin Bearer token. Auto-set by SA Login.

@@ -1,0 +1,37 @@
+$kind: http-request
+description: |-
+  Requires tenant_token.
+
+  Updates fields of an existing preamble.
+
+  Error responses:
+    401 — Unauthenticated
+    403 — Forbidden (missing permission)
+    404 — Preamble not found
+    422 — Validation failed
+url: "{{tenant_base_url}}/preambles/{{preamble_identifier}}"
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Operational Risk Preamble (Revised)",
+      "description": "Updated baseline controls and scope for operational risk audits.",
+      "status": "active",
+      "is_featured": false
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Preamble updated', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('name', 'Operational Risk Preamble (Revised)');
+          pm.expect(b.data).to.have.property('status', 'active');
+      });
+    language: text/javascript
+order: 4000

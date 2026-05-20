@@ -20,6 +20,7 @@ variables:
   central_base_url: http://127.0.0.1:8088/api/v1
   tenant_base_url: http://{{tenant_id}}.localhost:8088/v1
   tenant_id: acme-corp
+  preamble_identifier: ""
   sa_token: ""
   tenant_token: ""
 auth:
