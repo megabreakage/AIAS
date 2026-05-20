@@ -1,26 +1,26 @@
 name: AIAS API — Staging
 values:
   - key: central_base_url
-    value: 'https://api.yourdomain.com/api/v1'
+    value: "https://api.yourdomain.com/api/v1"
     description: Central domain for staging. Replace yourdomain.com with actual staging hostname.
   - key: tenant_base_url
-    value: 'https://{{tenant_id}}.yourdomain.com/v1'
+    value: "https://{{tenant_id}}.yourdomain.com/v1"
     description: Tenant domain for staging. Resolved from tenant_id variable.
   - key: tenant_id
-    value: ''
+    value: ""
     description: Active tenant slug on staging. Set after creating a tenant.
   - key: preamble_identifier
-    value: ''
+    value: ""
     description: Preamble identifier captured from Create/List Preambles requests.
   - key: sa_token
-    value: ''
+    value: ""
     description: Super-admin Bearer token. Auto-set by SA Login.
   - key: tenant_token
-    value: ''
+    value: ""
     description: Tenant user Bearer token. Auto-set by Tenant Login/Register.
   - key: sa_email
-    value: ''
+    value: ""
     description: Staging super-admin email.
   - key: sa_password
-    value: ''
+    value: ""
     description: Staging super-admin password.
