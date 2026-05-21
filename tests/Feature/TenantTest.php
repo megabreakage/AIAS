@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Filters\Central\Tenant\TenantFilters;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\TenantResource;
 use App\Models\Central\SuperAdmin;
@@ -146,6 +147,7 @@ describe('Tenant model', function (): void {
         expect($columns)->toContain('id')
             ->toContain('identifier')
             ->toContain('owner_id')
+            ->toContain('reference_number')
             ->toContain('name')
             ->toContain('domain')
             ->toContain('logo')
@@ -170,6 +172,12 @@ describe('Tenant model', function (): void {
             ->toContain('data_center')
             ->toContain('created_by')
             ->toContain('updated_by');
+    });
+
+    it('does not have reference_number as fillable', function (): void {
+        $fillable = (new Tenant)->getFillable();
+
+        expect($fillable)->not->toContain('reference_number');
     });
 });
 
@@ -227,7 +235,7 @@ describe('TenantResource', function (): void {
         $resource = TenantResource::make($tenant)->resolve();
 
         expect($resource)->toHaveKeys([
-            'id', 'identifier', 'name', 'domain', 'logo', 'status',
+            'id', 'identifier', 'reference_number', 'name', 'domain', 'logo', 'status',
             'owner_id', 'country_id', 'data_center',
             'created_by', 'updated_by', 'created_at', 'updated_at',
         ]);
@@ -250,7 +258,7 @@ describe('Tenant CRUD', function (): void {
 
         $this->getJson('/api/v1/tenants')
             ->assertOk()
-            ->assertJsonStructure(['data', 'meta']);
+            ->assertJsonStructure(['data', 'links', 'meta']);
     });
 
     it('can create a tenant with auto-generated domain', function (): void {
@@ -264,6 +272,11 @@ describe('Tenant CRUD', function (): void {
         $response->assertCreated()
             ->assertJsonPath('data.name', 'Acme Corporation')
             ->assertJsonPath('data.domain', 'acme-corporation.localhost');
+
+        // reference_number should be auto-generated
+        $refNum = $response->json('data.reference_number');
+        expect($refNum)->not->toBeNull()
+            ->toStartWith('AT-');
     });
 
     it('can create a tenant with explicit domain', function (): void {
@@ -542,5 +555,181 @@ describe('Tenant identifier', function (): void {
         expect($identifier)->not->toBeNull();
         // UUID v4 format check
         expect($identifier)->toMatch('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/');
+    });
+});
+
+// ===========================================================================
+// Reference Number
+// ===========================================================================
+
+describe('Tenant reference number', function (): void {
+
+    beforeEach(function (): void {
+        Event::fake([TenantCreated::class, TenantDeleted::class]);
+    });
+
+    it('auto-generates reference_number in AT-{id}-{timestamp} format', function (): void {
+        $admin = authenticatedSuperAdmin();
+
+        $response = $this->postJson('/api/v1/tenants', [
+            'name' => 'RefNum Corp',
+            'owner_id' => $admin->id,
+        ]);
+
+        $response->assertCreated();
+
+        $refNum = $response->json('data.reference_number');
+        $tenantId = $response->json('data.id');
+
+        expect($refNum)->toStartWith("AT-{$tenantId}-")
+            ->toMatch('/^AT-\d+-\d+$/');
+    });
+
+    it('cannot be set via mass assignment', function (): void {
+        $admin = authenticatedSuperAdmin();
+
+        $response = $this->postJson('/api/v1/tenants', [
+            'name' => 'Mass Assign Corp',
+            'owner_id' => $admin->id,
+            'reference_number' => 'CUSTOM-REF-123',
+        ]);
+
+        $response->assertCreated();
+
+        $refNum = $response->json('data.reference_number');
+        expect($refNum)->not->toBe('CUSTOM-REF-123')
+            ->toStartWith('AT-');
+    });
+
+    it('is unique across tenants', function (): void {
+        $admin = authenticatedSuperAdmin();
+
+        $response1 = $this->postJson('/api/v1/tenants', [
+            'name' => 'Unique Ref A',
+            'owner_id' => $admin->id,
+        ]);
+        $response2 = $this->postJson('/api/v1/tenants', [
+            'name' => 'Unique Ref B',
+            'owner_id' => $admin->id,
+        ]);
+
+        $response1->assertCreated();
+        $response2->assertCreated();
+
+        expect($response1->json('data.reference_number'))
+            ->not->toBe($response2->json('data.reference_number'));
+    });
+
+    it('is included in API response', function (): void {
+        $admin = authenticatedSuperAdmin();
+
+        $response = $this->postJson('/api/v1/tenants', [
+            'name' => 'Response Ref Corp',
+            'owner_id' => $admin->id,
+        ]);
+
+        $response->assertCreated()
+            ->assertJsonStructure(['data' => ['reference_number']]);
+
+        expect($response->json('data.reference_number'))->not->toBeNull();
+    });
+});
+
+// ===========================================================================
+// Tenant Filters
+// ===========================================================================
+
+describe('Tenant filtering', function (): void {
+
+    beforeEach(function (): void {
+        Event::fake([TenantCreated::class, TenantDeleted::class]);
+    });
+
+    it('can filter tenants by search term matching name', function (): void {
+        $admin = authenticatedSuperAdmin();
+
+        $this->postJson('/api/v1/tenants', [
+            'name' => 'Searchable Alpha Corp',
+            'owner_id' => $admin->id,
+        ])->assertCreated();
+
+        $this->postJson('/api/v1/tenants', [
+            'name' => 'Beta Industries',
+            'owner_id' => $admin->id,
+        ])->assertCreated();
+
+        $response = $this->getJson('/api/v1/tenants?search=Searchable');
+
+        $response->assertOk();
+        $names = collect($response->json('data'))->pluck('name');
+        expect($names)->toContain('Searchable Alpha Corp')
+            ->not->toContain('Beta Industries');
+    });
+
+    it('can filter tenants by reference_number parameter', function (): void {
+        $admin = authenticatedSuperAdmin();
+
+        $createResponse = $this->postJson('/api/v1/tenants', [
+            'name' => 'Ref Filter Corp',
+            'owner_id' => $admin->id,
+        ]);
+        $createResponse->assertCreated();
+        $refNum = $createResponse->json('data.reference_number');
+
+        $this->postJson('/api/v1/tenants', [
+            'name' => 'Other Corp',
+            'owner_id' => $admin->id,
+        ])->assertCreated();
+
+        $response = $this->getJson("/api/v1/tenants?reference_number={$refNum}");
+
+        $response->assertOk();
+        $refs = collect($response->json('data'))->pluck('reference_number');
+        expect($refs)->toContain($refNum);
+        expect($refs)->toHaveCount(1);
+    });
+
+    it('can filter tenants by search term matching reference_number', function (): void {
+        $admin = authenticatedSuperAdmin();
+
+        $createResponse = $this->postJson('/api/v1/tenants', [
+            'name' => 'Search Ref Corp',
+            'owner_id' => $admin->id,
+        ]);
+        $createResponse->assertCreated();
+        $refNum = $createResponse->json('data.reference_number');
+
+        // Search by reference_number via search param
+        $response = $this->getJson("/api/v1/tenants?search={$refNum}");
+
+        $response->assertOk();
+        $refs = collect($response->json('data'))->pluck('reference_number');
+        expect($refs)->toContain($refNum);
+    });
+
+    it('has TenantFilters class with expected filter keys', function (): void {
+        $request = \Illuminate\Http\Request::create('/tenants', 'GET');
+        $filters = TenantFilters::fromRequest($request);
+
+        expect($filters)->toBeInstanceOf(TenantFilters::class);
+    });
+
+    it('supports pagination via per_page parameter', function (): void {
+        $admin = authenticatedSuperAdmin();
+
+        // Create 3 tenants
+        foreach (['Paginate A', 'Paginate B', 'Paginate C'] as $name) {
+            $this->postJson('/api/v1/tenants', [
+                'name' => $name,
+                'owner_id' => $admin->id,
+            ])->assertCreated();
+        }
+
+        $response = $this->getJson('/api/v1/tenants?per_page=2');
+
+        $response->assertOk()
+            ->assertJsonPath('meta.per_page', 2);
+
+        expect(count($response->json('data')))->toBeLessThanOrEqual(2);
     });
 });
