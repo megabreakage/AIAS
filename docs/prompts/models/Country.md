@@ -9,10 +9,11 @@
 - `continent_id`- foreign key to continents table, cascade on delete,
 - `short_code`- nullable string, max length 10, indexed
 - `iso_code`- nullable string, max length 10,
-- `currency`- nullable string, max length 3, // Currency code (USD, EUR, GBP, etc.)
+- `currency`- nullable string, max length 5, // Currency code (USD, EUR, GBP, etc.)
+- `currency_name`- nullable string, max length 50, // Currency name (United States Dollar, Euro, British Pound, etc.)
 - `currency_sign`- nullable string, max length 5, // Currency symbol ($, etc.)
 - `country_code`- nullable string, max length 10, // Phone country code (+254, +1, etc.)
-- `phone_number_digits`- nullable unsigned tiny integer, // Number of digits in phone number
+- `phone_digits`- nullable unsigned tiny integer, // Number of digits in phone number
 - `status`- boolean, default true, indexed
 - `created_by`- foreign key to users table, nullable, null on delete,
 - `updated_by`- foreign key to users table, nullable, null on delete,
