@@ -7,10 +7,10 @@ use App\Http\Resources\TenantResource;
 use App\Models\Central\SuperAdmin;
 use App\Models\Central\Tenant;
 use App\Models\Central\TenantStatus;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\Passport;
 
-uses(RefreshDatabase::class);
+uses(DatabaseTransactions::class);
 
 // ---------------------------------------------------------------------------
 // Helper — authenticate as super admin
