@@ -1,6 +1,6 @@
 # AI Prompts for Continent Module
 
-/caveman Create a completly featured tenant-scoped **Continent** module. The migration should include the following fields:
+/caveman Create a completly featured central database **Continent** module. The migration should include the following fields:
 
 - `id`- primary key, auto-increment,
 - `identifier`- unique UUID,
