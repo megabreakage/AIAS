@@ -16,7 +16,6 @@ return new class extends Migration
             $table->id();
             $table->uuid('identifier')->unique()->index();
             $table->unsignedBigInteger('owner_id');
-            $table->string('reference_number', 125)->unique();
             $table->string('name')->unique()->index();
             $table->string('domain')->nullable()->unique();
             $table->string('logo')->nullable();

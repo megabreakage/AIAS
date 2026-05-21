@@ -61,7 +61,7 @@ final class TenantController extends BaseApiController
             Log::info('Tenant created', ['id' => $tenant->id, 'domain' => $domain]);
 
             return $this->success(
-                TenantResource::make($tenant->load('domains'))->resolve(),
+                TenantResource::make($tenant->refresh()->load('domains'))->resolve(),
                 Response::HTTP_CREATED,
             );
         } catch (\Throwable $e) {

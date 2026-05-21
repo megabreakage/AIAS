@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('central')->table('tenants', function (Blueprint $table): void {
-            $table->string('reference_number', 125)->unique()->after('owner_id');
+            $table->string('reference_number', 125)->nullable()->unique()->after('owner_id');
         });
     }
 
