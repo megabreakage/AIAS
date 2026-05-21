@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Resources\Central\Continent;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+final class ContinentResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        return [
+            'identifier' => $this->identifier,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'short_code' => $this->short_code,
+            'iso_code' => $this->iso_code,
+            'status' => $this->status,
+            'created_by' => $this->whenLoaded('createdBy', fn () => [
+                'id' => $this->createdBy?->id,
+                'identifier' => $this->createdBy?->identifier,
+                'name' => trim(($this->createdBy?->first_name ?? '').' '.($this->createdBy?->last_name ?? '')),
+            ]),
+            'updated_by' => $this->whenLoaded('updatedBy', fn () => [
+                'id' => $this->updatedBy?->id,
+                'identifier' => $this->updatedBy?->identifier,
+                'name' => trim(($this->updatedBy?->first_name ?? '').' '.($this->updatedBy?->last_name ?? '')),
+            ]),
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
+            'deleted_at' => $this->deleted_at?->toISOString(),
+        ];
+    }
+}

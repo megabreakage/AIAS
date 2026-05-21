@@ -1,0 +1,26 @@
+$kind: http-request
+description: |-
+  Requires sa_token.
+
+  Restores a previously soft-deleted continent by its identifier UUID.
+
+  Error responses:
+    401 — Unauthenticated
+    403 — Forbidden (missing role)
+    404 — Continent not found (or not trashed)
+url: "{{central_base_url}}/continents/{{continent_identifier}}/restore"
+method: POST
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Continent restored', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('name');
+          pm.expect(b.data.deleted_at).to.be.null;
+      });
+    language: text/javascript
+order: 6000

@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DefaultCentralRoleSeeder::class,
             DefaultSuperAdminSeeder::class,
+            ContinentSeeder::class,
         ]);
     }
 }

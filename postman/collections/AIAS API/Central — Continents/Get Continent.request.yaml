@@ -1,0 +1,24 @@
+$kind: http-request
+description: |-
+  Requires sa_token.
+
+  Returns a single continent by its identifier UUID.
+url: "{{central_base_url}}/continents/{{continent_identifier}}"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Continent retrieved', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('name');
+          pm.expect(b.data).to.have.property('slug');
+          pm.expect(b.data).to.have.property('short_code');
+          pm.expect(b.data).to.have.property('iso_code');
+          pm.expect(b.data).to.have.property('status');
+      });
+    language: text/javascript
+order: 3000

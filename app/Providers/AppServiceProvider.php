@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Central\Continent;
 use App\Models\Central\SuperAdmin;
 use App\Models\Tenant\Preamble;
+use App\Policies\ContinentPolicy;
 use App\Policies\PreamblePolicy;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -21,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Register policies
+        Gate::policy(Continent::class, ContinentPolicy::class);
         Gate::policy(Preamble::class, PreamblePolicy::class);
 
         // Reset Spatie permission cache when switching tenant context

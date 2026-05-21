@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\SuperAdminAuthController;
+use App\Http\Controllers\Api\V1\Central\ContinentController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\TenantController;
 use Illuminate\Support\Facades\Route;
@@ -37,5 +38,13 @@ Route::prefix('v1')->group(function () {
         Route::post('/tenants', [TenantController::class, 'store']);
         Route::get('/tenants/{id}', [TenantController::class, 'show']);
         Route::delete('/tenants/{id}', [TenantController::class, 'destroy']);
+
+        // Continent management
+        Route::get('/continents', [ContinentController::class, 'index']);
+        Route::post('/continents', [ContinentController::class, 'store']);
+        Route::get('/continents/{identifier}', [ContinentController::class, 'show']);
+        Route::put('/continents/{identifier}', [ContinentController::class, 'update']);
+        Route::delete('/continents/{identifier}', [ContinentController::class, 'destroy']);
+        Route::post('/continents/{identifier}/restore', [ContinentController::class, 'restore']);
     });
 });

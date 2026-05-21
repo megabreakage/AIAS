@@ -1,0 +1,40 @@
+$kind: http-request
+description: |-
+  Requires sa_token.
+
+  Creates a new continent and auto-saves continent_identifier.
+
+  Error responses:
+    401 — Unauthenticated
+    403 — Forbidden (missing role)
+    422 — Validation failed (name required, unique)
+url: "{{central_base_url}}/continents"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Africa",
+      "short_code": "AF",
+      "iso_code": "AF",
+      "status": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 201', () => pm.response.to.have.status(201));
+      pm.test('Continent created', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('name');
+          pm.expect(b.data).to.have.property('slug');
+          pm.expect(b.data).to.have.property('short_code');
+          pm.expect(b.data).to.have.property('status');
+          pm.collectionVariables.set('continent_identifier', b.data.identifier);
+          console.log('continent_identifier auto-saved: ' + b.data.identifier);
+      });
+    language: text/javascript
+order: 2000
