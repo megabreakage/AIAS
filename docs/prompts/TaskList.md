@@ -3,7 +3,18 @@
 3. **[Done]** /laravel-best-practices Create a completly featured central database **Country** module. Refer to `docs/prompts/models/Country.md` for Model specifications.
 4. /laravel-best-practices Create a listener to when a **Tenant** is created, and triggers an event that executes a scheduled job to create the Tenant's database, Migrates & Seeds the database with tenant-based migrations.
 5. /laravel-best-practices revise api routes and prefix `/api/` to all routes, and ensure that all routes are properly grouped and namespaced. Update Postman collection and environment variables to reflect the new route structure, and ensure that all endpoints are properly documented with request and response examples.
-6. /laravel-best-practices Implement API versioning strategy to support future versions without breaking existing clients. Ensure that the current version is stable and well-documented.
-7. /laravel-best-practices Implement a comprehensive logging strategy using Laravel's logging facilities. Ensure that all critical actions, errors, and exceptions are logged appropriately for debugging and monitoring purposes.
-8. /laravel-best-practices Implement a caching strategy to optimize performance for frequently accessed data. Use Laravel's caching mechanisms to store and retrieve cached data efficiently.
-9.
+6. /laravel-best-practices Implement:
+   - API versioning strategy to support future versions without breaking existing clients. Ensure that the current version is stable and well-documented.
+   - A comprehensive logging strategy using Laravel's logging facilities. Ensure that all critical actions, errors, and exceptions are logged appropriately for debugging and monitoring purposes.
+   - A caching strategy to optimize performance for frequently accessed data. Use Laravel's caching mechanisms to store and retrieve cached data efficiently.
+   - A rate-limiting strategy to protect the API from abuse and ensure fair usage. Use Laravel's built-in rate-limiting features to define limits for different user roles and endpoints.
+   - A comprehensive testing strategy to ensure the reliability and stability of the application. Write unit tests, feature tests, stress tests, and integration tests to cover all critical functionalities and edge cases. Use Laravel's testing facilities to create and run tests efficiently.
+   - A comprehensive security strategy to protect the application from common vulnerabilities and attacks. Use Laravel's security features, such as CSRF protection, input validation, and encryption, to secure the application effectively.
+   - A comprehensive deployment strategy to ensure smooth and efficient deployment of the application. Use GitHub Actions to automate the deployment process and ensure that it is reliable and repeatable.
+   - A comprehensive monitoring strategy to ensure that the application is running smoothly and any issues are detected and addressed promptly. Use Sentry to monitor the application effectively.
+   - A comprehensive error handling strategy to ensure that errors are handled gracefully and informative error messages are provided to users. Use Laravel's error handling features to manage errors effectively.
+   - A comprehensive performance optimization strategy to ensure that the application is fast and responsive. Use Laravel's performance optimization features, such as query optimization and eager loading, to improve performance.
+   - A comprehensive scalability strategy to ensure that the application can handle increased traffic and load as it grows. Use Laravel's scalability features, such as horizontal scaling and load balancing, to ensure that the application can scale effectively.
+   - A comprehensive backup and disaster recovery strategy to ensure that data is protected and can be recovered in case of a disaster. Use Laravel's backup features to create regular backups and ensure that they are stored securely.
+   -
+7.
