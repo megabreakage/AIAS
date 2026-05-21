@@ -14,3 +14,11 @@
 - `created_at`- timestamp,
 - `updated_at`- timestamp,
 - `deleted_at`- timestamp, nullable,
+
+The model should have the following relationships:
+
+- `countries`- has many Country model,
+- `createdBy`- belongs to User model,
+- `updatedBy`- belongs to User model,
+
+Create a seeder to populate the continents table with realistic data of all the continents for all fields.
