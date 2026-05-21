@@ -8,7 +8,10 @@ use App\Models\Central\SuperAdmin;
 use App\Models\Central\Tenant;
 use App\Models\Central\TenantStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
 use Laravel\Passport\Passport;
+use Stancl\Tenancy\Events\TenantCreated;
+use Stancl\Tenancy\Events\TenantDeleted;
 
 uses(DatabaseTransactions::class);
 
@@ -237,6 +240,11 @@ describe('TenantResource', function (): void {
 
 describe('Tenant CRUD', function (): void {
 
+    beforeEach(function (): void {
+        // Prevent tenant database lifecycle (create/migrate/seed) during tests
+        Event::fake([TenantCreated::class, TenantDeleted::class]);
+    });
+
     it('can list tenants', function (): void {
         authenticatedSuperAdmin();
 
@@ -343,6 +351,10 @@ describe('Tenant CRUD', function (): void {
 
 describe('Tenant creation validation', function (): void {
 
+    beforeEach(function (): void {
+        Event::fake([TenantCreated::class, TenantDeleted::class]);
+    });
+
     it('requires name', function (): void {
         $admin = authenticatedSuperAdmin();
 
@@ -431,6 +443,10 @@ describe('Tenant creation validation', function (): void {
 
 describe('Domain auto-generation', function (): void {
 
+    beforeEach(function (): void {
+        Event::fake([TenantCreated::class, TenantDeleted::class]);
+    });
+
     it('generates domain from tenant name slug', function (): void {
         $admin = authenticatedSuperAdmin();
 
@@ -463,6 +479,10 @@ describe('Domain auto-generation', function (): void {
 
 describe('Error response format', function (): void {
 
+    beforeEach(function (): void {
+        Event::fake([TenantCreated::class, TenantDeleted::class]);
+    });
+
     it('returns structured error for not found', function (): void {
         authenticatedSuperAdmin();
 
@@ -491,6 +511,10 @@ describe('Error response format', function (): void {
 // ===========================================================================
 
 describe('Tenant identifier', function (): void {
+
+    beforeEach(function (): void {
+        Event::fake([TenantCreated::class, TenantDeleted::class]);
+    });
 
     it('auto-generates UUID identifier on creation', function (): void {
         $admin = authenticatedSuperAdmin();
