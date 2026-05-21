@@ -1,6 +1,6 @@
 # AI Prompts for Country Module
 
-/caveman Create a completly featured central database **Country** module. The migration should include the following fields:
+Create a completly featured central database **Country** module. The migration should include the following fields:
 
 - `id`- primary key, auto-increment,
 - `identifier`- unique UUID,
