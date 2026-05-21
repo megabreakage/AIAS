@@ -17,8 +17,10 @@
 
 The model should have the following relationships:
 
-- `countries`- has many Country model,
-- `createdBy`- belongs to User model,
-- `updatedBy`- belongs to User model,
+- `countries`- has many `Country` model,
+- `createdBy`- belongs to `User` model,
+- `updatedBy`- belongs to `User` model,
 
 Create a seeder to populate the continents table with realistic data of all the continents for all fields.
+
+Update Postman collection and environment variables to include endpoints for the `Continent` module, including CRUD operations, any necessary relationships with the `Country` module, and ensure that the endpoints are properly documented with request (refer to `Requests/Central/Continent` for query parameters) and response examples.
