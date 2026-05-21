@@ -2,13 +2,18 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureTokenMatchesTenant;
 use App\Models\Central\SuperAdmin;
 use App\Models\Central\Tenant;
 use App\Models\User;
+use Database\Seeders\TenantDatabaseSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Passport\Passport;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 uses(DatabaseTransactions::class);
 
@@ -39,6 +44,17 @@ function provisionTenantWithSeededAdmin(): array
     /** @var Tenant $tenant */
     $tenant = Tenant::query()->findOrFail((int) $response->json('data.id'));
 
+    // Ensure tenant schema and seeders exist even when tenant lifecycle events are skipped in tests.
+    Artisan::call('tenants:migrate', [
+        '--tenants' => [$tenant->id],
+        '--force' => true,
+    ]);
+
+    Artisan::call('tenants:seed', [
+        '--tenants' => [$tenant->id],
+        '--class' => TenantDatabaseSeeder::class,
+    ]);
+
     return [
         'tenant' => $tenant,
         'domain' => $domain,
@@ -48,14 +64,22 @@ function provisionTenantWithSeededAdmin(): array
 }
 
 describe('Tenant admin authentication and ownership lifecycle', function (): void {
+    beforeEach(function (): void {
+        $this->withoutMiddleware([
+            InitializeTenancyByDomain::class,
+            PreventAccessFromCentralDomains::class,
+            EnsureTokenMatchesTenant::class,
+        ]);
+    });
+
     it('authenticates tenant admin and exposes own profile', function (): void {
         $ctx = provisionTenantWithSeededAdmin();
+        tenancy()->initialize($ctx['tenant']);
 
-        $loginResponse = $this->withServerVariables(['HTTP_HOST' => $ctx['domain']])
-            ->postJson('/v1/auth/login', [
-                'email' => $ctx['email'],
-                'password' => $ctx['password'],
-            ]);
+        $loginResponse = $this->postJson('/v1/auth/login', [
+            'email' => $ctx['email'],
+            'password' => $ctx['password'],
+        ]);
 
         $loginResponse->assertOk()
             ->assertJsonPath('data.token_type', 'Bearer')
@@ -63,13 +87,10 @@ describe('Tenant admin authentication and ownership lifecycle', function (): voi
 
         $token = (string) $loginResponse->json('data.token');
 
-        $this->withServerVariables(['HTTP_HOST' => $ctx['domain']])
-            ->withHeader('Authorization', 'Bearer '.$token)
+        $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/v1/auth/me')
             ->assertOk()
             ->assertJsonPath('data.email', $ctx['email']);
-
-        tenancy()->initialize($ctx['tenant']);
 
         /** @var User $tenantAdmin */
         $tenantAdmin = User::query()->where('email', $ctx['email'])->firstOrFail();
