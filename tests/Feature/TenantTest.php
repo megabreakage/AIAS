@@ -362,7 +362,8 @@ describe('Tenant creation validation', function (): void {
             'owner_id' => $admin->id,
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['name']);
+            ->assertJsonPath('error.code', 'VALIDATION_FAILED')
+            ->assertJsonPath('error.details.name.0', fn ($v) => str_contains($v, 'name'));
     });
 
     it('requires owner_id', function (): void {
@@ -372,7 +373,8 @@ describe('Tenant creation validation', function (): void {
             'name' => 'No Owner Corp',
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['owner_id']);
+            ->assertJsonPath('error.code', 'VALIDATION_FAILED')
+            ->assertJsonPath('error.details.owner_id.0', fn ($v) => str_contains($v, 'owner'));
     });
 
     it('rejects non-existent owner_id', function (): void {
@@ -383,7 +385,8 @@ describe('Tenant creation validation', function (): void {
             'owner_id' => 99999,
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['owner_id']);
+            ->assertJsonPath('error.code', 'VALIDATION_FAILED')
+            ->assertJsonPath('error.details.owner_id.0', fn ($v) => str_contains($v, 'owner'));
     });
 
     it('rejects duplicate tenant name', function (): void {
@@ -401,7 +404,8 @@ describe('Tenant creation validation', function (): void {
             'owner_id' => $admin->id,
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['name']);
+            ->assertJsonPath('error.code', 'VALIDATION_FAILED')
+            ->assertJsonPath('error.details.name.0', fn ($v) => str_contains($v, 'already exists'));
     });
 
     it('rejects duplicate domain', function (): void {
@@ -421,7 +425,8 @@ describe('Tenant creation validation', function (): void {
             'domain' => 'same-domain.localhost',
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['domain']);
+            ->assertJsonPath('error.code', 'VALIDATION_FAILED')
+            ->assertJsonPath('error.details.domain.0', fn ($v) => str_contains($v, 'already in use'));
     });
 
     it('rejects invalid status value', function (): void {
@@ -433,7 +438,8 @@ describe('Tenant creation validation', function (): void {
             'status' => 'invalid_status',
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['status']);
+            ->assertJsonPath('error.code', 'VALIDATION_FAILED')
+            ->assertJsonPath('error.details.status.0', fn ($v) => str_contains($v, 'status'));
     });
 });
 
@@ -502,7 +508,13 @@ describe('Error response format', function (): void {
         $response = $this->postJson('/api/v1/tenants', []);
 
         $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['name', 'owner_id']);
+            ->assertJsonPath('error.code', 'VALIDATION_FAILED')
+            ->assertJsonStructure([
+                'error' => ['code', 'message', 'details'],
+                'meta',
+            ]);
+
+        expect($response->json('error.details'))->toHaveKeys(['name', 'owner_id']);
     });
 });
 
