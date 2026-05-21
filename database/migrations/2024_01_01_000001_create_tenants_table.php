@@ -13,17 +13,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('central')->create('tenants', function (Blueprint $table): void {
-            $table->id(); // Primary Key, auto-increaments
+            $table->id();
             $table->uuid('identifier')->unique()->index();
-            $table->foreignId('owner_id')->constrained('users')->restrictOnDelete(); // Must have an existing user with `tenant-admin` role assigned to them
+            $table->unsignedBigInteger('owner_id');
             $table->string('name')->unique()->index();
-            $table->string('domain')->nullable(); // if available it should be unique from existing domains
+            $table->string('domain')->nullable()->unique();
             $table->string('logo')->nullable();
-            $table->foreignId('country_id')->nullable()->constrained('countries')->nullOnDelete();
+            $table->unsignedBigInteger('country_id')->nullable();
             $table->string('data_center')->nullable();
             $table->json('data')->nullable();
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

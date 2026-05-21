@@ -14,28 +14,47 @@ class DefaultTenantAdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $tenantDomain = tenant()?->domains?->first()?->domain ?? 'tenant.localhost';
-        $email        = "admin@{$tenantDomain}";
-        $password     = (string) env('TEST_TENANT_ADMIN_PASSWORD', 'password');
+        $tenantDomain = tenant()?->domain ?? tenant()?->domains?->first()?->domain ?? 'tenant.localhost';
+        $email = "admin@{$tenantDomain}";
+        $password = (string) env('TEST_TENANT_ADMIN_PASSWORD', 'password');
+        $firstName = 'Tenant';
+        $lastName = 'Admin';
 
-        $admin = User::withoutEvents(function () use ($email, $password): User {
+        $admin = User::withoutEvents(function () use ($email, $password, $firstName, $lastName): User {
             return User::firstOrCreate(
                 ['email' => $email],
                 [
-                    'identifier'        => (string) Str::uuid(),
-                    'first_name'        => 'Tenant',
-                    'last_name'         => 'Admin',
-                    'username'          => 'tenant_admin_' . Str::random(4),
+                    'identifier' => (string) Str::uuid(),
+                    'title' => null,
+                    'first_name' => $firstName,
+                    'middle_name' => null,
+                    'last_name' => $lastName,
+                    'username' => 'tenant_admin_'.Str::random(4),
                     'email_verified_at' => now(),
-                    'password'          => Hash::make($password),
-                    'is_active'         => true,
-                    'country_code'      => '+254',
+                    'country_code' => '+254',
+                    'phone' => null,
+                    'password' => Hash::make($password),
+                    'preferred_timezone' => 'Africa/Nairobi',
+                    'office_location' => null,
+                    'is_active' => true,
+                    'avatar' => null,
+                    'notes' => null,
                 ],
             );
         });
 
-        if (! $admin->hasRole('tenant-admin', 'api')) {
-            $admin->assignRole(Role::findByName('tenant-admin', 'api'));
+        $tenantAdminRole = Role::where('name', 'tenant-admin')
+            ->where('guard_name', 'api')
+            ->first();
+
+        if (!$tenantAdminRole) {
+            $this->command->error('tenant-admin role not found. Run DefaultTenantRoleSeeder first.');
+
+            return;
+        }
+
+        if (!$admin->hasRole('tenant-admin', 'api')) {
+            $admin->assignRole($tenantAdminRole);
         }
 
         if ($admin->wasRecentlyCreated) {
