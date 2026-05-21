@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Filters\Central\Tenant\TenantFilters;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\TenantResource;
 use App\Models\Central\Tenant;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -15,11 +17,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class TenantController extends BaseApiController
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $tenants = Tenant::query()->with('domains')->get();
+        $query = Tenant::query()->with('domains');
 
-        return $this->success(TenantResource::collection($tenants)->resolve());
+        $filters = TenantFilters::fromRequest($request);
+        $filters->apply($query);
+
+        $tenants = $query->paginate(
+            perPage: min($request->integer('per_page', 15), 100),
+            page: max($request->integer('page', 1), 1),
+        );
+
+        return $this->paginated($tenants, TenantResource::class);
     }
 
     public function store(CreateTenantRequest $request): JsonResponse

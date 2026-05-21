@@ -50,6 +50,7 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
             'id',
             'identifier',
             'owner_id',
+            'reference_number',
             'name',
             'domain',
             'logo',
@@ -71,6 +72,13 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
             if (auth()->check()) {
                 $tenant->created_by ??= auth()->id();
                 $tenant->updated_by ??= auth()->id();
+            }
+        });
+
+        self::created(function (Tenant $tenant): void {
+            if (empty($tenant->reference_number)) {
+                $tenant->reference_number = 'AT-'.$tenant->id.'-'.time();
+                $tenant->saveQuietly();
             }
         });
 
