@@ -1,22 +1,26 @@
 <?php
 
 use App\Models\Central\SuperAdmin;
+use App\Models\Central\Tenant;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
 use Laravel\Passport\Passport;
+use Stancl\Tenancy\Events\TenantCreated;
+use Stancl\Tenancy\Events\TenantDeleted;
 
 uses(DatabaseTransactions::class);
 
-it('can create a super admin', function (): void {
+it('can create a tenant record with events faked', function (): void {
+    Event::fake([TenantCreated::class, TenantDeleted::class]);
+
     $admin = SuperAdmin::factory()->create();
 
-    expect($admin)->toBeInstanceOf(SuperAdmin::class);
-    expect($admin->id)->toBeGreaterThan(0);
-});
+    $tenant = Tenant::create([
+        'name'     => 'Test Tenant',
+        'owner_id' => $admin->id,
+        'domain'   => 'test.localhost',
+    ]);
 
-it('can authenticate as super admin', function (): void {
-    $admin = SuperAdmin::factory()->create();
-    Passport::actingAs($admin, [], 'super_admin');
-
-    $this->getJson('/api/v1/tenants')
-        ->assertOk();
+    expect($tenant->id)->toBeGreaterThan(0);
+    expect($tenant->name)->toBe('Test Tenant');
 });
