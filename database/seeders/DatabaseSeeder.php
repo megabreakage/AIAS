@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             DefaultCentralRoleSeeder::class,
             DefaultSuperAdminSeeder::class,
             ContinentSeeder::class,
+            CountrySeeder::class,
         ]);
     }
 }

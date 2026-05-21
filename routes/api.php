@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\SuperAdminAuthController;
 use App\Http\Controllers\Api\V1\Central\ContinentController;
+use App\Http\Controllers\Api\V1\Central\CountryController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\TenantController;
 use Illuminate\Support\Facades\Route;
@@ -46,5 +47,13 @@ Route::prefix('v1')->group(function () {
         Route::put('/continents/{identifier}', [ContinentController::class, 'update']);
         Route::delete('/continents/{identifier}', [ContinentController::class, 'destroy']);
         Route::post('/continents/{identifier}/restore', [ContinentController::class, 'restore']);
+
+        // Country management
+        Route::get('/countries', [CountryController::class, 'index']);
+        Route::post('/countries', [CountryController::class, 'store']);
+        Route::get('/countries/{identifier}', [CountryController::class, 'show']);
+        Route::put('/countries/{identifier}', [CountryController::class, 'update']);
+        Route::delete('/countries/{identifier}', [CountryController::class, 'destroy']);
+        Route::post('/countries/{identifier}/restore', [CountryController::class, 'restore']);
     });
 });

@@ -21,6 +21,7 @@ variables:
   tenant_base_url: http://{{tenant_id}}.localhost:8088/v1
   tenant_id: acme-corp
   continent_identifier: ""
+  country_identifier: ""
   preamble_identifier: ""
   sa_token: ""
   tenant_token: ""

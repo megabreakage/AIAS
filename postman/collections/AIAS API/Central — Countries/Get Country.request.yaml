@@ -1,0 +1,29 @@
+$kind: http-request
+description: |-
+  Requires sa_token.
+
+  Retrieves a single country by identifier (UUID).
+
+  Error responses:
+    401 — Unauthenticated
+    403 — Forbidden
+    404 — Country not found
+url: "{{central_base_url}}/countries/{{country_identifier}}"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Country retrieved', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('name');
+          pm.expect(b.data).to.have.property('continent');
+          pm.expect(b.data).to.have.property('currency');
+          pm.expect(b.data).to.have.property('country_code');
+          pm.expect(b.data).to.have.property('phone_digits');
+      });
+    language: text/javascript
+order: 3000

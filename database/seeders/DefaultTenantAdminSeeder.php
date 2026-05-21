@@ -15,10 +15,10 @@ class DefaultTenantAdminSeeder extends Seeder
     public function run(): void
     {
         $tenantDomain = tenant()?->domain ?? tenant()?->domains?->first()?->domain ?? 'tenant.localhost';
-        $email = "admin@{$tenantDomain}";
+        $email = (string) env('TEST_TENANT_ADMIN_EMAIL', "admin@{$tenantDomain}");
         $password = (string) env('TEST_TENANT_ADMIN_PASSWORD', 'password');
         $firstName = 'Tenant';
-        $lastName = 'Admin';
+        $lastName = 'Owner';
 
         $admin = User::withoutEvents(function () use ($email, $password, $firstName, $lastName): User {
             return User::firstOrCreate(
@@ -29,7 +29,7 @@ class DefaultTenantAdminSeeder extends Seeder
                     'first_name' => $firstName,
                     'middle_name' => null,
                     'last_name' => $lastName,
-                    'username' => 'tenant_admin_'.Str::random(4),
+                    'username' => 'tenant_owner_'.Str::random(4),
                     'email_verified_at' => now(),
                     'country_code' => '+254',
                     'phone' => null,
