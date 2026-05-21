@@ -25,3 +25,5 @@ The model should have the following relationships:
 - `continent`- belongs to Continent model,
 - `createdBy`- belongs to User model,
 - `updatedBy`- belongs to User model,
+
+Create a seeder to populate the countries table with at least 5 countries from each continent, ensuring that each country is associated with a valid continent. The seeder should include realistic data for all fields, including name, slug, short code, iso code, currency, currency sign, country code, and phone number digits.
