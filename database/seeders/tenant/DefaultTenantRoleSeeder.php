@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Database\Seeders\Tenant;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -13,22 +13,22 @@ class DefaultTenantRoleSeeder extends Seeder
     {
         $roles = [
             [
-                'name'         => 'tenant-admin',
+                'name' => 'tenant-admin',
                 'display_name' => 'Tenant Admin',
-                'description'  => 'Has access to the specific tenant database features and settings',
-                'guard_name'   => 'api',
+                'description' => 'Has access to the specific tenant database features and settings',
+                'guard_name' => 'api',
             ],
             [
-                'name'         => 'auditor',
+                'name' => 'auditor',
                 'display_name' => 'Auditor',
-                'description'  => 'Can create and manage audit engagements and findings',
-                'guard_name'   => 'api',
+                'description' => 'Can create and manage audit engagements and findings',
+                'guard_name' => 'api',
             ],
             [
-                'name'         => 'viewer',
+                'name' => 'viewer',
                 'display_name' => 'Viewer',
-                'description'  => 'Read-only access to audit data',
-                'guard_name'   => 'api',
+                'description' => 'Read-only access to audit data',
+                'guard_name' => 'api',
             ],
         ];
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Database\Seeders\Central;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -13,10 +13,10 @@ class DefaultCentralRoleSeeder extends Seeder
     {
         $roles = [
             [
-                'name'         => 'super-admin',
+                'name' => 'super-admin',
                 'display_name' => 'Super Admin',
-                'description'  => 'Has access to all system features and settings',
-                'guard_name'   => 'super_admin',
+                'description' => 'Has access to all system features and settings',
+                'guard_name' => 'super_admin',
             ],
         ];
 
