@@ -142,7 +142,7 @@ return [
             'assign-permissions', 'manage-api-keys',
         ],
 
-        // AIAS Administration (Central Database - AIAS-admin/AIAS-user)
+        // Aias Administration (Central Database - admin/user)
         'admin-tenants' => [
             'view', 'create', 'edit', 'delete', 'restore',
             'activate', 'suspend', 'verify', 'view-statistics',
@@ -349,7 +349,7 @@ return [
             'service-users.view',
         ],
 
-        // TENANT HR — HR management, settings, user management (no tenant-admin/AIAS role assignment)
+        // TENANT HR — HR management, settings, user management (no tenant-admin/Aias role assignment)
         'tenant-hr' => [
             'dashboard.*',
             'hr-departments.*',
@@ -464,8 +464,8 @@ return [
             'matters.view',
         ],
 
-        // AIAS ADMIN — full control over central administration
-        'AIAS-admin' => [
+        // Aias ADMIN — full control over central administration
+        'admin' => [
             'admin-tenants.*',
             'admin-users.*',
             'admin-settings.*',
@@ -487,8 +487,8 @@ return [
             'service-users.*',
         ],
 
-        // AIAS USER — read-only admin with limited write access
-        'AIAS-user' => [
+        // Aias USER — read-only admin with limited write access
+        'user' => [
             'admin-tenants.view',
             'admin-tenants.view-statistics',
             'admin-users.view',
