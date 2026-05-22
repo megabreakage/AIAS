@@ -13,7 +13,35 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'permissions' => [
+    'central' => [
+        // API Key Management (Central Database - system-admin only)
+        'api-keys' => [
+            'view', 'create', 'regenerate', 'revoke', 'delete', 'update-permissions',
+            'view-usage', 'manage-tracking', 'set-expiration', 'manage-rate-limits',
+            'manage-ip-whitelist', 'view-security-logs',
+        ],
+
+        'service-users' => [
+            'view', 'create', 'edit', 'delete', 'activate', 'deactivate',
+            'assign-permissions', 'manage-api-keys',
+        ],
+
+        // Aias Administration (Central Database - admin/user)
+        'tenants' => [
+            'view', 'create', 'edit', 'delete', 'restore',
+            'activate', 'suspend', 'verify', 'view-statistics',
+        ],
+
+        'settings' => [
+            'view', 'edit', 'manage-system-defaults', 'manage-maintenance',
+        ],
+
+        'audit' => [
+            'view-logs', 'view-login-history', 'export-logs',
+        ],
+    ],
+
+    'tenants' => [
 
         'dashboard' => ['view'],
 
@@ -132,32 +160,6 @@ return [
         'office_locations' => ['view', 'create', 'edit', 'delete'],
 
         'mfa' => ['view-status', 'setup', 'enable', 'disable', 'regenerate-backup-codes', 'update-method'],
-
-        // API Key Management (Central Database - system-admin only)
-        'api-keys' => [
-            'view', 'create', 'regenerate', 'revoke', 'delete', 'update-permissions',
-            'view-usage', 'manage-tracking', 'set-expiration', 'manage-rate-limits',
-            'manage-ip-whitelist', 'view-security-logs',
-        ],
-
-        'service-users' => [
-            'view', 'create', 'edit', 'delete', 'activate', 'deactivate',
-            'assign-permissions', 'manage-api-keys',
-        ],
-
-        // Aias Administration (Central Database - admin/user)
-        'tenants' => [
-            'view', 'create', 'edit', 'delete', 'restore',
-            'activate', 'suspend', 'verify', 'view-statistics',
-        ],
-
-        'settings' => [
-            'view', 'edit', 'manage-system-defaults', 'manage-maintenance',
-        ],
-
-        'audit' => [
-            'view-logs', 'view-login-history', 'export-logs',
-        ],
 
     ],
 

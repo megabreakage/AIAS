@@ -32,6 +32,8 @@ class RolePermissionsSeeder extends Seeder
             ],
         ];
 
+        $permissions = config('permissions_map.central', []);
+
         foreach ($roles as $roleData) {
             $role = Role::on('central')->firstOrCreate(
                 ['name' => $roleData['name'], 'guard_name' => $roleData['guard_name']],
