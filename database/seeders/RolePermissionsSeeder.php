@@ -40,6 +40,14 @@ class RolePermissionsSeeder extends Seeder
                 ['display_name' => $roleData['display_name'], 'description' => $roleData['description']],
             );
 
+            if ($role) {
+                $role->syncPermissions($permissions);
+            } else {
+                $this->command->error("Failed to create central role: {$roleData['name']}");
+
+                continue;
+            }
+
             if ($role->wasRecentlyCreated) {
                 $this->command->info("Created central role: {$roleData['name']}");
             } else {

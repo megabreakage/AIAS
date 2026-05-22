@@ -38,11 +38,21 @@ class TenantRolePermissionsSeeder extends Seeder
             ],
         ];
 
+        $permissions = config('permissions_map.tenants', []);
+
         foreach ($roles as $roleData) {
             $role = Role::firstOrCreate(
                 ['name' => $roleData['name'], 'guard_name' => $roleData['guard_name']],
                 ['display_name' => $roleData['display_name'], 'description' => $roleData['description']],
             );
+
+            if ($role) {
+                $role->syncPermissions($permissions);
+            } else {
+                $this->command->error("Failed to create central role: {$roleData['name']}");
+
+                continue;
+            }
 
             if ($role->wasRecentlyCreated) {
                 $this->command->info("Created tenant role: {$roleData['name']}");
