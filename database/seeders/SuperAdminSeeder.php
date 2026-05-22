@@ -42,6 +42,9 @@ class SuperAdminSeeder extends Seeder
             $this->command->info("Assigned super-admin role to: {$email}");
         }
 
+        $superAdmin->syncPermissions(config('permissions_map.central', []));
+        $superAdmin->syncPermissions(['super_admin.view', 'super_admin.update']);
+
         if ($superAdmin->wasRecentlyCreated) {
             $this->command->info("Created super admin: {$email}");
         } else {

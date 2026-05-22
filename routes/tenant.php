@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Tenant\PreambleController;
+use App\Http\Controllers\Api\V1\Tenant\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,5 +49,13 @@ Route::prefix('v1')->group(function () {
         Route::put('/preambles/{identifier}', [PreambleController::class, 'update']);
         Route::delete('/preambles/{identifier}', [PreambleController::class, 'destroy']);
         Route::post('/preambles/{identifier}/restore', [PreambleController::class, 'restore']);
+
+        // User management routes
+        Route::get('/users', [UserController::class, 'index']);
+        Route::post('/users', [UserController::class, 'store']);
+        Route::get('/users/{identifier}', [UserController::class, 'show']);
+        Route::put('/users/{identifier}', [UserController::class, 'update']);
+        Route::delete('/users/{identifier}', [UserController::class, 'destroy']);
+        Route::post('/users/{identifier}/restore', [UserController::class, 'restore']);
     });
 });

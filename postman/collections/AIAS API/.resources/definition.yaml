@@ -23,6 +23,7 @@ variables:
   continent_identifier: ""
   country_identifier: ""
   preamble_identifier: ""
+  user_identifier: ""
   sa_token: ""
   tenant_token: ""
 auth:
