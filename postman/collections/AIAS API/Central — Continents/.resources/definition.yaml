@@ -1,0 +1,8 @@
+$kind: collection
+description: |-
+  Central continent management endpoints (super-admin only).
+
+  All endpoints require super-admin Bearer token (sa_token).
+
+  Create Continent auto-saves continent_identifier for subsequent requests.
+order: 4000

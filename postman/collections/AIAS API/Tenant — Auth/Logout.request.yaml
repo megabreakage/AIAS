@@ -1,0 +1,25 @@
+$kind: http-request
+description: |-
+  Requires tenant_token (Bearer — inherited from folder).
+
+  Revokes the Passport access token and clears tenant_token collection variable.
+
+  Error responses:
+    401 — Unauthenticated
+    403 — Token belongs to a different tenant
+url: "{{tenant_base_url}}/auth/logout"
+method: POST
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Logged out', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('message', 'Logged out successfully.');
+      });
+      pm.collectionVariables.set('tenant_token', '');
+      console.log('tenant_token cleared.');
+    language: text/javascript
+order: 4000
