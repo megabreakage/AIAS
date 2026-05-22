@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RolePermissionsSeeder extends Seeder
@@ -16,7 +17,7 @@ class RolePermissionsSeeder extends Seeder
                 'name' => 'super-admin',
                 'display_name' => 'Super Admin',
                 'description' => 'Has access to all system features and settings',
-                'guard_name' => 'api',
+                'guard_name' => 'super_admin',
             ],
             [
                 'name' => 'admin',
@@ -38,6 +39,12 @@ class RolePermissionsSeeder extends Seeder
             ],
         ];
 
+        // Create super-admin role under super_admin guard for SuperAdmin model
+        Role::on('central')->firstOrCreate(
+            ['name' => 'super-admin', 'guard_name' => 'super_admin'],
+            ['display_name' => 'Super Admin', 'description' => 'Has access to all system features and settings'],
+        );
+
         foreach ($roles as $roleData) {
             $role = Role::on('central')->firstOrCreate(
                 ['name' => $roleData['name'], 'guard_name' => $roleData['guard_name']],
@@ -45,11 +52,11 @@ class RolePermissionsSeeder extends Seeder
             );
 
             if ($role?->name !== 'tenant-admin') {
-                $this->syncCentralPermissions($role);
+                $this->syncCentralPermissions($role, $roleData['guard_name']);
             }
 
             if ($role?->name === 'tenant-admin') {
-                $this->syncTenantAdminPermissions($role);
+                $this->syncTenantAdminPermissions($role, $roleData['guard_name']);
             }
 
             if ($role?->wasRecentlyCreated) {
@@ -61,26 +68,58 @@ class RolePermissionsSeeder extends Seeder
     }
 
     /**
+     * Flatten a nested module => [actions] map into "module.action" permission names,
+     * create any missing permissions, and return the flat list.
+     *
+     * @param  array<string, list<string>>  $map
+     * @return list<string>
+     */
+    private function resolvePermissions(array $map, string $guardName = 'api'): array
+    {
+        $names = [];
+
+        foreach ($map as $module => $actions) {
+            foreach ($actions as $action) {
+                $names[] = "{$module}.{$action}";
+            }
+        }
+
+        foreach ($names as $name) {
+            Permission::on('central')->firstOrCreate(
+                ['name' => $name, 'guard_name' => $guardName],
+            );
+        }
+
+        return $names;
+    }
+
+    /**
      * Assigns Central DB Users Permissions
      */
-    private function syncCentralPermissions(Role $role): void
+    private function syncCentralPermissions(Role $role, string $guardName = 'api'): void
     {
-        $centralPermissions = config('permissions_map.central', []);
+        $centralPermissions = $this->resolvePermissions(
+            config('permissions_map.central', []),
+            $guardName,
+        );
 
         if (!empty($centralPermissions)) {
-            $role?->syncPermissions($centralPermissions);
+            $role->syncPermissions($centralPermissions);
         }
     }
 
     /**
      * Assigns TenantAdmin Permissions
      */
-    private function syncTenantAdminPermissions(Role $role): void
+    private function syncTenantAdminPermissions(Role $role, string $guardName = 'api'): void
     {
-        $tenantPermissions = config('permissions_map.tenants', []);
+        $tenantPermissions = $this->resolvePermissions(
+            config('permissions_map.tenants', []),
+            $guardName,
+        );
 
         if (!empty($tenantPermissions)) {
-            $role?->syncPermissions($tenantPermissions);
+            $role->syncPermissions($tenantPermissions);
         }
     }
 }

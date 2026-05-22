@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders\Tenant;
 
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class TenantRolePermissionsSeeder extends Seeder
@@ -59,14 +60,42 @@ class TenantRolePermissionsSeeder extends Seeder
     }
 
     /**
+     * Flatten a nested module => [actions] map into "module.action" permission names,
+     * create any missing permissions, and return the flat list.
+     *
+     * @param  array<string, list<string>>  $map
+     * @return list<string>
+     */
+    private function resolvePermissions(array $map, string $guardName = 'api'): array
+    {
+        $names = [];
+
+        foreach ($map as $module => $actions) {
+            foreach ($actions as $action) {
+                $names[] = "{$module}.{$action}";
+            }
+        }
+
+        foreach ($names as $name) {
+            Permission::firstOrCreate(
+                ['name' => $name, 'guard_name' => $guardName],
+            );
+        }
+
+        return $names;
+    }
+
+    /**
      * Assigns TenantAdmin Permissions
      */
     private function syncTenantAdminPermissions(Role $role): void
     {
-        $tenantPermissions = config('permissions_map.tenants', []);
+        $tenantPermissions = $this->resolvePermissions(
+            config('permissions_map.tenants', []),
+        );
 
         if (!empty($tenantPermissions)) {
-            $role?->syncPermissions($tenantPermissions);
+            $role->syncPermissions($tenantPermissions);
         }
     }
 }
