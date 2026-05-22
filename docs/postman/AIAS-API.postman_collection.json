@@ -379,7 +379,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"name\": \"Acme Corporation\",\n  \"id\": \"acme-corp\",\n  \"plan\": \"starter\",\n  \"domain\": \"acme.localhost\"\n}",
+                            "raw": "{\n  \"name\": \"Acme Corporation\",\n  \"id\": \"acme-corp\",\n  \"plan\": \"starter\",\n  \"domain\": \"acme-corp.localhost\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"

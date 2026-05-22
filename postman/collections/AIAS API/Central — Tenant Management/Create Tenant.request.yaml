@@ -27,7 +27,7 @@ body:
       "name": "Acme Corporation",
       "id": "acme-corp",
       "plan": "starter",
-      "domain": "acme.localhost"
+      "domain": "acme-corp.localhost"
     }
 scripts:
   - type: afterResponse
