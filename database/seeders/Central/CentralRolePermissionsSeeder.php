@@ -7,7 +7,7 @@ namespace Database\Seeders\Central;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
-class DefaultCentralRoleSeeder extends Seeder
+class CentralRolePermissionsSeeder extends Seeder
 {
     public function run(): void
     {

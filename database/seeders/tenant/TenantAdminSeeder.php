@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
-class DefaultTenantAdminSeeder extends Seeder
+class TenantAdminSeeder extends Seeder
 {
     public function run(): void
     {
@@ -48,7 +48,7 @@ class DefaultTenantAdminSeeder extends Seeder
             ->first();
 
         if (!$tenantAdminRole) {
-            $this->command->error('tenant-admin role not found. Run DefaultTenantRoleSeeder first.');
+            $this->command->error('tenant-admin role not found. Run TenantRolePermissionsSeeder first.');
 
             return;
         }

@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PassportClientSeeder::class,
-            DefaultCentralRoleSeeder::class,
+            CentralRolePermissionsSeeder::class,
             DefaultSuperAdminSeeder::class,
             ContinentSeeder::class,
             CountrySeeder::class,
