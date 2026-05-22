@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders\Tenant;
 
+use App\Models\Central\Tenant;
 use App\Models\User;
+use App\Notifications\TenantAdminWelcomeNotification;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -68,8 +70,40 @@ class TenantAdminSeeder extends Seeder
 
     private function createTenant(User $admin): void
     {
-        // 1. Create a tenant record in the central database, and associate the tenant with the admin user,
-        // 2. Trigger tenant creation events to set up the tenant database and run tenant-specific migrations and seeders.
-        // 3. Send a notification email to the tenant admin with their details (no passwords) and next steps.
+        $currentTenant = tenant();
+
+        // In tenant context: DB, migrations, and seeding were already completed by the
+        // TenantCreated event pipeline (CreateDatabase → MigrateDatabase → SeedDatabase).
+        // Associate the admin user with the existing tenant record and send a welcome notification.
+        if ($currentTenant !== null) {
+            $currentTenant->update([
+                'data' => array_merge((array) ($currentTenant->data ?? []), [
+                    'admin_user_id' => $admin->id,
+                    'admin_email'   => $admin->email,
+                ]),
+            ]);
+
+            $admin->notify(new TenantAdminWelcomeNotification($currentTenant));
+
+            return;
+        }
+
+        // Central context: create the tenant record in the central database.
+        // Stancl fires TenantCreated automatically after create(), which triggers the job pipeline:
+        // CreateDatabase → MigrateDatabase → SeedDatabase (re-runs this seeder in tenant context).
+        $emailDomain = Str::after($admin->email, '@');
+        $tenantId    = Str::slug(Str::before($emailDomain, '.'));
+
+        /** @var Tenant $tenant */
+        $tenant = Tenant::create([
+            'id'     => $tenantId,
+            'name'   => Str::title(Str::replace(['.', '-', '_'], ' ', Str::before($emailDomain, '.'))).' Organization',
+            'plan'   => 'starter',
+            'status' => 'active',
+        ]);
+
+        $tenant->domains()->create(['domain' => $emailDomain]);
+
+        $this->command->info("Tenant '{$tenant->name}' created: {$tenant->id}");
     }
 }
