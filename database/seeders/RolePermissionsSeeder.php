@@ -44,15 +44,15 @@ class RolePermissionsSeeder extends Seeder
                 ['display_name' => $roleData['display_name'], 'description' => $roleData['description']],
             );
 
-            if ($role && $role->name !== 'tenant-admin') {
+            if ($role?->name !== 'tenant-admin') {
                 $this->syncCentralPermissions($role);
             }
 
-            if ($role && $role->name === 'tenant-admin') {
+            if ($role?->name === 'tenant-admin') {
                 $this->syncTenantAdminPermissions($role);
             }
 
-            if ($role->wasRecentlyCreated) {
+            if ($role?->wasRecentlyCreated) {
                 $this->command->info("Created central role: {$roleData['name']}");
             } else {
                 $this->command->line("Central role already exists: {$roleData['name']}");
@@ -68,7 +68,7 @@ class RolePermissionsSeeder extends Seeder
         $centralPermissions = config('permissions_map.central', []);
 
         if (!empty($centralPermissions)) {
-            $role->syncPermissions($centralPermissions);
+            $role?->syncPermissions($centralPermissions);
         }
     }
 
@@ -80,7 +80,7 @@ class RolePermissionsSeeder extends Seeder
         $tenantPermissions = config('permissions_map.tenants', []);
 
         if (!empty($tenantPermissions)) {
-            $role->syncPermissions($tenantPermissions);
+            $role?->syncPermissions($tenantPermissions);
         }
     }
 }

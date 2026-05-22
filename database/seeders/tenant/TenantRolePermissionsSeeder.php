@@ -47,18 +47,26 @@ class TenantRolePermissionsSeeder extends Seeder
             );
 
             if ($role) {
-                $role->syncPermissions($permissions);
-            } else {
-                $this->command->error("Failed to create central role: {$roleData['name']}");
-
-                continue;
+                $this->syncTenantAdminPermissions($role);
             }
 
-            if ($role->wasRecentlyCreated) {
+            if ($role?->wasRecentlyCreated) {
                 $this->command->info("Created tenant role: {$roleData['name']}");
             } else {
                 $this->command->line("Tenant role already exists: {$roleData['name']}");
             }
+        }
+    }
+
+    /**
+     * Assigns TenantAdmin Permissions
+     */
+    private function syncTenantAdminPermissions(Role $role): void
+    {
+        $tenantPermissions = config('permissions_map.tenants', []);
+
+        if (!empty($tenantPermissions)) {
+            $role?->syncPermissions($tenantPermissions);
         }
     }
 }
