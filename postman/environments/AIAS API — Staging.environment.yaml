@@ -9,9 +9,15 @@ values:
   - key: tenant_id
     value: ""
     description: Active tenant slug on staging. Set after creating a tenant.
+  - key: continent_identifier
+    value: ""
+    description: Continent identifier. Auto-set by Create/List Continents.
+  - key: country_identifier
+    value: ""
+    description: Country identifier. Auto-set by Create/List Countries.
   - key: preamble_identifier
     value: ""
-    description: Preamble identifier captured from Create/List Preambles requests.
+    description: Preamble identifier. Auto-set by Create/List Preambles.
   - key: sa_token
     value: ""
     description: Super-admin Bearer token. Auto-set by SA Login.
