@@ -143,21 +143,21 @@ return [
         ],
 
         // Aias Administration (Central Database - admin/user)
-        'admin-tenants' => [
+        'tenants' => [
             'view', 'create', 'edit', 'delete', 'restore',
             'activate', 'suspend', 'verify', 'view-statistics',
         ],
 
-        'admin-users' => [
+        'users' => [
             'view', 'create', 'edit', 'delete', 'restore',
             'activate', 'deactivate', 'assign-roles', 'reset-password',
         ],
 
-        'admin-settings' => [
+        'settings' => [
             'view', 'edit', 'manage-system-defaults', 'manage-maintenance',
         ],
 
-        'admin-audit' => [
+        'audit' => [
             'view-logs', 'view-login-history', 'export-logs',
         ],
 
@@ -466,10 +466,10 @@ return [
 
         // Aias ADMIN — full control over central administration
         'admin' => [
-            'admin-tenants.*',
-            'admin-users.*',
-            'admin-settings.*',
-            'admin-audit.*',
+            'tenants.*',
+            'users.*',
+            'settings.*',
+            'audit.*',
             'system.*',
             'users.view',
             'users.create',
@@ -489,12 +489,12 @@ return [
 
         // Aias USER — read-only admin with limited write access
         'user' => [
-            'admin-tenants.view',
-            'admin-tenants.view-statistics',
-            'admin-users.view',
-            'admin-settings.view',
-            'admin-audit.view-logs',
-            'admin-audit.view-login-history',
+            'tenants.view',
+            'tenants.view-statistics',
+            'users.view',
+            'settings.view',
+            'audit.view-logs',
+            'audit.view-login-history',
             'users.view',
             'roles.view',
             'mfa.view-status',
