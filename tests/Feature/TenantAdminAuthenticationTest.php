@@ -3,114 +3,16 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\EnsureTokenMatchesTenant;
-use App\Models\Central\PassportClient;
-use App\Models\Central\SuperAdmin;
 use App\Models\Central\Tenant;
 use App\Models\User;
-use Database\Seeders\TenantDatabaseSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
-use Laravel\Passport\Passport;
 use Stancl\Tenancy\Events\TenantDeleted;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 uses(DatabaseTransactions::class);
-
-/**
- * Provision a tenant with a seeded admin user via the super-admin API flow.
- *
- * @return array{tenant: Tenant, domain: string, email: string, password: string}
- */
-/**
- * Ensure a Passport personal access client exists for the given provider.
- */
-function ensurePassportPersonalAccessClient(string $provider = 'users'): void
-{
-    $exists = PassportClient::query()
-        ->where('provider', $provider)
-        ->whereJsonContains('grant_types', 'personal_access')
-        ->exists();
-
-    if (!$exists) {
-        PassportClient::forceCreate([
-            'id' => Str::uuid()->toString(),
-            'name' => "{$provider} Personal Access Client",
-            'secret' => Str::random(40),
-            'provider' => $provider,
-            'redirect_uris' => ['http://localhost'],
-            'grant_types' => ['personal_access'],
-            'revoked' => false,
-        ]);
-    }
-}
-
-function provisionTenantWithSeededAdmin(): array
-{
-    ensurePassportPersonalAccessClient('super_admins');
-    ensurePassportPersonalAccessClient('users');
-
-    $superAdmin = SuperAdmin::factory()->create();
-    Passport::actingAs($superAdmin, [], 'super_admin');
-
-    $domain = 'tenant-admin-'.Str::lower(Str::random(8)).'.localhost';
-    $email = 'tenant-admin-'.Str::lower(Str::random(8)).'@'.$domain;
-    $password = 'StrongPass123!';
-
-    putenv('TEST_TENANT_ADMIN_EMAIL='.$email);
-    putenv('TEST_TENANT_ADMIN_PASSWORD='.$password);
-    $_ENV['TEST_TENANT_ADMIN_EMAIL'] = $email;
-    $_ENV['TEST_TENANT_ADMIN_PASSWORD'] = $password;
-    $_SERVER['TEST_TENANT_ADMIN_EMAIL'] = $email;
-    $_SERVER['TEST_TENANT_ADMIN_PASSWORD'] = $password;
-
-    $response = test()->postJson('/api/v1/tenants', [
-        'name' => 'Tenant Admin Auth '.Str::upper(Str::random(4)),
-        'owner_id' => $superAdmin->id,
-        'domain' => $domain,
-    ]);
-
-    $response->assertCreated();
-
-    /** @var Tenant $tenant */
-    $tenant = Tenant::query()->findOrFail((int) $response->json('data.id'));
-
-    Artisan::call('tenants:migrate', [
-        '--tenants' => [$tenant->id],
-        '--force' => true,
-    ]);
-
-    Artisan::call('tenants:seed', [
-        '--tenants' => [$tenant->id],
-        '--class' => TenantDatabaseSeeder::class,
-    ]);
-
-    return [
-        'tenant' => $tenant,
-        'domain' => $domain,
-        'email' => $email,
-        'password' => $password,
-    ];
-}
-
-/**
- * Authenticate a tenant admin via login and return the bearer token.
- */
-function loginTenantAdmin(string $email, string $password): string
-{
-    $loginResponse = test()->postJson('/v1/auth/login', [
-        'email' => $email,
-        'password' => $password,
-    ]);
-
-    $loginResponse->assertOk()
-        ->assertJsonPath('data.token_type', 'Bearer');
-
-    return (string) $loginResponse->json('data.token');
-}
 
 // ===========================================================================
 // Tenant Admin Authentication
