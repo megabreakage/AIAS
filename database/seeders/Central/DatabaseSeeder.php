@@ -2,12 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Database\Seeders\Central;
 
-use Database\Seeders\Central\CentralRolePermissionsSeeder;
-use Database\Seeders\Central\ContinentSeeder;
-use Database\Seeders\Central\CountrySeeder;
-use Database\Seeders\Central\SuperAdminSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder

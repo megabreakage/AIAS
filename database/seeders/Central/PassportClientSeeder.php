@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Database\Seeders\Central;
 
 use Illuminate\Database\Seeder;
 use Laravel\Passport\Client;

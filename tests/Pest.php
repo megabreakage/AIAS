@@ -6,7 +6,7 @@ use App\Models\Central\PassportClient;
 use App\Models\Central\SuperAdmin;
 use App\Models\Central\Tenant;
 use App\Models\User;
-use Database\Seeders\TenantDatabaseSeeder;
+use Database\Seeders\Tenant\TenantDatabaseSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Laravel\Passport\Passport;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Database\Seeders\TenantDatabaseSeeder;
+use Database\Seeders\Tenant\TenantDatabaseSeeder;
 use Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper;

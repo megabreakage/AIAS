@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders;
+namespace Database\Seeders\Tenant;
 
 use Illuminate\Database\Seeder;
 
@@ -12,7 +12,7 @@ class TenantDatabaseSeeder extends Seeder
     {
         $this->call([
             TenantRolePermissionsSeeder::class,
-            DefaultTenantAdminSeeder::class,
+            TenantAdminSeeder::class,
         ]);
     }
 }
