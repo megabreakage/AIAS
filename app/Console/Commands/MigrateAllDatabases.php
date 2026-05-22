@@ -128,7 +128,7 @@ class MigrateAllDatabases extends Command
      */
     protected function seedCentral(bool $force): int
     {
-        $seedOptions = ['--class' => 'Database\\Seeders\\Central\\DatabaseSeeder'];
+        $seedOptions = ['--class' => 'Database\\Seeders\\DatabaseSeeder'];
 
         if ($force) {
             $seedOptions['--force'] = true;
