@@ -1,8 +1,8 @@
 name: AIAS API — Local
 values:
   - key: central_base_url
-    value: "http://127.0.0.1:8088/api/v1"
-    description: "Central domain. Start server: php artisan serve --host=127.0.0.1 --port=8088"
+    value: "http://localhost:8020/api/v1"
+    description: "Central domain. Start server: php artisan serve --host=localhost --port=8020"
   - key: tenant_base_url
     value: "http://{{tenant_id}}.localhost:8020/v1"
     description: Tenant domain. Resolved from tenant_id variable. Requires /etc/hosts or local DNS for subdomain routing.

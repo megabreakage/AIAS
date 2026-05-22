@@ -17,7 +17,7 @@ description: |-
   Response envelope (error):
     { "error": { "code": "...", "message": "...", "details": null }, "meta": {...} }
 variables:
-  central_base_url: http://127.0.0.1:8088/api/v1
+  central_base_url: http://localhost:8020/api/v1
   tenant_base_url: http://{{tenant_id}}.localhost:8020/v1
   tenant_id: acme-corp
   continent_identifier: ""

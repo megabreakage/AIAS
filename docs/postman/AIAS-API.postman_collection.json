@@ -9,7 +9,7 @@
     "variable": [
         {
             "key": "central_base_url",
-            "value": "http://127.0.0.1:8088/api/v1",
+            "value": "http://localhost:8020/api/v1",
             "type": "string",
             "description": "Central domain base URL. Handles super-admin auth and tenant management."
         },
