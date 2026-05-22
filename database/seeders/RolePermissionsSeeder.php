@@ -18,6 +18,18 @@ class RolePermissionsSeeder extends Seeder
                 'description' => 'Has access to all system features and settings',
                 'guard_name' => 'super_admin',
             ],
+            [
+                'name' => 'admin',
+                'display_name' => 'Admin',
+                'description' => 'Has access to standard admin features',
+                'guard_name' => 'api',
+            ],
+            [
+                'name' => 'user',
+                'display_name' => 'User',
+                'description' => 'Has access to standard user features',
+                'guard_name' => 'api',
+            ],
         ];
 
         foreach ($roles as $roleData) {

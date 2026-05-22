@@ -25,6 +25,12 @@ class TenantRolePermissionsSeeder extends Seeder
                 'guard_name' => 'api',
             ],
             [
+                'name' => 'client',
+                'display_name' => 'Client',
+                'description' => 'Can access client-specific features and data',
+                'guard_name' => 'api',
+            ],
+            [
                 'name' => 'viewer',
                 'display_name' => 'Viewer',
                 'description' => 'Read-only access to audit data',
