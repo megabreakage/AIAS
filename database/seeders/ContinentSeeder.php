@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Seeders\Central;
+namespace Database\Seeders;
 
 use App\Models\Central\Continent;
 use Illuminate\Database\Seeder;
