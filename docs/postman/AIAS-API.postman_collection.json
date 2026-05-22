@@ -2,7 +2,7 @@
     "info": {
         "_postman_id": "aias-api-v1",
         "name": "AIAS API",
-        "description": "Adaptive Intelligent Auditing System — Multi-tenant Laravel 13 API.\n\nTwo routing contexts:\n  Central domain (localhost:8088) — prefix /api/v1 — super-admin auth + tenant management\n  Tenant domain ({tenant_id}.localhost:8088) — prefix /v1 — tenant user auth + operations\n\nQuick start:\n  1. Super Admin Auth / Login  →  sa_token auto-saved\n  2. Tenant Management / Create Tenant  →  tenant_id auto-saved\n  3. Tenant Auth / Register or Login  →  tenant_token auto-saved\n\nResponse envelope (success):\n  { \"data\": {...}, \"meta\": { \"request_id\": \"...\", \"version\": \"v1\", \"tenant\": null } }\n\nResponse envelope (error):\n  { \"error\": { \"code\": \"...\", \"message\": \"...\", \"details\": null }, \"meta\": {...} }",
+        "description": "Adaptive Intelligent Auditing System — Multi-tenant Laravel 13 API.\n\nTwo routing contexts:\n  Central domain (localhost:8020) — prefix /api/v1 — super-admin auth + tenant management\n  Tenant domain ({tenant_id}.localhost:8020) — prefix /v1 — tenant user auth + operations\n\nQuick start:\n  1. Super Admin Auth / Login  →  sa_token auto-saved\n  2. Tenant Management / Create Tenant  →  tenant_id auto-saved\n  3. Tenant Auth / Register or Login  →  tenant_token auto-saved\n\nResponse envelope (success):\n  { \"data\": {...}, \"meta\": { \"request_id\": \"...\", \"version\": \"v1\", \"tenant\": null } }\n\nResponse envelope (error):\n  { \"error\": { \"code\": \"...\", \"message\": \"...\", \"details\": null }, \"meta\": {...} }",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "_exporter_id": "aias-jq-generator"
     },
@@ -15,7 +15,7 @@
         },
         {
             "key": "tenant_base_url",
-            "value": "http://{{tenant_id}}.localhost:8088/v1",
+            "value": "http://{{tenant_id}}.localhost:8020/v1",
             "type": "string",
             "description": "Tenant domain base URL. Resolved from tenant_id variable."
         },
@@ -1141,7 +1141,7 @@
         },
         {
             "name": "Tenant — Health",
-            "description": "Health check on the tenant domain. Confirms tenant resolution is working.\n\nNOTE: Requests go to {{tenant_base_url}} = http://{{tenant_id}}.localhost:8088/v1\nEnsure {{tenant_id}} is set (use Create Tenant or List Tenants first).",
+            "description": "Health check on the tenant domain. Confirms tenant resolution is working.\n\nNOTE: Requests go to {{tenant_base_url}} = http://{{tenant_id}}.localhost:8020/v1\nEnsure {{tenant_id}} is set (use Create Tenant or List Tenants first).",
             "auth": {
                 "type": "noauth"
             },
@@ -1194,7 +1194,7 @@
         },
         {
             "name": "Tenant — Auth",
-            "description": "Tenant-domain user authentication. Requests go to http://{{tenant_id}}.localhost:8088/v1.\n\nThis folder uses {{tenant_token}} Bearer auth (not sa_token).\nRegister and Login auto-save tenant_token to collection variables.",
+            "description": "Tenant-domain user authentication. Requests go to http://{{tenant_id}}.localhost:8020/v1.\n\nThis folder uses {{tenant_token}} Bearer auth (not sa_token).\nRegister and Login auto-save tenant_token to collection variables.",
             "auth": {
                 "type": "bearer",
                 "bearer": [

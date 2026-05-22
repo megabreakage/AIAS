@@ -3,8 +3,8 @@ description: |-
   Adaptive Intelligent Auditing System — Multi-tenant Laravel 13 API.
 
   Two routing contexts:
-    Central domain (localhost:8088) — prefix /api/v1 — super-admin auth + tenant management
-    Tenant domain ({tenant_id}.localhost:8088) — prefix /v1 — tenant user auth + operations
+    Central domain (localhost:8020) — prefix /api/v1 — super-admin auth + tenant management
+    Tenant domain ({tenant_id}.localhost:8020) — prefix /v1 — tenant user auth + operations
 
   Quick start:
     1. Super Admin Auth / Login  →  sa_token auto-saved
@@ -18,7 +18,7 @@ description: |-
     { "error": { "code": "...", "message": "...", "details": null }, "meta": {...} }
 variables:
   central_base_url: http://127.0.0.1:8088/api/v1
-  tenant_base_url: http://{{tenant_id}}.localhost:8088/v1
+  tenant_base_url: http://{{tenant_id}}.localhost:8020/v1
   tenant_id: acme-corp
   continent_identifier: ""
   country_identifier: ""
