@@ -38,20 +38,18 @@ class RolePermissionsSeeder extends Seeder
             ],
         ];
 
-        $permissions = config('permissions_map.central', []);
-
         foreach ($roles as $roleData) {
             $role = Role::on('central')->firstOrCreate(
                 ['name' => $roleData['name'], 'guard_name' => $roleData['guard_name']],
                 ['display_name' => $roleData['display_name'], 'description' => $roleData['description']],
             );
 
-            if ($role) {
-                $role->syncPermissions($permissions);
-            } else {
-                $this->command->error("Failed to create central role: {$roleData['name']}");
+            if ($role && $role->name !== 'tenant-admin') {
+                $this->syncCentralPermissions($role);
+            }
 
-                continue;
+            if ($role && $role->name === 'tenant-admin') {
+                $this->syncTenantAdminPermissions($role);
             }
 
             if ($role->wasRecentlyCreated) {
@@ -59,6 +57,27 @@ class RolePermissionsSeeder extends Seeder
             } else {
                 $this->command->line("Central role already exists: {$roleData['name']}");
             }
+        }
+    }
+
+    private function syncCentralPermissions(Role $role): void
+    {
+        $centralPermissions = config('permissions_map.central', []);
+
+        if (!empty($centralPermissions)) {
+            $role->syncPermissions($centralPermissions);
+        }
+    }
+
+    /**
+     * Assigning TenantAdmin Permissions
+     */
+    private function syncTenantAdminPermissions(Role $role): void
+    {
+        $tenantPermissions = config('permissions_map.tenants', []);
+
+        if (!empty($tenantPermissions)) {
+            $role->syncPermissions($tenantPermissions);
         }
     }
 }
