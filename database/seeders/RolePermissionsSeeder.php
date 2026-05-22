@@ -25,6 +25,12 @@ class RolePermissionsSeeder extends Seeder
                 'guard_name' => 'api',
             ],
             [
+                'name' => 'tenant-admin',
+                'display_name' => 'Tenant Admin',
+                'description' => 'Has access to tenant-specific admin features',
+                'guard_name' => 'api',
+            ],
+            [
                 'name' => 'user',
                 'display_name' => 'User',
                 'description' => 'Has access to standard user features',
