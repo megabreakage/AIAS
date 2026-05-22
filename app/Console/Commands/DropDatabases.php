@@ -8,8 +8,7 @@ use App\Models\Central\Tenant;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Collection;
-use Stancl\Tenancy\Contracts\TenantWithDatabase;
+use Stancl\Tenancy\Contracts\TenantDatabaseManager;
 
 #[Signature('db:drop
     {--tenant-only : Drop all tenant databases only (skip central)}
@@ -33,14 +32,14 @@ class DropDatabases extends Command
         // Resolve scope label for confirmation prompt
         $scope = match (true) {
             (bool) $specificTenant => "tenant '{$specificTenant}' database",
-            $tenantOnly            => 'all tenant databases',
-            default                => 'central database AND all tenant databases',
+            $tenantOnly => 'all tenant databases',
+            default => 'central database AND all tenant databases',
         };
 
-        if (! $force) {
+        if (!$force) {
             $confirmed = $this->confirm("⚠️  This will permanently DROP {$scope}. Continue?", false);
 
-            if (! $confirmed) {
+            if (!$confirmed) {
                 $this->info('Aborted.');
 
                 return self::SUCCESS;
@@ -92,7 +91,7 @@ class DropDatabases extends Command
 
         $dbName = config('database.connections.central.database');
 
-        if (! $dbName) {
+        if (!$dbName) {
             $this->error('Central connection database name not resolved.');
 
             return self::FAILURE;
@@ -152,7 +151,7 @@ class DropDatabases extends Command
             }
         }
 
-        if (! empty($failed)) {
+        if (!empty($failed)) {
             $this->error('Failed tenants: '.implode(', ', $failed));
 
             return self::FAILURE;
@@ -173,7 +172,7 @@ class DropDatabases extends Command
 
         $tenant = Tenant::find($tenantId);
 
-        if (! $tenant) {
+        if (!$tenant) {
             $this->error("Tenant '{$tenantId}' not found.");
 
             return self::FAILURE;
@@ -194,10 +193,10 @@ class DropDatabases extends Command
         $dbName = $tenant->database()->getName();
 
         try {
-            /** @var \Stancl\Tenancy\Contracts\TenantDatabaseManager $manager */
+            /** @var TenantDatabaseManager $manager */
             $manager = $tenant->database()->manager();
 
-            if (! $manager->databaseExists($dbName)) {
+            if (!$manager->databaseExists($dbName)) {
                 $this->warn("  ⚠  Database '{$dbName}' does not exist — skipping tenant {$tenantId}.");
 
                 return self::SUCCESS;
@@ -221,6 +220,6 @@ class DropDatabases extends Command
     {
         $id = (string) $tenant->getTenantKey();
 
-        return $id !== 'SYSTEM' && ! str_starts_with($id, 'TEST');
+        return $id !== 'SYSTEM' && !str_starts_with($id, 'TEST');
     }
 }
