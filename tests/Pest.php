@@ -50,15 +50,15 @@ function ensurePassportPersonalAccessClient(string $provider = 'users'): void
         ->whereJsonContains('grant_types', 'personal_access')
         ->exists();
 
-    if (! $exists) {
+    if (!$exists) {
         PassportClient::forceCreate([
-            'id'            => Str::uuid()->toString(),
-            'name'          => "{$provider} Personal Access Client",
-            'secret'        => Str::random(40),
-            'provider'      => $provider,
+            'id' => Str::uuid()->toString(),
+            'name' => "{$provider} Personal Access Client",
+            'secret' => Str::random(40),
+            'provider' => $provider,
             'redirect_uris' => ['http://localhost'],
-            'grant_types'   => ['personal_access'],
-            'revoked'       => false,
+            'grant_types' => ['personal_access'],
+            'revoked' => false,
         ]);
     }
 }
@@ -76,21 +76,21 @@ function provisionTenantWithSeededAdmin(): array
     $superAdmin = SuperAdmin::factory()->create();
     Passport::actingAs($superAdmin, [], 'super_admin');
 
-    $domain   = 'tenant-admin-' . Str::lower(Str::random(8)) . '.localhost';
-    $email    = 'tenant-admin-' . Str::lower(Str::random(8)) . '@' . $domain;
+    $domain = 'tenant-admin-'.Str::lower(Str::random(8)).'.localhost';
+    $email = 'tenant-admin-'.Str::lower(Str::random(8)).'@'.$domain;
     $password = 'StrongPass123!';
 
-    putenv('TEST_TENANT_ADMIN_EMAIL=' . $email);
-    putenv('TEST_TENANT_ADMIN_PASSWORD=' . $password);
-    $_ENV['TEST_TENANT_ADMIN_EMAIL']    = $email;
+    putenv('TEST_TENANT_ADMIN_EMAIL='.$email);
+    putenv('TEST_TENANT_ADMIN_PASSWORD='.$password);
+    $_ENV['TEST_TENANT_ADMIN_EMAIL'] = $email;
     $_ENV['TEST_TENANT_ADMIN_PASSWORD'] = $password;
-    $_SERVER['TEST_TENANT_ADMIN_EMAIL']    = $email;
+    $_SERVER['TEST_TENANT_ADMIN_EMAIL'] = $email;
     $_SERVER['TEST_TENANT_ADMIN_PASSWORD'] = $password;
 
     $response = test()->postJson('/api/v1/tenants', [
-        'name'     => 'Tenant Admin Auth ' . Str::upper(Str::random(4)),
+        'name' => 'Tenant Admin Auth '.Str::upper(Str::random(4)),
         'owner_id' => $superAdmin->id,
-        'domain'   => $domain,
+        'domain' => $domain,
     ]);
 
     $response->assertCreated();
@@ -100,18 +100,18 @@ function provisionTenantWithSeededAdmin(): array
 
     Artisan::call('tenants:migrate', [
         '--tenants' => [$tenant->id],
-        '--force'   => true,
+        '--force' => true,
     ]);
 
     Artisan::call('tenants:seed', [
         '--tenants' => [$tenant->id],
-        '--class'   => TenantDatabaseSeeder::class,
+        '--class' => TenantDatabaseSeeder::class,
     ]);
 
     return [
-        'tenant'   => $tenant,
-        'domain'   => $domain,
-        'email'    => $email,
+        'tenant' => $tenant,
+        'domain' => $domain,
+        'email' => $email,
         'password' => $password,
     ];
 }
@@ -122,7 +122,7 @@ function provisionTenantWithSeededAdmin(): array
 function loginTenantAdmin(string $email, string $password): string
 {
     $loginResponse = test()->postJson('/v1/auth/login', [
-        'email'    => $email,
+        'email' => $email,
         'password' => $password,
     ]);
 
@@ -139,14 +139,14 @@ function loginTenantAdmin(string $email, string $password): string
  */
 function registerTenantUser(string $firstName = 'Test', string $lastName = 'User'): array
 {
-    $email    = fake()->unique()->safeEmail();
+    $email = fake()->unique()->safeEmail();
     $password = 'SecurePass123!';
 
     $response = test()->postJson('/v1/auth/register', [
-        'first_name'            => $firstName,
-        'last_name'             => $lastName,
-        'email'                 => $email,
-        'password'              => $password,
+        'first_name' => $firstName,
+        'last_name' => $lastName,
+        'email' => $email,
+        'password' => $password,
         'password_confirmation' => $password,
     ]);
 
