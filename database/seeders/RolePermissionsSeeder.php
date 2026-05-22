@@ -16,7 +16,7 @@ class RolePermissionsSeeder extends Seeder
                 'name' => 'super-admin',
                 'display_name' => 'Super Admin',
                 'description' => 'Has access to all system features and settings',
-                'guard_name' => 'super_admin',
+                'guard_name' => 'api',
             ],
             [
                 'name' => 'admin',
