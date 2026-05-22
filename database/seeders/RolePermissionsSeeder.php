@@ -60,6 +60,9 @@ class RolePermissionsSeeder extends Seeder
         }
     }
 
+    /**
+     * Assigns Central DB Users Permissions
+     */
     private function syncCentralPermissions(Role $role): void
     {
         $centralPermissions = config('permissions_map.central', []);
@@ -70,7 +73,7 @@ class RolePermissionsSeeder extends Seeder
     }
 
     /**
-     * Assigning TenantAdmin Permissions
+     * Assigns TenantAdmin Permissions
      */
     private function syncTenantAdminPermissions(Role $role): void
     {
