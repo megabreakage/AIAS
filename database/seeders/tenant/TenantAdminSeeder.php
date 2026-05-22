@@ -43,6 +43,8 @@ class TenantAdminSeeder extends Seeder
             );
         });
 
+        $this->createTenant($admin);
+
         $tenantAdminRole = Role::where('name', 'tenant-admin')
             ->where('guard_name', 'api')
             ->first();
@@ -62,5 +64,12 @@ class TenantAdminSeeder extends Seeder
         } else {
             $this->command->line("Default tenant admin already exists: {$email}");
         }
+    }
+
+    private function createTenant(User $admin): void
+    {
+        // 1. Create a tenant record in the central database, and associate the tenant with the admin user,
+        // 2. Trigger tenant creation events to set up the tenant database and run tenant-specific migrations and seeders.
+        // 3. Send a notification email to the tenant admin with their details (no passwords) and next steps.
     }
 }
