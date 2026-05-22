@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\V1\Auth\SuperAdminAuthController;
 use App\Http\Controllers\Api\V1\Central\ContinentController;
 use App\Http\Controllers\Api\V1\Central\CountryController;
+use App\Http\Controllers\Api\V1\Central\TenantUserController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\TenantController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,9 @@ Route::prefix('v1')->group(function () {
         Route::post('/tenants', [TenantController::class, 'store']);
         Route::get('/tenants/{id}', [TenantController::class, 'show']);
         Route::delete('/tenants/{id}', [TenantController::class, 'destroy']);
+
+        // Tenant user management by super-admin
+        Route::post('/tenants/{id}/users', [TenantUserController::class, 'store']);
 
         // Continent management
         Route::get('/continents', [ContinentController::class, 'index']);
