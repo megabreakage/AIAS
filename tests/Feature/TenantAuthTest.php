@@ -27,6 +27,7 @@ describe('Tenant user registration', function (): void {
     it('registers a new user and returns a token', function (): void {
         $ctx = provisionTenantWithSeededAdmin();
         tenancy()->initialize($ctx['tenant']);
+        app('auth')->forgetGuards();
 
         $password = 'SecurePass123!';
 
@@ -48,6 +49,7 @@ describe('Tenant user registration', function (): void {
     it('creates the user record in the tenant database', function (): void {
         $ctx = provisionTenantWithSeededAdmin();
         tenancy()->initialize($ctx['tenant']);
+        app('auth')->forgetGuards();
 
         $password = 'SecurePass123!';
 
@@ -67,6 +69,7 @@ describe('Tenant user registration', function (): void {
     it('rejects duplicate email with 422', function (): void {
         $ctx = provisionTenantWithSeededAdmin();
         tenancy()->initialize($ctx['tenant']);
+        app('auth')->forgetGuards();
 
         $password = 'SecurePass123!';
         $payload = [
@@ -89,6 +92,7 @@ describe('Tenant user registration', function (): void {
     it('rejects missing first_name with 422', function (): void {
         $ctx = provisionTenantWithSeededAdmin();
         tenancy()->initialize($ctx['tenant']);
+        app('auth')->forgetGuards();
 
         $this->postJson('/v1/auth/register', [
             'last_name' => 'Doe',
@@ -106,6 +110,7 @@ describe('Tenant user registration', function (): void {
     it('rejects mismatched password confirmation with 422', function (): void {
         $ctx = provisionTenantWithSeededAdmin();
         tenancy()->initialize($ctx['tenant']);
+        app('auth')->forgetGuards();
 
         $this->postJson('/v1/auth/register', [
             'first_name' => 'Jane',
@@ -123,6 +128,7 @@ describe('Tenant user registration', function (): void {
     it('rejects a password shorter than 8 characters', function (): void {
         $ctx = provisionTenantWithSeededAdmin();
         tenancy()->initialize($ctx['tenant']);
+        app('auth')->forgetGuards();
 
         $this->postJson('/v1/auth/register', [
             'first_name' => 'Jane',
@@ -140,8 +146,7 @@ describe('Tenant user registration', function (): void {
     it('does not expose password in registration response', function (): void {
         $ctx = provisionTenantWithSeededAdmin();
         $password = 'SecurePass123!';
-        tenancy()->initialize($ctx['tenant']);
-
+        tenancy()->initialize($ctx['tenant']);        app('auth')->forgetGuards();
         $response = $this->postJson('/v1/auth/register', [
             'first_name' => 'Jane',
             'last_name' => 'Doe',

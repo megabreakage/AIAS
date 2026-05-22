@@ -138,7 +138,8 @@ function loginTenantAdmin(string $email, string $password): string
  * @return array{email: string, password: string, user: User}
  */
 function registerTenantUser(string $firstName = 'Test', string $lastName = 'User'): array
-{
+{    // Reset auth so the unauthenticated register endpoint has no created_by leak.
+    app('auth')->forgetGuards();
     $email = fake()->unique()->safeEmail();
     $password = 'SecurePass123!';
 
