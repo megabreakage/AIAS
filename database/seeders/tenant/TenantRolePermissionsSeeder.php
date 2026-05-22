@@ -1,8 +1,9 @@
 <?php
 
-namespace Database\Seeders;
+declare(strict_types=1);
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+namespace Database\Seeders\Tenant;
+
 use Illuminate\Database\Seeder;
 
 class TenantRolePermissionsSeeder extends Seeder
