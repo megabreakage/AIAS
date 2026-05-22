@@ -1,1754 +1,1754 @@
 {
-  "info": {
-    "_postman_id": "aias-api-v1",
-    "name": "AIAS API",
-    "description": "Adaptive Intelligent Auditing System — Multi-tenant Laravel 13 API.\n\nTwo routing contexts:\n  Central domain (localhost:8088) — prefix /api/v1 — super-admin auth + tenant management\n  Tenant domain ({tenant_id}.localhost:8088) — prefix /v1 — tenant user auth + operations\n\nQuick start:\n  1. Super Admin Auth / Login  →  sa_token auto-saved\n  2. Tenant Management / Create Tenant  →  tenant_id auto-saved\n  3. Tenant Auth / Register or Login  →  tenant_token auto-saved\n\nResponse envelope (success):\n  { \"data\": {...}, \"meta\": { \"request_id\": \"...\", \"version\": \"v1\", \"tenant\": null } }\n\nResponse envelope (error):\n  { \"error\": { \"code\": \"...\", \"message\": \"...\", \"details\": null }, \"meta\": {...} }",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "aias-jq-generator"
-  },
-  "variable": [
-    {
-      "key": "central_base_url",
-      "value": "http://127.0.0.1:8088/api/v1",
-      "type": "string",
-      "description": "Central domain base URL. Handles super-admin auth and tenant management."
+    "info": {
+        "_postman_id": "aias-api-v1",
+        "name": "AIAS API",
+        "description": "Adaptive Intelligent Auditing System — Multi-tenant Laravel 13 API.\n\nTwo routing contexts:\n  Central domain (localhost:8088) — prefix /api/v1 — super-admin auth + tenant management\n  Tenant domain ({tenant_id}.localhost:8088) — prefix /v1 — tenant user auth + operations\n\nQuick start:\n  1. Super Admin Auth / Login  →  sa_token auto-saved\n  2. Tenant Management / Create Tenant  →  tenant_id auto-saved\n  3. Tenant Auth / Register or Login  →  tenant_token auto-saved\n\nResponse envelope (success):\n  { \"data\": {...}, \"meta\": { \"request_id\": \"...\", \"version\": \"v1\", \"tenant\": null } }\n\nResponse envelope (error):\n  { \"error\": { \"code\": \"...\", \"message\": \"...\", \"details\": null }, \"meta\": {...} }",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "aias-jq-generator"
     },
-    {
-      "key": "tenant_base_url",
-      "value": "http://{{tenant_id}}.localhost:8088/v1",
-      "type": "string",
-      "description": "Tenant domain base URL. Resolved from tenant_id variable."
+    "variable": [
+        {
+            "key": "central_base_url",
+            "value": "http://127.0.0.1:8088/api/v1",
+            "type": "string",
+            "description": "Central domain base URL. Handles super-admin auth and tenant management."
+        },
+        {
+            "key": "tenant_base_url",
+            "value": "http://{{tenant_id}}.localhost:8088/v1",
+            "type": "string",
+            "description": "Tenant domain base URL. Resolved from tenant_id variable."
+        },
+        {
+            "key": "tenant_id",
+            "value": "acme-corp",
+            "type": "string",
+            "description": "Active tenant ID. Auto-set by Create Tenant response."
+        },
+        {
+            "key": "continent_identifier",
+            "value": "",
+            "type": "string",
+            "description": "Continent identifier. Auto-set by Create/List Continents."
+        },
+        {
+            "key": "country_identifier",
+            "value": "",
+            "type": "string",
+            "description": "Country identifier. Auto-set by Create/List Countries."
+        },
+        {
+            "key": "preamble_identifier",
+            "value": "",
+            "type": "string",
+            "description": "Preamble identifier. Auto-set by Create/List Preambles."
+        },
+        {
+            "key": "sa_token",
+            "value": "",
+            "type": "secret",
+            "description": "Super-admin Bearer token. Auto-set by SA Login."
+        },
+        {
+            "key": "tenant_token",
+            "value": "",
+            "type": "secret",
+            "description": "Tenant user Bearer token. Auto-set by Tenant Login/Register."
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{sa_token}}",
+                "type": "string"
+            }
+        ]
     },
-    {
-      "key": "tenant_id",
-      "value": "acme-corp",
-      "type": "string",
-      "description": "Active tenant ID. Auto-set by Create Tenant response."
-    },
-    {
-      "key": "continent_identifier",
-      "value": "",
-      "type": "string",
-      "description": "Continent identifier. Auto-set by Create/List Continents."
-    },
-    {
-      "key": "country_identifier",
-      "value": "",
-      "type": "string",
-      "description": "Country identifier. Auto-set by Create/List Countries."
-    },
-    {
-      "key": "preamble_identifier",
-      "value": "",
-      "type": "string",
-      "description": "Preamble identifier. Auto-set by Create/List Preambles."
-    },
-    {
-      "key": "sa_token",
-      "value": "",
-      "type": "secret",
-      "description": "Super-admin Bearer token. Auto-set by SA Login."
-    },
-    {
-      "key": "tenant_token",
-      "value": "",
-      "type": "secret",
-      "description": "Tenant user Bearer token. Auto-set by Tenant Login/Register."
-    }
-  ],
-  "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{sa_token}}",
-        "type": "string"
-      }
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "item": [
+        {
+            "name": "Central — Health",
+            "description": "Health check on the central domain. No authentication required.",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Success envelope', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b).to.have.property('data');",
+                                    "    pm.expect(b.data).to.have.property('status', 'ok');",
+                                    "    pm.expect(b).to.have.property('meta');",
+                                    "    pm.expect(b.meta).to.have.property('version', 'v1');",
+                                    "    pm.expect(b.meta).to.have.property('request_id');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/health",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Public endpoint. Returns { status: ok } with full meta block including request_id and version."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Central — Super Admin Auth",
+            "description": "Super-admin authentication on the central domain. Login auto-saves sa_token to collection variables. All subsequent super-admin requests inherit the collection-level Bearer auth.",
+            "item": [
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Returns SA token', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b).to.have.property('data');",
+                                    "    pm.expect(b.data).to.have.property('token');",
+                                    "    pm.expect(b.data).to.have.property('token_type', 'Bearer');",
+                                    "    pm.expect(b.data).to.have.property('user');",
+                                    "    pm.expect(b.data.user).to.have.property('id');",
+                                    "    pm.expect(b.data.user).to.have.property('email');",
+                                    "    pm.expect(b.data.user).to.have.property('first_name');",
+                                    "    pm.expect(b.data.user).to.have.property('last_name');",
+                                    "    pm.collectionVariables.set('sa_token', b.data.token);",
+                                    "    console.log('sa_token saved for: ' + b.data.user.email);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"sa@aias.system\",\n  \"password\": \"password\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{central_base_url}}/auth/login",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Public endpoint. Throttled: 10 requests/minute.\n\nReturns Bearer token + user object. Token is auto-saved to sa_token collection variable.\n\nError responses:\n  401 — Invalid credentials\n  403 — Account disabled\n  422 — Validation failed"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Me (Current Admin)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Admin profile', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.all.keys('id', 'first_name', 'last_name', 'email', 'is_active');",
+                                    "    pm.expect(b.meta).to.have.property('version', 'v1');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/auth/me",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "me"
+                            ]
+                        },
+                        "description": "Requires sa_token (Bearer — inherited from collection).\n\nReturns authenticated super-admin profile including is_active flag.\n\nError responses:\n  401 — Unauthenticated"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Logged out', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('message', 'Logged out successfully.');",
+                                    "});",
+                                    "pm.collectionVariables.set('sa_token', '');",
+                                    "console.log('sa_token cleared.');"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/auth/logout",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "logout"
+                            ]
+                        },
+                        "description": "Requires sa_token (Bearer — inherited from collection).\n\nRevokes the Passport access token and clears sa_token collection variable.\n\nError responses:\n  401 — Unauthenticated"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Central — Tenant Management",
+            "description": "Tenant CRUD on the central domain. All endpoints require super-admin Bearer token (sa_token).\n\nCreate Tenant auto-saves tenant_id for use in tenant-domain requests.",
+            "item": [
+                {
+                    "name": "List Tenants",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Tenant array', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.be.an('array');",
+                                    "    pm.expect(b).to.have.property('meta');",
+                                    "    if (b.data.length > 0) {",
+                                    "        const t = b.data[0];",
+                                    "        pm.expect(t).to.have.property('id');",
+                                    "        pm.expect(t).to.have.property('name');",
+                                    "        pm.expect(t).to.have.property('plan');",
+                                    "        pm.expect(t).to.have.property('status');",
+                                    "        pm.collectionVariables.set('tenant_id', t.id);",
+                                    "        console.log('tenant_id set to first result: ' + t.id);",
+                                    "    }",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/tenants",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "tenants"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nReturns all tenants with their associated domains. Sets tenant_id to the first result."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Tenant",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                                    "pm.test('Tenant created', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('id');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('plan');",
+                                    "    pm.expect(b.data).to.have.property('status', 'active');",
+                                    "    pm.expect(b.data).to.have.property('domains');",
+                                    "    pm.collectionVariables.set('tenant_id', b.data.id);",
+                                    "    console.log('tenant_id auto-saved: ' + b.data.id);",
+                                    "    console.log('Tenant DB provisioning triggered in background.');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Acme Corporation\",\n  \"id\": \"acme-corp\",\n  \"plan\": \"starter\",\n  \"domain\": \"acme.localhost\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{central_base_url}}/tenants",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "tenants"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nCreates a new tenant and provisions a dedicated database. The domain field is optional — if provided, it must be unique.\n\nField rules:\n  id     — nullable, lowercase alphanumeric/hyphens/underscores, auto-generated from name if omitted\n  name   — required, max 255\n  plan   — nullable, one of: starter | professional | enterprise (default: starter)\n  domain — nullable, must be unique across all tenants\n\nTriggers TenantCreated event → DB create → migrations → seeder in background.\n\nError responses:\n  401 — Unauthenticated\n  422 — Validation failed (duplicate id/domain, invalid format)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Tenant",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Tenant object', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('id');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('plan');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "    pm.expect(b.data).to.have.property('domains');",
+                                    "    pm.expect(b.data.domains).to.be.an('array');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/tenants/{{tenant_id}}",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "tenants",
+                                "{{tenant_id}}"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nFetches a single tenant by ID including its domains array.\n\nError responses:\n  401 — Unauthenticated\n  404 — Tenant not found"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Tenant",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 204', () => pm.response.to.have.status(204));",
+                                    "console.log('Tenant deleted. TenantDeleted event fires DB drop in background.');"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/tenants/{{tenant_id}}",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "tenants",
+                                "{{tenant_id}}"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nSoft-deletes the tenant record. Triggers TenantDeleted event which drops the tenant database in the background.\n\nWARNING: This action drops all tenant data.\n\nError responses:\n  401 — Unauthenticated\n  404 — Tenant not found"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Central — Continents",
+            "description": "Central continent management endpoints (super-admin only).\n\nAll endpoints require super-admin Bearer token (sa_token).\n\nCreate Continent auto-saves continent_identifier for subsequent requests.",
+            "item": [
+                {
+                    "name": "List Continents",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Continent array', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.be.an('array');",
+                                    "    pm.expect(b).to.have.property('meta');",
+                                    "    if (b.data.length > 0) {",
+                                    "        const c = b.data[0];",
+                                    "        pm.expect(c).to.have.property('identifier');",
+                                    "        pm.expect(c).to.have.property('name');",
+                                    "        pm.expect(c).to.have.property('slug');",
+                                    "        pm.expect(c).to.have.property('short_code');",
+                                    "        pm.expect(c).to.have.property('iso_code');",
+                                    "        pm.expect(c).to.have.property('status');",
+                                    "        pm.collectionVariables.set('continent_identifier', c.identifier);",
+                                    "        console.log('continent_identifier set to first result: ' + c.identifier);",
+                                    "    }",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/continents?page=1&per_page=15",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "continents"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "name",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_order",
+                                    "value": "asc",
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nReturns paginated list of continents. Supports filters: search, status, sort_by, sort_order.\n\nSets continent_identifier to the first result."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Continent",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                                    "pm.test('Continent created', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('slug');",
+                                    "    pm.expect(b.data).to.have.property('short_code');",
+                                    "    pm.expect(b.data).to.have.property('iso_code');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "    pm.collectionVariables.set('continent_identifier', b.data.identifier);",
+                                    "    console.log('continent_identifier auto-saved: ' + b.data.identifier);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Africa\",\n  \"short_code\": \"AF\",\n  \"iso_code\": \"AF\",\n  \"status\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{central_base_url}}/continents",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "continents"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nCreates a new continent.\n\nField rules:\n  name       — required, max 255, unique\n  slug       — nullable, max 255 (auto-generated from name if omitted)\n  short_code — nullable, max 10\n  iso_code   — nullable, max 10\n  status     — nullable, boolean (default: true)\n\nError responses:\n  401 — Unauthenticated\n  422 — Validation failed (duplicate name)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Continent",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Continent object', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('slug');",
+                                    "    pm.expect(b.data).to.have.property('short_code');",
+                                    "    pm.expect(b.data).to.have.property('iso_code');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "    pm.expect(b.data).to.have.property('created_at');",
+                                    "    pm.expect(b.data).to.have.property('updated_at');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/continents/{{continent_identifier}}",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "continents",
+                                "{{continent_identifier}}"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nFetches a single continent by identifier.\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Continent",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Continent updated', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('slug');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Africa (Updated)\",\n  \"short_code\": \"AFR\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{central_base_url}}/continents/{{continent_identifier}}",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "continents",
+                                "{{continent_identifier}}"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nUpdates an existing continent. All fields are optional (partial update).\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found\n  422 — Validation failed (duplicate name)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Continent",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 204', () => pm.response.to.have.status(204));",
+                                    "console.log('Continent soft-deleted.');"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/continents/{{continent_identifier}}",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "continents",
+                                "{{continent_identifier}}"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nSoft-deletes the continent.\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Restore Continent",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Continent restored', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data.deleted_at).to.be.null;",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/continents/{{continent_identifier}}/restore",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "continents",
+                                "{{continent_identifier}}",
+                                "restore"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nRestores a previously soft-deleted continent.\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found in trash"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Central — Countries",
+            "description": "Central country management endpoints (super-admin only).\n\nAll endpoints require super-admin Bearer token (sa_token).\n\nCreate Country auto-saves country_identifier for subsequent requests.\nCountries belong to continents — continent_id required on create.",
+            "item": [
+                {
+                    "name": "List Countries",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Country array', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.be.an('array');",
+                                    "    pm.expect(b).to.have.property('meta');",
+                                    "    if (b.data.length > 0) {",
+                                    "        const c = b.data[0];",
+                                    "        pm.expect(c).to.have.property('identifier');",
+                                    "        pm.expect(c).to.have.property('name');",
+                                    "        pm.expect(c).to.have.property('slug');",
+                                    "        pm.expect(c).to.have.property('short_code');",
+                                    "        pm.expect(c).to.have.property('iso_code');",
+                                    "        pm.expect(c).to.have.property('status');",
+                                    "        pm.collectionVariables.set('country_identifier', c.identifier);",
+                                    "        console.log('country_identifier set to first result: ' + c.identifier);",
+                                    "    }",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/countries?page=1&per_page=15",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "countries"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "continent_identifier",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "name",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_order",
+                                    "value": "asc",
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nReturns paginated list of countries. Supports filters: search, status, continent_identifier, sort_by, sort_order.\n\nSets country_identifier to the first result."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Country",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                                    "pm.test('Country created', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('slug');",
+                                    "    pm.expect(b.data).to.have.property('continent');",
+                                    "    pm.expect(b.data).to.have.property('short_code');",
+                                    "    pm.expect(b.data).to.have.property('iso_code');",
+                                    "    pm.expect(b.data).to.have.property('currency');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "    pm.collectionVariables.set('country_identifier', b.data.identifier);",
+                                    "    console.log('country_identifier auto-saved: ' + b.data.identifier);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Kenya\",\n  \"continent_id\": 1,\n  \"short_code\": \"KE\",\n  \"iso_code\": \"KEN\",\n  \"currency\": \"KES\",\n  \"currency_name\": \"Kenyan Shilling\",\n  \"currency_sign\": \"KSh\",\n  \"country_code\": \"+254\",\n  \"phone_digits\": 10,\n  \"status\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{central_base_url}}/countries",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "countries"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nCreates a new country linked to a continent.\n\nField rules:\n  name          — required, max 255, unique\n  continent_id  — required, must exist in continents table\n  slug          — nullable, max 255 (auto-generated from name if omitted)\n  short_code    — nullable, max 10\n  iso_code      — nullable, max 10\n  currency      — nullable, max 5 (e.g. KES, USD)\n  currency_name — nullable, max 50\n  currency_sign — nullable, max 5 (e.g. KSh, $)\n  country_code  — nullable, max 10 (e.g. +254)\n  phone_digits  — nullable, integer, 1–15\n  status        — nullable, boolean (default: true)\n\nError responses:\n  401 — Unauthenticated\n  422 — Validation failed (duplicate name, invalid continent_id)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Country",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Country object', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('slug');",
+                                    "    pm.expect(b.data).to.have.property('continent');",
+                                    "    pm.expect(b.data).to.have.property('short_code');",
+                                    "    pm.expect(b.data).to.have.property('iso_code');",
+                                    "    pm.expect(b.data).to.have.property('currency');",
+                                    "    pm.expect(b.data).to.have.property('currency_name');",
+                                    "    pm.expect(b.data).to.have.property('currency_sign');",
+                                    "    pm.expect(b.data).to.have.property('country_code');",
+                                    "    pm.expect(b.data).to.have.property('phone_digits');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "    pm.expect(b.data).to.have.property('created_at');",
+                                    "    pm.expect(b.data).to.have.property('updated_at');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/countries/{{country_identifier}}",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "countries",
+                                "{{country_identifier}}"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nFetches a single country by identifier including its continent relation.\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Country",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Country updated', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Kenya (Updated)\",\n  \"currency_sign\": \"Ksh\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{central_base_url}}/countries/{{country_identifier}}",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "countries",
+                                "{{country_identifier}}"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nUpdates an existing country. All fields are optional (partial update).\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found\n  422 — Validation failed (duplicate name, invalid continent_id)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Country",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 204', () => pm.response.to.have.status(204));",
+                                    "console.log('Country soft-deleted.');"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/countries/{{country_identifier}}",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "countries",
+                                "{{country_identifier}}"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nSoft-deletes the country.\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Restore Country",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Country restored', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data.deleted_at).to.be.null;",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{central_base_url}}/countries/{{country_identifier}}/restore",
+                            "host": [
+                                "{{central_base_url}}"
+                            ],
+                            "path": [
+                                "countries",
+                                "{{country_identifier}}",
+                                "restore"
+                            ]
+                        },
+                        "description": "Requires sa_token.\n\nRestores a previously soft-deleted country.\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found in trash"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Tenant — Health",
+            "description": "Health check on the tenant domain. Confirms tenant resolution is working.\n\nNOTE: Requests go to {{tenant_base_url}} = http://{{tenant_id}}.localhost:8088/v1\nEnsure {{tenant_id}} is set (use Create Tenant or List Tenants first).",
+            "auth": {
+                "type": "noauth"
+            },
+            "item": [
+                {
+                    "name": "Tenant Health Check",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Tenant resolved', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('status', 'ok');",
+                                    "    pm.expect(b.data).to.have.property('tenant');",
+                                    "    pm.expect(b.data.tenant).to.not.be.null;",
+                                    "    console.log('Resolved tenant: ' + b.data.tenant);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{tenant_base_url}}/health",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Public endpoint on the tenant domain.\n\nConfirms that Stancl tenancy resolves the correct tenant from the Host header. Returns the resolved tenant ID.\n\nPrerequisite: tenant_id collection variable must be set and the tenant must exist in the database."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Tenant — Auth",
+            "description": "Tenant-domain user authentication. Requests go to http://{{tenant_id}}.localhost:8088/v1.\n\nThis folder uses {{tenant_token}} Bearer auth (not sa_token).\nRegister and Login auto-save tenant_token to collection variables.",
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{tenant_token}}",
+                        "type": "string"
+                    }
+                ]
+            },
+            "item": [
+                {
+                    "name": "Register",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                                    "pm.test('Returns tenant token', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('token');",
+                                    "    pm.expect(b.data).to.have.property('token_type', 'Bearer');",
+                                    "    pm.expect(b.data).to.have.property('user');",
+                                    "    pm.expect(b.data.user).to.have.property('id');",
+                                    "    pm.expect(b.data.user).to.have.property('email');",
+                                    "    pm.expect(b.data.user).to.have.property('first_name');",
+                                    "    pm.expect(b.data.user).to.have.property('last_name');",
+                                    "    pm.collectionVariables.set('tenant_token', b.data.token);",
+                                    "    console.log('tenant_token saved for: ' + b.data.user.email);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{tenant_base_url}}/auth/register",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "description": "Public endpoint on the tenant domain.\n\nCreates a new user scoped to the resolved tenant. Returns Bearer token.\n\nField rules:\n  first_name — required, max 100\n  last_name  — required, max 100\n  email      — required, valid email, unique within the tenant\n  password   — required, min 8 chars\n  password_confirmation — required, must match password\n\nError responses:\n  422 — Validation failed (duplicate email, password mismatch, etc.)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Returns tenant token', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('token');",
+                                    "    pm.expect(b.data).to.have.property('token_type', 'Bearer');",
+                                    "    pm.expect(b.data).to.have.property('user');",
+                                    "    pm.expect(b.data.user).to.have.property('id');",
+                                    "    pm.expect(b.data.user).to.have.property('email');",
+                                    "    pm.collectionVariables.set('tenant_token', b.data.token);",
+                                    "    console.log('tenant_token saved for: ' + b.data.user.email);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"password123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{tenant_base_url}}/auth/login",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Public endpoint on the tenant domain. Throttled: 10 requests/minute.\n\nAuthenticates a tenant user scoped to the resolved tenant. Returns Bearer token.\n\nError responses:\n  401 — Invalid credentials\n  403 — Account disabled\n  422 — Validation failed"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Me (Current User)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('User profile with tenant context', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('id');",
+                                    "    pm.expect(b.data).to.have.property('email');",
+                                    "    pm.expect(b.data).to.have.property('first_name');",
+                                    "    pm.expect(b.data).to.have.property('last_name');",
+                                    "    pm.expect(b.meta).to.have.property('tenant');",
+                                    "    pm.expect(b.meta.tenant).to.not.be.null;",
+                                    "    console.log('Tenant in meta: ' + b.meta.tenant);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{tenant_base_url}}/auth/me",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "me"
+                            ]
+                        },
+                        "description": "Requires tenant_token (Bearer — inherited from folder).\n\nAlso validates that the token belongs to this tenant (EnsureTokenMatchesTenant middleware).\n\nThe meta.tenant field confirms the resolved tenant context.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant (TENANT_MISMATCH)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Logged out', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('message', 'Logged out successfully.');",
+                                    "});",
+                                    "pm.collectionVariables.set('tenant_token', '');",
+                                    "console.log('tenant_token cleared.');"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{tenant_base_url}}/auth/logout",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "logout"
+                            ]
+                        },
+                        "description": "Requires tenant_token (Bearer — inherited from folder).\n\nRevokes the Passport access token and clears tenant_token collection variable.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Tenant — Preambles",
+            "description": "Tenant-scoped preamble management endpoints.\n\nRequires tenant_token (Bearer auth) and valid tenant resolution via {{tenant_base_url}}.\n\nCreate Preamble auto-saves preamble_identifier for subsequent requests.",
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{tenant_token}}",
+                        "type": "string"
+                    }
+                ]
+            },
+            "item": [
+                {
+                    "name": "List Preambles",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Preamble array', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.be.an('array');",
+                                    "    pm.expect(b).to.have.property('meta');",
+                                    "    if (b.data.length > 0) {",
+                                    "        const p = b.data[0];",
+                                    "        pm.expect(p).to.have.property('identifier');",
+                                    "        pm.expect(p).to.have.property('reference_number');",
+                                    "        pm.expect(p).to.have.property('name');",
+                                    "        pm.expect(p).to.have.property('status');",
+                                    "        pm.collectionVariables.set('preamble_identifier', p.identifier);",
+                                    "        console.log('preamble_identifier set to first result: ' + p.identifier);",
+                                    "    }",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{tenant_base_url}}/preambles?page=1&per_page=15",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "preambles"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "name",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_order",
+                                    "value": "asc",
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "Requires tenant_token.\n\nReturns paginated list of preambles for the resolved tenant. Supports filters: search, status, sort_by, sort_order.\n\nSets preamble_identifier to the first result."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Preamble",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                                    "pm.test('Preamble created', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('reference_number');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('description');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "    pm.expect(b.data).to.have.property('effective_date');",
+                                    "    pm.expect(b.data).to.have.property('is_featured');",
+                                    "    pm.collectionVariables.set('preamble_identifier', b.data.identifier);",
+                                    "    console.log('preamble_identifier auto-saved: ' + b.data.identifier);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Quality Policy Statement\",\n  \"description\": \"This preamble establishes the quality management policy for the organization.\",\n  \"status\": \"draft\",\n  \"effective_date\": \"2026-06-01\",\n  \"is_featured\": false\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{tenant_base_url}}/preambles",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "preambles"
+                            ]
+                        },
+                        "description": "Requires tenant_token.\n\nCreates a new preamble scoped to the resolved tenant.\n\nField rules:\n  name           — required, max 255\n  description    — nullable, text\n  status         — nullable, one of the allowed statuses (e.g. draft, active, archived)\n  effective_date — nullable, valid date (YYYY-MM-DD)\n  is_featured    — nullable, boolean\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  422 — Validation failed"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Preamble",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Preamble object', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('reference_number');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('description');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "    pm.expect(b.data).to.have.property('effective_date');",
+                                    "    pm.expect(b.data).to.have.property('is_featured');",
+                                    "    pm.expect(b.data).to.have.property('created_at');",
+                                    "    pm.expect(b.data).to.have.property('updated_at');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{tenant_base_url}}/preambles/{{preamble_identifier}}",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "preambles",
+                                "{{preamble_identifier}}"
+                            ]
+                        },
+                        "description": "Requires tenant_token.\n\nFetches a single preamble by identifier.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Preamble",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Preamble updated', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data).to.have.property('status');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Quality Policy Statement (Revised)\",\n  \"status\": \"active\",\n  \"is_featured\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{tenant_base_url}}/preambles/{{preamble_identifier}}",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "preambles",
+                                "{{preamble_identifier}}"
+                            ]
+                        },
+                        "description": "Requires tenant_token.\n\nUpdates an existing preamble. All fields are optional (partial update).\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found\n  422 — Validation failed"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Preamble",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 204', () => pm.response.to.have.status(204));",
+                                    "console.log('Preamble soft-deleted.');"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{tenant_base_url}}/preambles/{{preamble_identifier}}",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "preambles",
+                                "{{preamble_identifier}}"
+                            ]
+                        },
+                        "description": "Requires tenant_token.\n\nSoft-deletes the preamble.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Restore Preamble",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Preamble restored', () => {",
+                                    "    const b = pm.response.json();",
+                                    "    pm.expect(b.data).to.have.property('identifier');",
+                                    "    pm.expect(b.data).to.have.property('name');",
+                                    "    pm.expect(b.data.deleted_at).to.be.null;",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{tenant_base_url}}/preambles/{{preamble_identifier}}/restore",
+                            "host": [
+                                "{{tenant_base_url}}"
+                            ],
+                            "path": [
+                                "preambles",
+                                "{{preamble_identifier}}",
+                                "restore"
+                            ]
+                        },
+                        "description": "Requires tenant_token.\n\nRestores a previously soft-deleted preamble.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found in trash"
+                    },
+                    "response": []
+                }
+            ]
+        }
     ]
-  },
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          ""
-        ]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          ""
-        ]
-      }
-    }
-  ],
-  "item": [
-    {
-      "name": "Central — Health",
-      "description": "Health check on the central domain. No authentication required.",
-      "item": [
-        {
-          "name": "Health Check",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Success envelope', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property('data');",
-                  "    pm.expect(b.data).to.have.property('status', 'ok');",
-                  "    pm.expect(b).to.have.property('meta');",
-                  "    pm.expect(b.meta).to.have.property('version', 'v1');",
-                  "    pm.expect(b.meta).to.have.property('request_id');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/health",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "health"
-              ]
-            },
-            "description": "Public endpoint. Returns { status: ok } with full meta block including request_id and version."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Central — Super Admin Auth",
-      "description": "Super-admin authentication on the central domain. Login auto-saves sa_token to collection variables. All subsequent super-admin requests inherit the collection-level Bearer auth.",
-      "item": [
-        {
-          "name": "Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Returns SA token', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property('data');",
-                  "    pm.expect(b.data).to.have.property('token');",
-                  "    pm.expect(b.data).to.have.property('token_type', 'Bearer');",
-                  "    pm.expect(b.data).to.have.property('user');",
-                  "    pm.expect(b.data.user).to.have.property('id');",
-                  "    pm.expect(b.data.user).to.have.property('email');",
-                  "    pm.expect(b.data.user).to.have.property('first_name');",
-                  "    pm.expect(b.data.user).to.have.property('last_name');",
-                  "    pm.collectionVariables.set('sa_token', b.data.token);",
-                  "    console.log('sa_token saved for: ' + b.data.user.email);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"sa@aias.system\",\n  \"password\": \"password\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{central_base_url}}/auth/login",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            },
-            "description": "Public endpoint. Throttled: 10 requests/minute.\n\nReturns Bearer token + user object. Token is auto-saved to sa_token collection variable.\n\nError responses:\n  401 — Invalid credentials\n  403 — Account disabled\n  422 — Validation failed"
-          },
-          "response": []
-        },
-        {
-          "name": "Me (Current Admin)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Admin profile', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.all.keys('id', 'first_name', 'last_name', 'email', 'is_active');",
-                  "    pm.expect(b.meta).to.have.property('version', 'v1');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/auth/me",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "auth",
-                "me"
-              ]
-            },
-            "description": "Requires sa_token (Bearer — inherited from collection).\n\nReturns authenticated super-admin profile including is_active flag.\n\nError responses:\n  401 — Unauthenticated"
-          },
-          "response": []
-        },
-        {
-          "name": "Logout",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Logged out', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('message', 'Logged out successfully.');",
-                  "});",
-                  "pm.collectionVariables.set('sa_token', '');",
-                  "console.log('sa_token cleared.');"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/auth/logout",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "auth",
-                "logout"
-              ]
-            },
-            "description": "Requires sa_token (Bearer — inherited from collection).\n\nRevokes the Passport access token and clears sa_token collection variable.\n\nError responses:\n  401 — Unauthenticated"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Central — Tenant Management",
-      "description": "Tenant CRUD on the central domain. All endpoints require super-admin Bearer token (sa_token).\n\nCreate Tenant auto-saves tenant_id for use in tenant-domain requests.",
-      "item": [
-        {
-          "name": "List Tenants",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Tenant array', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.be.an('array');",
-                  "    pm.expect(b).to.have.property('meta');",
-                  "    if (b.data.length > 0) {",
-                  "        const t = b.data[0];",
-                  "        pm.expect(t).to.have.property('id');",
-                  "        pm.expect(t).to.have.property('name');",
-                  "        pm.expect(t).to.have.property('plan');",
-                  "        pm.expect(t).to.have.property('status');",
-                  "        pm.collectionVariables.set('tenant_id', t.id);",
-                  "        console.log('tenant_id set to first result: ' + t.id);",
-                  "    }",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/tenants",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "tenants"
-              ]
-            },
-            "description": "Requires sa_token.\n\nReturns all tenants with their associated domains. Sets tenant_id to the first result."
-          },
-          "response": []
-        },
-        {
-          "name": "Create Tenant",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
-                  "pm.test('Tenant created', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('id');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('plan');",
-                  "    pm.expect(b.data).to.have.property('status', 'active');",
-                  "    pm.expect(b.data).to.have.property('domains');",
-                  "    pm.collectionVariables.set('tenant_id', b.data.id);",
-                  "    console.log('tenant_id auto-saved: ' + b.data.id);",
-                  "    console.log('Tenant DB provisioning triggered in background.');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Acme Corporation\",\n  \"id\": \"acme-corp\",\n  \"plan\": \"starter\",\n  \"domain\": \"acme.localhost\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{central_base_url}}/tenants",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "tenants"
-              ]
-            },
-            "description": "Requires sa_token.\n\nCreates a new tenant and provisions a dedicated database. The domain field is optional — if provided, it must be unique.\n\nField rules:\n  id     — nullable, lowercase alphanumeric/hyphens/underscores, auto-generated from name if omitted\n  name   — required, max 255\n  plan   — nullable, one of: starter | professional | enterprise (default: starter)\n  domain — nullable, must be unique across all tenants\n\nTriggers TenantCreated event → DB create → migrations → seeder in background.\n\nError responses:\n  401 — Unauthenticated\n  422 — Validation failed (duplicate id/domain, invalid format)"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Tenant",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Tenant object', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('id');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('plan');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "    pm.expect(b.data).to.have.property('domains');",
-                  "    pm.expect(b.data.domains).to.be.an('array');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/tenants/{{tenant_id}}",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "tenants",
-                "{{tenant_id}}"
-              ]
-            },
-            "description": "Requires sa_token.\n\nFetches a single tenant by ID including its domains array.\n\nError responses:\n  401 — Unauthenticated\n  404 — Tenant not found"
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Tenant",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 204', () => pm.response.to.have.status(204));",
-                  "console.log('Tenant deleted. TenantDeleted event fires DB drop in background.');"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/tenants/{{tenant_id}}",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "tenants",
-                "{{tenant_id}}"
-              ]
-            },
-            "description": "Requires sa_token.\n\nSoft-deletes the tenant record. Triggers TenantDeleted event which drops the tenant database in the background.\n\nWARNING: This action drops all tenant data.\n\nError responses:\n  401 — Unauthenticated\n  404 — Tenant not found"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Central — Continents",
-      "description": "Central continent management endpoints (super-admin only).\n\nAll endpoints require super-admin Bearer token (sa_token).\n\nCreate Continent auto-saves continent_identifier for subsequent requests.",
-      "item": [
-        {
-          "name": "List Continents",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Continent array', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.be.an('array');",
-                  "    pm.expect(b).to.have.property('meta');",
-                  "    if (b.data.length > 0) {",
-                  "        const c = b.data[0];",
-                  "        pm.expect(c).to.have.property('identifier');",
-                  "        pm.expect(c).to.have.property('name');",
-                  "        pm.expect(c).to.have.property('slug');",
-                  "        pm.expect(c).to.have.property('short_code');",
-                  "        pm.expect(c).to.have.property('iso_code');",
-                  "        pm.expect(c).to.have.property('status');",
-                  "        pm.collectionVariables.set('continent_identifier', c.identifier);",
-                  "        console.log('continent_identifier set to first result: ' + c.identifier);",
-                  "    }",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/continents?page=1&per_page=15",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "continents"
-              ],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1"
-                },
-                {
-                  "key": "per_page",
-                  "value": "15"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "status",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "sort_by",
-                  "value": "name",
-                  "disabled": true
-                },
-                {
-                  "key": "sort_order",
-                  "value": "asc",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Requires sa_token.\n\nReturns paginated list of continents. Supports filters: search, status, sort_by, sort_order.\n\nSets continent_identifier to the first result."
-          },
-          "response": []
-        },
-        {
-          "name": "Create Continent",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
-                  "pm.test('Continent created', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('slug');",
-                  "    pm.expect(b.data).to.have.property('short_code');",
-                  "    pm.expect(b.data).to.have.property('iso_code');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "    pm.collectionVariables.set('continent_identifier', b.data.identifier);",
-                  "    console.log('continent_identifier auto-saved: ' + b.data.identifier);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Africa\",\n  \"short_code\": \"AF\",\n  \"iso_code\": \"AF\",\n  \"status\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{central_base_url}}/continents",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "continents"
-              ]
-            },
-            "description": "Requires sa_token.\n\nCreates a new continent.\n\nField rules:\n  name       — required, max 255, unique\n  slug       — nullable, max 255 (auto-generated from name if omitted)\n  short_code — nullable, max 10\n  iso_code   — nullable, max 10\n  status     — nullable, boolean (default: true)\n\nError responses:\n  401 — Unauthenticated\n  422 — Validation failed (duplicate name)"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Continent",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Continent object', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('slug');",
-                  "    pm.expect(b.data).to.have.property('short_code');",
-                  "    pm.expect(b.data).to.have.property('iso_code');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "    pm.expect(b.data).to.have.property('created_at');",
-                  "    pm.expect(b.data).to.have.property('updated_at');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/continents/{{continent_identifier}}",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "continents",
-                "{{continent_identifier}}"
-              ]
-            },
-            "description": "Requires sa_token.\n\nFetches a single continent by identifier.\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found"
-          },
-          "response": []
-        },
-        {
-          "name": "Update Continent",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Continent updated', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('slug');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Africa (Updated)\",\n  \"short_code\": \"AFR\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{central_base_url}}/continents/{{continent_identifier}}",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "continents",
-                "{{continent_identifier}}"
-              ]
-            },
-            "description": "Requires sa_token.\n\nUpdates an existing continent. All fields are optional (partial update).\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found\n  422 — Validation failed (duplicate name)"
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Continent",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 204', () => pm.response.to.have.status(204));",
-                  "console.log('Continent soft-deleted.');"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/continents/{{continent_identifier}}",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "continents",
-                "{{continent_identifier}}"
-              ]
-            },
-            "description": "Requires sa_token.\n\nSoft-deletes the continent.\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found"
-          },
-          "response": []
-        },
-        {
-          "name": "Restore Continent",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Continent restored', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data.deleted_at).to.be.null;",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/continents/{{continent_identifier}}/restore",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "continents",
-                "{{continent_identifier}}",
-                "restore"
-              ]
-            },
-            "description": "Requires sa_token.\n\nRestores a previously soft-deleted continent.\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found in trash"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Central — Countries",
-      "description": "Central country management endpoints (super-admin only).\n\nAll endpoints require super-admin Bearer token (sa_token).\n\nCreate Country auto-saves country_identifier for subsequent requests.\nCountries belong to continents — continent_id required on create.",
-      "item": [
-        {
-          "name": "List Countries",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Country array', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.be.an('array');",
-                  "    pm.expect(b).to.have.property('meta');",
-                  "    if (b.data.length > 0) {",
-                  "        const c = b.data[0];",
-                  "        pm.expect(c).to.have.property('identifier');",
-                  "        pm.expect(c).to.have.property('name');",
-                  "        pm.expect(c).to.have.property('slug');",
-                  "        pm.expect(c).to.have.property('short_code');",
-                  "        pm.expect(c).to.have.property('iso_code');",
-                  "        pm.expect(c).to.have.property('status');",
-                  "        pm.collectionVariables.set('country_identifier', c.identifier);",
-                  "        console.log('country_identifier set to first result: ' + c.identifier);",
-                  "    }",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/countries?page=1&per_page=15",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "countries"
-              ],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1"
-                },
-                {
-                  "key": "per_page",
-                  "value": "15"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "status",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "continent_identifier",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "sort_by",
-                  "value": "name",
-                  "disabled": true
-                },
-                {
-                  "key": "sort_order",
-                  "value": "asc",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Requires sa_token.\n\nReturns paginated list of countries. Supports filters: search, status, continent_identifier, sort_by, sort_order.\n\nSets country_identifier to the first result."
-          },
-          "response": []
-        },
-        {
-          "name": "Create Country",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
-                  "pm.test('Country created', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('slug');",
-                  "    pm.expect(b.data).to.have.property('continent');",
-                  "    pm.expect(b.data).to.have.property('short_code');",
-                  "    pm.expect(b.data).to.have.property('iso_code');",
-                  "    pm.expect(b.data).to.have.property('currency');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "    pm.collectionVariables.set('country_identifier', b.data.identifier);",
-                  "    console.log('country_identifier auto-saved: ' + b.data.identifier);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Kenya\",\n  \"continent_id\": 1,\n  \"short_code\": \"KE\",\n  \"iso_code\": \"KEN\",\n  \"currency\": \"KES\",\n  \"currency_name\": \"Kenyan Shilling\",\n  \"currency_sign\": \"KSh\",\n  \"country_code\": \"+254\",\n  \"phone_digits\": 10,\n  \"status\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{central_base_url}}/countries",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "countries"
-              ]
-            },
-            "description": "Requires sa_token.\n\nCreates a new country linked to a continent.\n\nField rules:\n  name          — required, max 255, unique\n  continent_id  — required, must exist in continents table\n  slug          — nullable, max 255 (auto-generated from name if omitted)\n  short_code    — nullable, max 10\n  iso_code      — nullable, max 10\n  currency      — nullable, max 5 (e.g. KES, USD)\n  currency_name — nullable, max 50\n  currency_sign — nullable, max 5 (e.g. KSh, $)\n  country_code  — nullable, max 10 (e.g. +254)\n  phone_digits  — nullable, integer, 1–15\n  status        — nullable, boolean (default: true)\n\nError responses:\n  401 — Unauthenticated\n  422 — Validation failed (duplicate name, invalid continent_id)"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Country",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Country object', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('slug');",
-                  "    pm.expect(b.data).to.have.property('continent');",
-                  "    pm.expect(b.data).to.have.property('short_code');",
-                  "    pm.expect(b.data).to.have.property('iso_code');",
-                  "    pm.expect(b.data).to.have.property('currency');",
-                  "    pm.expect(b.data).to.have.property('currency_name');",
-                  "    pm.expect(b.data).to.have.property('currency_sign');",
-                  "    pm.expect(b.data).to.have.property('country_code');",
-                  "    pm.expect(b.data).to.have.property('phone_digits');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "    pm.expect(b.data).to.have.property('created_at');",
-                  "    pm.expect(b.data).to.have.property('updated_at');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/countries/{{country_identifier}}",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "countries",
-                "{{country_identifier}}"
-              ]
-            },
-            "description": "Requires sa_token.\n\nFetches a single country by identifier including its continent relation.\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found"
-          },
-          "response": []
-        },
-        {
-          "name": "Update Country",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Country updated', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Kenya (Updated)\",\n  \"currency_sign\": \"Ksh\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{central_base_url}}/countries/{{country_identifier}}",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "countries",
-                "{{country_identifier}}"
-              ]
-            },
-            "description": "Requires sa_token.\n\nUpdates an existing country. All fields are optional (partial update).\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found\n  422 — Validation failed (duplicate name, invalid continent_id)"
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Country",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 204', () => pm.response.to.have.status(204));",
-                  "console.log('Country soft-deleted.');"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/countries/{{country_identifier}}",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "countries",
-                "{{country_identifier}}"
-              ]
-            },
-            "description": "Requires sa_token.\n\nSoft-deletes the country.\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found"
-          },
-          "response": []
-        },
-        {
-          "name": "Restore Country",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Country restored', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data.deleted_at).to.be.null;",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{central_base_url}}/countries/{{country_identifier}}/restore",
-              "host": [
-                "{{central_base_url}}"
-              ],
-              "path": [
-                "countries",
-                "{{country_identifier}}",
-                "restore"
-              ]
-            },
-            "description": "Requires sa_token.\n\nRestores a previously soft-deleted country.\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found in trash"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Tenant — Health",
-      "description": "Health check on the tenant domain. Confirms tenant resolution is working.\n\nNOTE: Requests go to {{tenant_base_url}} = http://{{tenant_id}}.localhost:8088/v1\nEnsure {{tenant_id}} is set (use Create Tenant or List Tenants first).",
-      "auth": {
-        "type": "noauth"
-      },
-      "item": [
-        {
-          "name": "Tenant Health Check",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Tenant resolved', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('status', 'ok');",
-                  "    pm.expect(b.data).to.have.property('tenant');",
-                  "    pm.expect(b.data.tenant).to.not.be.null;",
-                  "    console.log('Resolved tenant: ' + b.data.tenant);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{tenant_base_url}}/health",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "health"
-              ]
-            },
-            "description": "Public endpoint on the tenant domain.\n\nConfirms that Stancl tenancy resolves the correct tenant from the Host header. Returns the resolved tenant ID.\n\nPrerequisite: tenant_id collection variable must be set and the tenant must exist in the database."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Tenant — Auth",
-      "description": "Tenant-domain user authentication. Requests go to http://{{tenant_id}}.localhost:8088/v1.\n\nThis folder uses {{tenant_token}} Bearer auth (not sa_token).\nRegister and Login auto-save tenant_token to collection variables.",
-      "auth": {
-        "type": "bearer",
-        "bearer": [
-          {
-            "key": "token",
-            "value": "{{tenant_token}}",
-            "type": "string"
-          }
-        ]
-      },
-      "item": [
-        {
-          "name": "Register",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
-                  "pm.test('Returns tenant token', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('token');",
-                  "    pm.expect(b.data).to.have.property('token_type', 'Bearer');",
-                  "    pm.expect(b.data).to.have.property('user');",
-                  "    pm.expect(b.data.user).to.have.property('id');",
-                  "    pm.expect(b.data.user).to.have.property('email');",
-                  "    pm.expect(b.data.user).to.have.property('first_name');",
-                  "    pm.expect(b.data.user).to.have.property('last_name');",
-                  "    pm.collectionVariables.set('tenant_token', b.data.token);",
-                  "    console.log('tenant_token saved for: ' + b.data.user.email);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{tenant_base_url}}/auth/register",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "auth",
-                "register"
-              ]
-            },
-            "description": "Public endpoint on the tenant domain.\n\nCreates a new user scoped to the resolved tenant. Returns Bearer token.\n\nField rules:\n  first_name — required, max 100\n  last_name  — required, max 100\n  email      — required, valid email, unique within the tenant\n  password   — required, min 8 chars\n  password_confirmation — required, must match password\n\nError responses:\n  422 — Validation failed (duplicate email, password mismatch, etc.)"
-          },
-          "response": []
-        },
-        {
-          "name": "Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Returns tenant token', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('token');",
-                  "    pm.expect(b.data).to.have.property('token_type', 'Bearer');",
-                  "    pm.expect(b.data).to.have.property('user');",
-                  "    pm.expect(b.data.user).to.have.property('id');",
-                  "    pm.expect(b.data.user).to.have.property('email');",
-                  "    pm.collectionVariables.set('tenant_token', b.data.token);",
-                  "    console.log('tenant_token saved for: ' + b.data.user.email);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"password123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{tenant_base_url}}/auth/login",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            },
-            "description": "Public endpoint on the tenant domain. Throttled: 10 requests/minute.\n\nAuthenticates a tenant user scoped to the resolved tenant. Returns Bearer token.\n\nError responses:\n  401 — Invalid credentials\n  403 — Account disabled\n  422 — Validation failed"
-          },
-          "response": []
-        },
-        {
-          "name": "Me (Current User)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('User profile with tenant context', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('id');",
-                  "    pm.expect(b.data).to.have.property('email');",
-                  "    pm.expect(b.data).to.have.property('first_name');",
-                  "    pm.expect(b.data).to.have.property('last_name');",
-                  "    pm.expect(b.meta).to.have.property('tenant');",
-                  "    pm.expect(b.meta.tenant).to.not.be.null;",
-                  "    console.log('Tenant in meta: ' + b.meta.tenant);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{tenant_base_url}}/auth/me",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "auth",
-                "me"
-              ]
-            },
-            "description": "Requires tenant_token (Bearer — inherited from folder).\n\nAlso validates that the token belongs to this tenant (EnsureTokenMatchesTenant middleware).\n\nThe meta.tenant field confirms the resolved tenant context.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant (TENANT_MISMATCH)"
-          },
-          "response": []
-        },
-        {
-          "name": "Logout",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Logged out', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('message', 'Logged out successfully.');",
-                  "});",
-                  "pm.collectionVariables.set('tenant_token', '');",
-                  "console.log('tenant_token cleared.');"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{tenant_base_url}}/auth/logout",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "auth",
-                "logout"
-              ]
-            },
-            "description": "Requires tenant_token (Bearer — inherited from folder).\n\nRevokes the Passport access token and clears tenant_token collection variable.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Tenant — Preambles",
-      "description": "Tenant-scoped preamble management endpoints.\n\nRequires tenant_token (Bearer auth) and valid tenant resolution via {{tenant_base_url}}.\n\nCreate Preamble auto-saves preamble_identifier for subsequent requests.",
-      "auth": {
-        "type": "bearer",
-        "bearer": [
-          {
-            "key": "token",
-            "value": "{{tenant_token}}",
-            "type": "string"
-          }
-        ]
-      },
-      "item": [
-        {
-          "name": "List Preambles",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Preamble array', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.be.an('array');",
-                  "    pm.expect(b).to.have.property('meta');",
-                  "    if (b.data.length > 0) {",
-                  "        const p = b.data[0];",
-                  "        pm.expect(p).to.have.property('identifier');",
-                  "        pm.expect(p).to.have.property('reference_number');",
-                  "        pm.expect(p).to.have.property('name');",
-                  "        pm.expect(p).to.have.property('status');",
-                  "        pm.collectionVariables.set('preamble_identifier', p.identifier);",
-                  "        console.log('preamble_identifier set to first result: ' + p.identifier);",
-                  "    }",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{tenant_base_url}}/preambles?page=1&per_page=15",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "preambles"
-              ],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1"
-                },
-                {
-                  "key": "per_page",
-                  "value": "15"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "status",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "sort_by",
-                  "value": "name",
-                  "disabled": true
-                },
-                {
-                  "key": "sort_order",
-                  "value": "asc",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Requires tenant_token.\n\nReturns paginated list of preambles for the resolved tenant. Supports filters: search, status, sort_by, sort_order.\n\nSets preamble_identifier to the first result."
-          },
-          "response": []
-        },
-        {
-          "name": "Create Preamble",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
-                  "pm.test('Preamble created', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('reference_number');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('description');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "    pm.expect(b.data).to.have.property('effective_date');",
-                  "    pm.expect(b.data).to.have.property('is_featured');",
-                  "    pm.collectionVariables.set('preamble_identifier', b.data.identifier);",
-                  "    console.log('preamble_identifier auto-saved: ' + b.data.identifier);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Quality Policy Statement\",\n  \"description\": \"This preamble establishes the quality management policy for the organization.\",\n  \"status\": \"draft\",\n  \"effective_date\": \"2026-06-01\",\n  \"is_featured\": false\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{tenant_base_url}}/preambles",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "preambles"
-              ]
-            },
-            "description": "Requires tenant_token.\n\nCreates a new preamble scoped to the resolved tenant.\n\nField rules:\n  name           — required, max 255\n  description    — nullable, text\n  status         — nullable, one of the allowed statuses (e.g. draft, active, archived)\n  effective_date — nullable, valid date (YYYY-MM-DD)\n  is_featured    — nullable, boolean\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  422 — Validation failed"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Preamble",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Preamble object', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('reference_number');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('description');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "    pm.expect(b.data).to.have.property('effective_date');",
-                  "    pm.expect(b.data).to.have.property('is_featured');",
-                  "    pm.expect(b.data).to.have.property('created_at');",
-                  "    pm.expect(b.data).to.have.property('updated_at');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{tenant_base_url}}/preambles/{{preamble_identifier}}",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "preambles",
-                "{{preamble_identifier}}"
-              ]
-            },
-            "description": "Requires tenant_token.\n\nFetches a single preamble by identifier.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found"
-          },
-          "response": []
-        },
-        {
-          "name": "Update Preamble",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Preamble updated', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data).to.have.property('status');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Quality Policy Statement (Revised)\",\n  \"status\": \"active\",\n  \"is_featured\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{tenant_base_url}}/preambles/{{preamble_identifier}}",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "preambles",
-                "{{preamble_identifier}}"
-              ]
-            },
-            "description": "Requires tenant_token.\n\nUpdates an existing preamble. All fields are optional (partial update).\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found\n  422 — Validation failed"
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Preamble",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 204', () => pm.response.to.have.status(204));",
-                  "console.log('Preamble soft-deleted.');"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{tenant_base_url}}/preambles/{{preamble_identifier}}",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "preambles",
-                "{{preamble_identifier}}"
-              ]
-            },
-            "description": "Requires tenant_token.\n\nSoft-deletes the preamble.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found"
-          },
-          "response": []
-        },
-        {
-          "name": "Restore Preamble",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Preamble restored', () => {",
-                  "    const b = pm.response.json();",
-                  "    pm.expect(b.data).to.have.property('identifier');",
-                  "    pm.expect(b.data).to.have.property('name');",
-                  "    pm.expect(b.data.deleted_at).to.be.null;",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{tenant_base_url}}/preambles/{{preamble_identifier}}/restore",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "preambles",
-                "{{preamble_identifier}}",
-                "restore"
-              ]
-            },
-            "description": "Requires tenant_token.\n\nRestores a previously soft-deleted preamble.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found in trash"
-          },
-          "response": []
-        }
-      ]
-    }
-  ]
 }
