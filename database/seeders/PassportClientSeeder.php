@@ -30,7 +30,7 @@ class PassportClientSeeder extends Seeder
             return;
         }
 
-        $this->clientRepository->createPersonalAccessClient(null, $name, 'http://localhost', $provider);
+        $this->clientRepository->createPersonalAccessGrantClient($name, $provider);
 
         $this->command->info("Created personal access client for provider: {$provider}");
     }
