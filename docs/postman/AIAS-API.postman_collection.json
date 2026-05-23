@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "aias-api-v1",
     "name": "AIAS API",
-    "description": "Adaptive Intelligent Auditing System — Multi-tenant Laravel 13 API.\n\nTwo routing contexts:\n  Central domain (localhost:8020) — prefix /api/v1 — super-admin auth + tenant management\n  Tenant domain ({tenant_id}.localhost:8020) — prefix /v1 — tenant user auth + operations\n\nQuick start:\n  1. Super Admin Auth / Login  →  sa_token auto-saved\n  2. Tenant Management / Create Tenant  →  tenant_id auto-saved\n  3. Tenant Auth / Register or Login  →  tenant_token auto-saved\n\nResponse envelope (success):\n  { \"data\": {...}, \"meta\": { \"request_id\": \"...\", \"version\": \"v1\", \"tenant\": null } }\n\nResponse envelope (error):\n  { \"error\": { \"code\": \"...\", \"message\": \"...\", \"details\": null }, \"meta\": {...} }",
+    "description": "Adaptive Intelligent Auditing System \u2014 Multi-tenant Laravel 13 API.\n\nTwo routing contexts:\n  Central domain (localhost:8020) \u2014 prefix /api/v1 \u2014 super-admin auth + tenant management\n  Tenant domain ({tenant_id}.localhost:8020) \u2014 prefix /v1 \u2014 tenant user auth + operations\n\nQuick start:\n  1. Super Admin Auth / Login  \u2192  sa_token auto-saved\n  2. Tenant Management / Create Tenant  \u2192  tenant_id auto-saved\n  3. Tenant Auth / Register or Login  \u2192  tenant_token auto-saved\n\nResponse envelope (success):\n  { \"data\": {...}, \"meta\": { \"request_id\": \"...\", \"version\": \"v1\", \"tenant\": null } }\n\nResponse envelope (error):\n  { \"error\": { \"code\": \"...\", \"message\": \"...\", \"details\": null }, \"meta\": {...} }",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "aias-jq-generator"
   },
@@ -98,7 +98,7 @@
   ],
   "item": [
     {
-      "name": "Central — Health",
+      "name": "Central \u2014 Health",
       "description": "Health check on the central domain. No authentication required.",
       "item": [
         {
@@ -149,7 +149,7 @@
       ]
     },
     {
-      "name": "Central — Super Admin Auth",
+      "name": "Central \u2014 Super Admin Auth",
       "description": "Super-admin authentication on the central domain. Login auto-saves sa_token to collection variables. All subsequent super-admin requests inherit the collection-level Bearer auth.",
       "item": [
         {
@@ -212,7 +212,7 @@
                 "login"
               ]
             },
-            "description": "Public endpoint. Throttled: 10 requests/minute.\n\nReturns Bearer token + user object. Token is auto-saved to sa_token collection variable.\n\nError responses:\n  401 — Invalid credentials\n  403 — Account disabled\n  422 — Validation failed"
+            "description": "Public endpoint. Throttled: 10 requests/minute.\n\nReturns Bearer token + user object. Token is auto-saved to sa_token collection variable.\n\nError responses:\n  401 \u2014 Invalid credentials\n  403 \u2014 Account disabled\n  422 \u2014 Validation failed"
           },
           "response": []
         },
@@ -252,7 +252,7 @@
                 "me"
               ]
             },
-            "description": "Requires sa_token (Bearer — inherited from collection).\n\nReturns authenticated super-admin profile including is_active flag.\n\nError responses:\n  401 — Unauthenticated"
+            "description": "Requires sa_token (Bearer \u2014 inherited from collection).\n\nReturns authenticated super-admin profile including is_active flag.\n\nError responses:\n  401 \u2014 Unauthenticated"
           },
           "response": []
         },
@@ -293,14 +293,14 @@
                 "logout"
               ]
             },
-            "description": "Requires sa_token (Bearer — inherited from collection).\n\nRevokes the Passport access token and clears sa_token collection variable.\n\nError responses:\n  401 — Unauthenticated"
+            "description": "Requires sa_token (Bearer \u2014 inherited from collection).\n\nRevokes the Passport access token and clears sa_token collection variable.\n\nError responses:\n  401 \u2014 Unauthenticated"
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Central — Tenant Management",
+      "name": "Central \u2014 Tenant Management",
       "description": "Tenant CRUD on the central domain. All endpoints require super-admin Bearer token (sa_token).\n\nCreate Tenant auto-saves tenant_id for use in tenant-domain requests.",
       "item": [
         {
@@ -405,7 +405,7 @@
                 "tenants"
               ]
             },
-            "description": "Requires sa_token.\n\nCreates a new tenant and provisions a dedicated database. The domain field is optional — if provided, it must be unique.\n\nField rules:\n  id     — nullable, lowercase alphanumeric/hyphens/underscores, auto-generated from name if omitted\n  name   — required, max 255\n  plan   — nullable, one of: starter | professional | enterprise (default: starter)\n  domain — nullable, must be unique across all tenants\n\nTriggers TenantCreated event → DB create → migrations → seeder in background.\n\nError responses:\n  401 — Unauthenticated\n  422 — Validation failed (duplicate id/domain, invalid format)"
+            "description": "Requires sa_token.\n\nCreates a new tenant and provisions a dedicated database. The domain field is optional \u2014 if provided, it must be unique.\n\nField rules:\n  id     \u2014 nullable, lowercase alphanumeric/hyphens/underscores, auto-generated from name if omitted\n  name   \u2014 required, max 255\n  plan   \u2014 nullable, one of: starter | professional | enterprise (default: starter)\n  domain \u2014 nullable, must be unique across all tenants\n\nTriggers TenantCreated event \u2192 DB create \u2192 migrations \u2192 seeder in background.\n\nError responses:\n  401 \u2014 Unauthenticated\n  422 \u2014 Validation failed (duplicate id/domain, invalid format)"
           },
           "response": []
         },
@@ -449,7 +449,7 @@
                 "{{tenant_id}}"
               ]
             },
-            "description": "Requires sa_token.\n\nFetches a single tenant by ID including its domains array.\n\nError responses:\n  401 — Unauthenticated\n  404 — Tenant not found"
+            "description": "Requires sa_token.\n\nFetches a single tenant by ID including its domains array.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Tenant not found"
           },
           "response": []
         },
@@ -485,7 +485,7 @@
                 "{{tenant_id}}"
               ]
             },
-            "description": "Requires sa_token.\n\nSoft-deletes the tenant record. Triggers TenantDeleted event which drops the tenant database in the background.\n\nWARNING: This action drops all tenant data.\n\nError responses:\n  401 — Unauthenticated\n  404 — Tenant not found"
+            "description": "Requires sa_token.\n\nSoft-deletes the tenant record. Triggers TenantDeleted event which drops the tenant database in the background.\n\nWARNING: This action drops all tenant data.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Tenant not found"
           },
           "response": []
         },
@@ -526,7 +526,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"username\": \"jane.doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"Password1\",\n  \"role\": \"auditor\",\n  \"title\": null,\n  \"middle_name\": null,\n  \"phone\": null,\n  \"country_code\": null,\n  \"preferred_timezone\": \"Africa/Nairobi\",\n  \"office_location\": null,\n  \"notes\": null,\n  \"is_active\": true\n}",
+              "raw": "{\n  \"title\": \"Mrs.\",\n  \"first_name\": \"Elma\",\n  \"middle_name\": null,\n  \"last_name\": \"Wambui\",\n  \"username\": \"elma\",\n  \"email\": \"elma@airtraffic.com\",\n  \"country_code\": \"+254\",\n  \"phone\": \"0727905402\",\n  \"password\": \"T@ngo540\",\n  \"role\": \"auditor\",\n  \"preferred_timezone\": \"Africa/Nairobi\",\n  \"office_location\": \"Lengai House, Wilson Airport\",\n  \"notes\": null,\n  \"is_active\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -544,14 +544,14 @@
                 "users"
               ]
             },
-            "description": "Requires sa_token.\n\nCreates a user inside a specific tenant's database. The super-admin provides the tenant ID and all user details including the role to assign.\n\nRoles (must match a seeded role in the tenant DB):\n  tenant-admin — full tenant access\n  auditor      — audit operations\n  client       — read-only client access\n  viewer       — read-only viewer access\n\nPassword rules: min 8 characters, must contain letters and numbers.\n\nError responses:\n  401 — Unauthenticated\n  404 — Tenant not found (TENANT_NOT_FOUND)\n  422 — Validation failed / EMAIL_TAKEN / USERNAME_TAKEN / ROLE_NOT_FOUND"
+            "description": "Requires sa_token.\n\nCreates a user inside a specific tenant's database. The super-admin provides the tenant ID and all user details including the role to assign.\n\nRoles (must match a seeded role in the tenant DB):\n  tenant-admin \u2014 full tenant access\n  auditor      \u2014 audit operations\n  client       \u2014 read-only client access\n  viewer       \u2014 read-only viewer access\n\nPassword rules: min 8 characters, must contain letters and numbers.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Tenant not found (TENANT_NOT_FOUND)\n  422 \u2014 Validation failed / EMAIL_TAKEN / USERNAME_TAKEN / ROLE_NOT_FOUND"
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Central — Continents",
+      "name": "Central \u2014 Continents",
       "description": "Central continent management endpoints (super-admin only).\n\nAll endpoints require super-admin Bearer token (sa_token).\n\nCreate Continent auto-saves continent_identifier for subsequent requests.",
       "item": [
         {
@@ -688,7 +688,7 @@
                 "continents"
               ]
             },
-            "description": "Requires sa_token.\n\nCreates a new continent.\n\nField rules:\n  name       — required, max 255, unique\n  slug       — nullable, max 255 (auto-generated from name if omitted)\n  short_code — nullable, max 10\n  iso_code   — nullable, max 10\n  status     — nullable, boolean (default: true)\n\nError responses:\n  401 — Unauthenticated\n  422 — Validation failed (duplicate name)"
+            "description": "Requires sa_token.\n\nCreates a new continent.\n\nField rules:\n  name       \u2014 required, max 255, unique\n  slug       \u2014 nullable, max 255 (auto-generated from name if omitted)\n  short_code \u2014 nullable, max 10\n  iso_code   \u2014 nullable, max 10\n  status     \u2014 nullable, boolean (default: true)\n\nError responses:\n  401 \u2014 Unauthenticated\n  422 \u2014 Validation failed (duplicate name)"
           },
           "response": []
         },
@@ -734,7 +734,7 @@
                 "{{continent_identifier}}"
               ]
             },
-            "description": "Requires sa_token.\n\nFetches a single continent by identifier.\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found"
+            "description": "Requires sa_token.\n\nFetches a single continent by identifier.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Continent not found"
           },
           "response": []
         },
@@ -789,7 +789,7 @@
                 "{{continent_identifier}}"
               ]
             },
-            "description": "Requires sa_token.\n\nUpdates an existing continent. All fields are optional (partial update).\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found\n  422 — Validation failed (duplicate name)"
+            "description": "Requires sa_token.\n\nUpdates an existing continent. All fields are optional (partial update).\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Continent not found\n  422 \u2014 Validation failed (duplicate name)"
           },
           "response": []
         },
@@ -825,7 +825,7 @@
                 "{{continent_identifier}}"
               ]
             },
-            "description": "Requires sa_token.\n\nSoft-deletes the continent.\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found"
+            "description": "Requires sa_token.\n\nSoft-deletes the continent.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Continent not found"
           },
           "response": []
         },
@@ -867,15 +867,15 @@
                 "restore"
               ]
             },
-            "description": "Requires sa_token.\n\nRestores a previously soft-deleted continent.\n\nError responses:\n  401 — Unauthenticated\n  404 — Continent not found in trash"
+            "description": "Requires sa_token.\n\nRestores a previously soft-deleted continent.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Continent not found in trash"
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Central — Countries",
-      "description": "Central country management endpoints (super-admin only).\n\nAll endpoints require super-admin Bearer token (sa_token).\n\nCreate Country auto-saves country_identifier for subsequent requests.\nCountries belong to continents — continent_id required on create.",
+      "name": "Central \u2014 Countries",
+      "description": "Central country management endpoints (super-admin only).\n\nAll endpoints require super-admin Bearer token (sa_token).\n\nCreate Country auto-saves country_identifier for subsequent requests.\nCountries belong to continents \u2014 continent_id required on create.",
       "item": [
         {
           "name": "List Countries",
@@ -1018,7 +1018,7 @@
                 "countries"
               ]
             },
-            "description": "Requires sa_token.\n\nCreates a new country linked to a continent.\n\nField rules:\n  name          — required, max 255, unique\n  continent_id  — required, must exist in continents table\n  slug          — nullable, max 255 (auto-generated from name if omitted)\n  short_code    — nullable, max 10\n  iso_code      — nullable, max 10\n  currency      — nullable, max 5 (e.g. KES, USD)\n  currency_name — nullable, max 50\n  currency_sign — nullable, max 5 (e.g. KSh, $)\n  country_code  — nullable, max 10 (e.g. +254)\n  phone_digits  — nullable, integer, 1–15\n  status        — nullable, boolean (default: true)\n\nError responses:\n  401 — Unauthenticated\n  422 — Validation failed (duplicate name, invalid continent_id)"
+            "description": "Requires sa_token.\n\nCreates a new country linked to a continent.\n\nField rules:\n  name          \u2014 required, max 255, unique\n  continent_id  \u2014 required, must exist in continents table\n  slug          \u2014 nullable, max 255 (auto-generated from name if omitted)\n  short_code    \u2014 nullable, max 10\n  iso_code      \u2014 nullable, max 10\n  currency      \u2014 nullable, max 5 (e.g. KES, USD)\n  currency_name \u2014 nullable, max 50\n  currency_sign \u2014 nullable, max 5 (e.g. KSh, $)\n  country_code  \u2014 nullable, max 10 (e.g. +254)\n  phone_digits  \u2014 nullable, integer, 1\u201315\n  status        \u2014 nullable, boolean (default: true)\n\nError responses:\n  401 \u2014 Unauthenticated\n  422 \u2014 Validation failed (duplicate name, invalid continent_id)"
           },
           "response": []
         },
@@ -1070,7 +1070,7 @@
                 "{{country_identifier}}"
               ]
             },
-            "description": "Requires sa_token.\n\nFetches a single country by identifier including its continent relation.\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found"
+            "description": "Requires sa_token.\n\nFetches a single country by identifier including its continent relation.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Country not found"
           },
           "response": []
         },
@@ -1124,7 +1124,7 @@
                 "{{country_identifier}}"
               ]
             },
-            "description": "Requires sa_token.\n\nUpdates an existing country. All fields are optional (partial update).\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found\n  422 — Validation failed (duplicate name, invalid continent_id)"
+            "description": "Requires sa_token.\n\nUpdates an existing country. All fields are optional (partial update).\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Country not found\n  422 \u2014 Validation failed (duplicate name, invalid continent_id)"
           },
           "response": []
         },
@@ -1160,7 +1160,7 @@
                 "{{country_identifier}}"
               ]
             },
-            "description": "Requires sa_token.\n\nSoft-deletes the country.\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found"
+            "description": "Requires sa_token.\n\nSoft-deletes the country.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Country not found"
           },
           "response": []
         },
@@ -1202,14 +1202,14 @@
                 "restore"
               ]
             },
-            "description": "Requires sa_token.\n\nRestores a previously soft-deleted country.\n\nError responses:\n  401 — Unauthenticated\n  404 — Country not found in trash"
+            "description": "Requires sa_token.\n\nRestores a previously soft-deleted country.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Country not found in trash"
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Tenant — Health",
+      "name": "Tenant \u2014 Health",
       "description": "Health check on the tenant domain. Confirms tenant resolution is working.\n\nNOTE: Requests go to {{tenant_base_url}} = http://{{tenant_id}}.localhost:8020/v1\nEnsure {{tenant_id}} is set (use Create Tenant or List Tenants first).",
       "auth": {
         "type": "noauth"
@@ -1262,7 +1262,7 @@
       ]
     },
     {
-      "name": "Tenant — Auth",
+      "name": "Tenant \u2014 Auth",
       "description": "Tenant-domain user authentication. Requests go to http://{{tenant_id}}.localhost:8020/v1.\n\nThis folder uses {{tenant_token}} Bearer auth (not sa_token).\nRegister and Login auto-save tenant_token to collection variables.",
       "auth": {
         "type": "bearer",
@@ -1334,7 +1334,7 @@
                 "register"
               ]
             },
-            "description": "Public endpoint on the tenant domain.\n\nCreates a new user scoped to the resolved tenant. Returns Bearer token.\n\nField rules:\n  first_name — required, max 100\n  last_name  — required, max 100\n  email      — required, valid email, unique within the tenant\n  password   — required, min 8 chars\n  password_confirmation — required, must match password\n\nError responses:\n  422 — Validation failed (duplicate email, password mismatch, etc.)"
+            "description": "Public endpoint on the tenant domain.\n\nCreates a new user scoped to the resolved tenant. Returns Bearer token.\n\nField rules:\n  first_name \u2014 required, max 100\n  last_name  \u2014 required, max 100\n  email      \u2014 required, valid email, unique within the tenant\n  password   \u2014 required, min 8 chars\n  password_confirmation \u2014 required, must match password\n\nError responses:\n  422 \u2014 Validation failed (duplicate email, password mismatch, etc.)"
           },
           "response": []
         },
@@ -1395,7 +1395,7 @@
                 "login"
               ]
             },
-            "description": "Public endpoint on the tenant domain. Throttled: 10 requests/minute.\n\nAuthenticates a tenant user scoped to the resolved tenant. Returns Bearer token.\n\nError responses:\n  401 — Invalid credentials\n  403 — Account disabled\n  422 — Validation failed"
+            "description": "Public endpoint on the tenant domain. Throttled: 10 requests/minute.\n\nAuthenticates a tenant user scoped to the resolved tenant. Returns Bearer token.\n\nError responses:\n  401 \u2014 Invalid credentials\n  403 \u2014 Account disabled\n  422 \u2014 Validation failed"
           },
           "response": []
         },
@@ -1440,7 +1440,7 @@
                 "me"
               ]
             },
-            "description": "Requires tenant_token (Bearer — inherited from folder).\n\nAlso validates that the token belongs to this tenant (EnsureTokenMatchesTenant middleware).\n\nThe meta.tenant field confirms the resolved tenant context.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant (TENANT_MISMATCH)"
+            "description": "Requires tenant_token (Bearer \u2014 inherited from folder).\n\nAlso validates that the token belongs to this tenant (EnsureTokenMatchesTenant middleware).\n\nThe meta.tenant field confirms the resolved tenant context.\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Token belongs to a different tenant (TENANT_MISMATCH)"
           },
           "response": []
         },
@@ -1481,14 +1481,14 @@
                 "logout"
               ]
             },
-            "description": "Requires tenant_token (Bearer — inherited from folder).\n\nRevokes the Passport access token and clears tenant_token collection variable.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant"
+            "description": "Requires tenant_token (Bearer \u2014 inherited from folder).\n\nRevokes the Passport access token and clears tenant_token collection variable.\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Token belongs to a different tenant"
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Tenant — Preambles",
+      "name": "Tenant \u2014 Preambles",
       "description": "Tenant-scoped preamble management endpoints.\n\nRequires tenant_token (Bearer auth) and valid tenant resolution via {{tenant_base_url}}.\n\nCreate Preamble auto-saves preamble_identifier for subsequent requests.",
       "auth": {
         "type": "bearer",
@@ -1634,7 +1634,7 @@
                 "preambles"
               ]
             },
-            "description": "Requires tenant_token.\n\nCreates a new preamble scoped to the resolved tenant.\n\nField rules:\n  name           — required, max 255\n  description    — nullable, text\n  status         — nullable, one of the allowed statuses (e.g. draft, active, archived)\n  effective_date — nullable, valid date (YYYY-MM-DD)\n  is_featured    — nullable, boolean\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  422 — Validation failed"
+            "description": "Requires tenant_token.\n\nCreates a new preamble scoped to the resolved tenant.\n\nField rules:\n  name           \u2014 required, max 255\n  description    \u2014 nullable, text\n  status         \u2014 nullable, one of the allowed statuses (e.g. draft, active, archived)\n  effective_date \u2014 nullable, valid date (YYYY-MM-DD)\n  is_featured    \u2014 nullable, boolean\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Token belongs to a different tenant\n  422 \u2014 Validation failed"
           },
           "response": []
         },
@@ -1681,7 +1681,7 @@
                 "{{preamble_identifier}}"
               ]
             },
-            "description": "Requires tenant_token.\n\nFetches a single preamble by identifier.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found"
+            "description": "Requires tenant_token.\n\nFetches a single preamble by identifier.\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Token belongs to a different tenant\n  404 \u2014 Preamble not found"
           },
           "response": []
         },
@@ -1735,7 +1735,7 @@
                 "{{preamble_identifier}}"
               ]
             },
-            "description": "Requires tenant_token.\n\nUpdates an existing preamble. All fields are optional (partial update).\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found\n  422 — Validation failed"
+            "description": "Requires tenant_token.\n\nUpdates an existing preamble. All fields are optional (partial update).\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Token belongs to a different tenant\n  404 \u2014 Preamble not found\n  422 \u2014 Validation failed"
           },
           "response": []
         },
@@ -1771,7 +1771,7 @@
                 "{{preamble_identifier}}"
               ]
             },
-            "description": "Requires tenant_token.\n\nSoft-deletes the preamble.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found"
+            "description": "Requires tenant_token.\n\nSoft-deletes the preamble.\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Token belongs to a different tenant\n  404 \u2014 Preamble not found"
           },
           "response": []
         },
@@ -1813,14 +1813,14 @@
                 "restore"
               ]
             },
-            "description": "Requires tenant_token.\n\nRestores a previously soft-deleted preamble.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found in trash"
+            "description": "Requires tenant_token.\n\nRestores a previously soft-deleted preamble.\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Token belongs to a different tenant\n  404 \u2014 Preamble not found in trash"
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Tenant — Users",
+      "name": "Tenant \u2014 Users",
       "description": "Tenant-scoped user management endpoints.\n\nRequires tenant_token (Bearer auth) and valid tenant resolution via {{tenant_base_url}}.\n\nCreate User auto-saves user_identifier for subsequent requests.",
       "auth": {
         "type": "bearer",
@@ -1950,7 +1950,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Mr.\",\n  \"first_name\": \"John\",\n  \"middle_name\": \"Doe\",\n  \"last_name\": \"Smith\",\n  \"username\": \"john.smith\",\n  \"email\": \"john.smith@example.com\",\n  \"country_code\": \"+254\",\n  \"phone\": \"0712345678\",\n  \"password\": \"Password1\",\n  \"preferred_timezone\": \"Africa/Nairobi\",\n  \"office_location\": \"Nairobi HQ\",\n  \"is_active\": true\n}",
+              "raw": "{\n  \"title\": \"Mrs.\",\n  \"first_name\": \"Elma\",\n  \"middle_name\": null,\n  \"last_name\": \"Wambui\",\n  \"username\": \"elma\",\n  \"email\": \"elma@airtraffic.com\",\n  \"country_code\": \"+254\",\n  \"phone\": \"0727905402\",\n  \"password\": \"T@ngo540\",\n  \"role\": \"auditor\",\n  \"preferred_timezone\": \"Africa/Nairobi\",\n  \"office_location\": \"Lengai House, Wilson Airport\",\n  \"notes\": null,\n  \"is_active\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1966,7 +1966,7 @@
                 "users"
               ]
             },
-            "description": "Requires tenant_token.\n\nCreates a new user in the resolved tenant.\n\nField rules:\n  title          — nullable, max 50\n  first_name     — required, max 100\n  middle_name    — nullable, max 100\n  last_name      — required, max 100\n  username       — required, unique within tenant, max 100\n  email          — required, unique within tenant, max 255\n  country_code   — nullable, e.g. \"+254\"\n  phone          — nullable, max 30\n  password       — required, min 8, must include letters and numbers\n  preferred_timezone — nullable\n  office_location — nullable\n  avatar         — nullable, URL string\n  notes          — nullable\n  is_active      — nullable boolean (defaults to true)\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.create permission)\n  422 — Validation failed"
+            "description": "Requires tenant_token.\n\nCreates a new user in the resolved tenant.\n\nField rules:\n  title          \u2014 nullable, max 50\n  first_name     \u2014 required, max 100\n  middle_name    \u2014 nullable, max 100\n  last_name      \u2014 required, max 100\n  username       \u2014 required, unique within tenant, max 100\n  email          \u2014 required, unique within tenant, max 255\n  country_code   \u2014 nullable, e.g. \"+254\"\n  phone          \u2014 nullable, max 30\n  password       \u2014 required, min 8, must include letters and numbers\n  preferred_timezone \u2014 nullable\n  office_location \u2014 nullable\n  avatar         \u2014 nullable, URL string\n  notes          \u2014 nullable\n  is_active      \u2014 nullable boolean (defaults to true)\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Forbidden (missing user.create permission)\n  422 \u2014 Validation failed"
           },
           "response": []
         },
@@ -2013,7 +2013,7 @@
                 "{{user_identifier}}"
               ]
             },
-            "description": "Requires tenant_token.\n\nFetches a single user by identifier.\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.view permission)\n  404 — User not found"
+            "description": "Requires tenant_token.\n\nFetches a single user by identifier.\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Forbidden (missing user.view permission)\n  404 \u2014 User not found"
           },
           "response": []
         },
@@ -2067,7 +2067,7 @@
                 "{{user_identifier}}"
               ]
             },
-            "description": "Requires tenant_token.\n\nUpdates an existing user. All fields are optional (partial update).\nSend password only when changing it.\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.edit permission)\n  404 — User not found\n  422 — Validation failed"
+            "description": "Requires tenant_token.\n\nUpdates an existing user. All fields are optional (partial update).\nSend password only when changing it.\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Forbidden (missing user.edit permission)\n  404 \u2014 User not found\n  422 \u2014 Validation failed"
           },
           "response": []
         },
@@ -2103,7 +2103,7 @@
                 "{{user_identifier}}"
               ]
             },
-            "description": "Requires tenant_token.\n\nSoft-deletes the user. Cannot delete yourself.\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.delete permission or attempting self-delete)\n  404 — User not found"
+            "description": "Requires tenant_token.\n\nSoft-deletes the user. Cannot delete yourself.\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Forbidden (missing user.delete permission or attempting self-delete)\n  404 \u2014 User not found"
           },
           "response": []
         },
@@ -2145,7 +2145,7 @@
                 "restore"
               ]
             },
-            "description": "Requires tenant_token.\n\nRestores a soft-deleted user.\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.restore permission)\n  404 — User not found in trash"
+            "description": "Requires tenant_token.\n\nRestores a soft-deleted user.\n\nError responses:\n  401 \u2014 Unauthenticated\n  403 \u2014 Forbidden (missing user.restore permission)\n  404 \u2014 User not found in trash"
           },
           "response": []
         }
