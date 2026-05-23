@@ -6,7 +6,7 @@ description: |-
 
   Create Preamble auto-saves preamble_identifier for subsequent requests.
 auth:
-  - id: 9e628252-7964-4774-bfe7-3ddbb80755b8
+  - id: d9605167-bf63-49cb-ae90-5488792aa477
     type: bearer
     name: bearer auth
     credentials:
