@@ -245,7 +245,7 @@ describe('TenantResource', function (): void {
 
         expect($resource)->toHaveKeys([
             'id', 'identifier', 'reference_number', 'name', 'domain', 'logo', 'status',
-            'owner_id', 'country_id', 'data_center',
+            'country_id', 'data_center',
             'created_by', 'updated_by', 'created_at', 'updated_at',
         ]);
     });
@@ -1362,7 +1362,7 @@ describe('Tenant response structure', function (): void {
             ->assertJsonStructure([
                 'data' => [
                     'id', 'identifier', 'reference_number', 'name', 'domain',
-                    'logo', 'status', 'owner_id', 'country_id', 'data_center',
+                    'logo', 'status', 'owner', 'country_id', 'data_center',
                     'domains', 'created_by', 'updated_by', 'created_at', 'updated_at',
                 ],
             ]);
@@ -1372,7 +1372,7 @@ describe('Tenant response structure', function (): void {
         expect($response->json('data.logo'))->toBe('https://example.com/logo.png');
         expect($response->json('data.country_id'))->toBe(42);
         expect($response->json('data.data_center'))->toBe('eu-west-1');
-        expect($response->json('data.owner_id'))->toBe($admin->id);
+        expect($response->json('data.owner.id'))->toBe($admin->identifier);
     });
 
     it('returns 204 No Content on successful delete', function (): void {

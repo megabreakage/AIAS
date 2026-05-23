@@ -19,7 +19,7 @@ final class TenantController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Tenant::query()->with('domains');
+        $query = Tenant::query()->with('domains', 'owner');
 
         $filters = TenantFilters::fromRequest($request);
         $filters->apply($query);
@@ -61,7 +61,7 @@ final class TenantController extends BaseApiController
             Log::info('Tenant created', ['id' => $tenant->id, 'domain' => $domain]);
 
             return $this->success(
-                TenantResource::make($tenant->refresh()->load('domains'))->resolve(),
+                TenantResource::make($tenant->refresh()->load('domains', 'owner'))->resolve(),
                 Response::HTTP_CREATED,
             );
         } catch (\Throwable $e) {
@@ -81,7 +81,7 @@ final class TenantController extends BaseApiController
 
     public function show(string $id): JsonResponse
     {
-        $tenant = Tenant::with('domains')->find($id);
+        $tenant = Tenant::with('domains', 'owner')->find($id);
 
         if (!$tenant) {
             return $this->error(
