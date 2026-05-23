@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models\Central;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Auditable;
@@ -89,23 +88,59 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
         });
     }
 
+    /**
+     * Get the route key name for route model binding.
+     */
     public function getRouteKeyName(): string
     {
         return 'identifier';
     }
 
-    public function owner(): BelongsTo
+    /**
+     * Get the user who created the record.
+     */
+    public function createdBy()
     {
-        return $this->belongsTo(SuperAdmin::class, 'owner_id');
+        return $this->belongsTo(Tenant::class, 'created_by');
     }
 
-    public function creator(): BelongsTo
+    /**
+     * Get the user who last updated the record.
+     */
+    public function updatedBy()
     {
-        return $this->belongsTo(SuperAdmin::class, 'created_by');
+        return $this->belongsTo(Tenant::class, 'updated_by');
     }
 
-    public function updater(): BelongsTo
+    /**
+     * Get the user who created the record.
+     */
+    public function creator()
     {
-        return $this->belongsTo(SuperAdmin::class, 'updated_by');
+        return $this->belongsTo(Tenant::class, 'created_by');
+    }
+
+    /**
+     * Get the user who last updated the record.
+     */
+    public function updater()
+    {
+        return $this->belongsTo(Tenant::class, 'updated_by');
+    }
+
+    /**
+     * Scope to get records created by a specific user.
+     */
+    public function scopeCreatedBy($query, $userId)
+    {
+        return $query->where('created_by', $userId);
+    }
+
+    /**
+     * Scope to get records updated by a specific user.
+     */
+    public function scopeUpdatedBy($query, $userId)
+    {
+        return $query->where('updated_by', $userId);
     }
 }

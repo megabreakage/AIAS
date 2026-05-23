@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models\Central;
 
+use App\Models\BaseModel;
 use App\Support\Concerns\HasAuditTrail;
 use App\Support\Concerns\HasUuidIdentifier;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 
-final class Country extends Model implements Auditable
+final class Country extends BaseModel implements Auditable
 {
     use HasAuditTrail;
     use HasFactory;
@@ -51,38 +50,8 @@ final class Country extends Model implements Auditable
         ];
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'identifier';
-    }
-
-    protected static function booted(): void
-    {
-        self::creating(function (self $country): void {
-            if (empty($country->slug)) {
-                $country->slug = Str::slug($country->name);
-            }
-        });
-
-        self::updating(function (self $country): void {
-            if ($country->isDirty('name') && !$country->isDirty('slug')) {
-                $country->slug = Str::slug($country->name);
-            }
-        });
-    }
-
     public function continent(): BelongsTo
     {
         return $this->belongsTo(Continent::class);
-    }
-
-    public function createdBy(): BelongsTo
-    {
-        return $this->belongsTo(SuperAdmin::class, 'created_by');
-    }
-
-    public function updatedBy(): BelongsTo
-    {
-        return $this->belongsTo(SuperAdmin::class, 'updated_by');
     }
 }

@@ -18,10 +18,10 @@ final class ContinentResource extends JsonResource
             'short_code' => $this->short_code,
             'iso_code' => $this->iso_code,
             'status' => $this->status,
-            'created_by' => $this->whenLoaded('createdBy', fn () => [
-                'id' => $this->createdBy?->id,
-                'identifier' => $this->createdBy?->identifier,
-                'name' => trim(($this->createdBy?->first_name ?? '').' '.($this->createdBy?->last_name ?? '')),
+            'created_by' => $this->whenLoaded('creator', fn () => [
+                'id' => $this->creator?->id,
+                'identifier' => $this->creator?->identifier,
+                'name' => trim(($this->creator?->first_name ?? '').' '.($this->creator?->last_name ?? '')),
             ]),
             'updated_by' => $this->whenLoaded('updatedBy', fn () => [
                 'id' => $this->updatedBy?->id,
