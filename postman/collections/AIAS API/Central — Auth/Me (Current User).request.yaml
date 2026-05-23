@@ -2,7 +2,7 @@ $kind: http-request
 description: |-
   Requires central_token (Bearer — inherited from collection).
 
-  Returns authenticated super-admin profile including is_active flag.
+  Returns authenticated user profile including roles and tenant association.
 
   Error responses:
     401 — Unauthenticated
@@ -14,7 +14,7 @@ scripts:
   - type: afterResponse
     code: |-
       pm.test('Status 200', () => pm.response.to.have.status(200));
-      pm.test('Admin profile', () => {
+      pm.test('User profile', () => {
           const b = pm.response.json();
           pm.expect(b.data).to.have.all.keys('id', 'first_name', 'last_name', 'email', 'is_active');
           pm.expect(b.meta).to.have.property('version', 'v1');

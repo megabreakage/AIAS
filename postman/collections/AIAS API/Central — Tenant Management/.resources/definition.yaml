@@ -1,6 +1,7 @@
 $kind: collection
 description: |-
-  Tenant CRUD on the central domain. All endpoints require super-admin Bearer token (central_token).
+  Tenant CRUD on the central domain. All endpoints require authenticated Bearer token (central_token)
+  from a user with the super-admin role.
 
   Create Tenant auto-saves tenant_id for use in tenant-domain requests.
 order: 3000

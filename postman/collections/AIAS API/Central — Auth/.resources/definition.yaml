@@ -1,0 +1,6 @@
+$kind: collection
+description: |-
+  Central domain authentication (unified). Login auto-saves central_token to collection variables.
+  All subsequent central requests inherit the collection-level Bearer auth.
+  Super-admin is a role on the User model, not a separate entity.
+order: 2000

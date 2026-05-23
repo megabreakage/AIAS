@@ -4,11 +4,14 @@ description: |-
   Adaptive Intelligent Auditing System — Multi-tenant Laravel 13 API.
 
   Two routing contexts:
-    Central domain (localhost:8020) — prefix /api/v1 — super-admin auth + tenant management
+    Central domain (localhost:8020) — prefix /api/v1 — unified auth + tenant management
     Tenant domain ({tenant_id}.localhost:8020) — prefix /v1 — tenant user auth + operations
 
+  Authentication is unified — all users (including super-admins) authenticate via the same
+  endpoint. Super-admin is a role, not a separate entity or guard.
+
   Quick start:
-    1. Super Admin Auth / Login  →  central_token auto-saved
+    1. Central Auth / Login  →  central_token auto-saved
     2. Tenant Management / Create Tenant  →  tenant_id auto-saved
     3. Tenant Auth / Register or Login  →  tenant_token auto-saved
 

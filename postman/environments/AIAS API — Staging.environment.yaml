@@ -20,7 +20,7 @@ values:
     description: Preamble identifier. Auto-set by Create/List Preambles.
   - key: central_token
     value: ""
-    description: Super-admin Bearer token. Auto-set by SA Login.
+    description: Central Bearer token (any user). Auto-set by Central Auth Login.
   - key: tenant_token
     value: ""
     description: Tenant user Bearer token. Auto-set by Tenant Login/Register.
