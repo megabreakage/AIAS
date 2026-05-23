@@ -1,28 +1,28 @@
 name: AIAS API — Local
 values:
   - key: central_base_url
-    value: "http://localhost:8020/api/v1"
-    description: "Central domain. Start server: php artisan serve --host=localhost --port=8020"
+    value: 'http://localhost:8020/api/v1'
+    description: 'Central domain. Start server: php artisan serve --host=localhost --port=8020'
   - key: tenant_base_url
-    value: "http://{{tenant_id}}.localhost:8020/v1"
+    value: 'http://{{tenant_id}}.localhost:8020/v1'
     description: Tenant domain. Resolved from tenant_id variable. Requires /etc/hosts or local DNS for subdomain routing.
   - key: tenant_id
     value: acme-corp
     description: Active tenant slug. Must match a tenant in the database.
   - key: continent_identifier
-    value: ""
+    value: ''
     description: Continent identifier. Auto-set by Create/List Continents.
   - key: country_identifier
-    value: ""
+    value: ''
     description: Country identifier. Auto-set by Create/List Countries.
   - key: preamble_identifier
-    value: ""
+    value: ''
     description: Preamble identifier. Auto-set by Create/List Preambles.
   - key: central_token
-    value: ""
+    value: ''
     description: Super-admin Bearer token. Auto-set by SA Login.
   - key: tenant_token
-    value: ""
+    value: ''
     description: Tenant user Bearer token. Auto-set by Tenant Login/Register.
   - key: sa_email
     value: sa@aias.system
@@ -31,11 +31,11 @@ values:
     value: password
     description: Default super-admin password (seeded by DatabaseSeeder).
   - key: tenant_user_identifier
-    value: ""
+    value: ''
     description: Tenant user identifier. Auto-set by Create Tenant User.
   - key: user_identifier
-    value: ""
+    value: ''
     description: Tenant user identifier (UUID). Auto-set by List/Create User.
   - key: tenant_owner_id
-    value: ""
+    value: ''
     description: Central user ID (integer). Auto-set by Register Tenant Owner (Step 1). Used as owner_id in Create Tenant (Step 2).
