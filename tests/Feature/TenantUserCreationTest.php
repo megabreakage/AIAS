@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Central\TenantUserController;
 use App\Http\Requests\Central\User\CreateTenantUserRequest;
-use App\Models\Central\SuperAdmin;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Passport\Passport;
@@ -12,16 +12,16 @@ use Laravel\Passport\Passport;
 uses(DatabaseTransactions::class);
 
 beforeEach(function (): void {
-    ensurePassportPersonalAccessClient('super_admins');
+    ensurePassportPersonalAccessClient('users');
 });
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-function authenticatedSA(): SuperAdmin
+function authenticatedSA(): User
 {
-    $admin = SuperAdmin::factory()->create();
-    Passport::actingAs($admin, [], 'super_admin');
+    $admin = User::factory()->superAdmin()->create();
+    Passport::actingAs($admin, [], 'api');
 
     return $admin;
 }
@@ -64,7 +64,7 @@ describe('TenantUser route registration', function (): void {
         $route = collect(app('router')->getRoutes()->getRoutes())
             ->first(fn ($r) => $r->uri() === 'api/v1/tenants/{id}/users' && in_array('POST', $r->methods(), true));
 
-        expect($route->gatherMiddleware())->toContain('auth:super_admin');
+        expect($route->gatherMiddleware())->toContain('auth:api');
     });
 });
 

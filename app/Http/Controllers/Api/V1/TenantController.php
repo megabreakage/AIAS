@@ -7,8 +7,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Filters\Central\Tenant\TenantFilters;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\Tenant\TenantResource;
-use App\Models\Central\CentralUser;
 use App\Models\Central\Tenant;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,8 +39,8 @@ final class TenantController extends BaseApiController
 
         $domain = $data['domain'] ?? $this->generateUniqueDomain($data['name']);
 
-        /** @var CentralUser $owner */
-        $owner = CentralUser::on('central')->findOrFail($data['owner_id']);
+        /** @var User $owner */
+        $owner = User::findOrFail($data['owner_id']);
 
         Log::info('Creating tenant', ['name' => $data['name'], 'domain' => $domain, 'owner_id' => $owner->id]);
 
@@ -48,22 +48,22 @@ final class TenantController extends BaseApiController
             $tenant = DB::transaction(function () use ($data, $domain, $owner): Tenant {
                 /** @var Tenant $tenant */
                 $tenant = Tenant::create([
-                    'owner_id'    => $owner->id,
-                    'name'        => $data['name'],
-                    'domain'      => $domain,
-                    'logo'        => $data['logo'] ?? null,
-                    'country_id'  => $data['country_id'] ?? null,
+                    'owner_id' => $owner->id,
+                    'name' => $data['name'],
+                    'domain' => $domain,
+                    'logo' => $data['logo'] ?? null,
+                    'country_id' => $data['country_id'] ?? null,
                     'data_center' => $data['data_center'] ?? null,
-                    'status'      => $data['status'] ?? 'active',
-                    'data'        => [
+                    'status' => $data['status'] ?? 'active',
+                    'data' => [
                         'owner' => [
-                            'id'         => $owner->id,
+                            'id' => $owner->id,
                             'identifier' => $owner->identifier,
-                            'email'      => $owner->email,
-                            'username'   => $owner->username,
+                            'email' => $owner->email,
+                            'username' => $owner->username,
                             'first_name' => $owner->first_name,
-                            'last_name'  => $owner->last_name,
-                            'password'   => $owner->getAttributes()['password'],
+                            'last_name' => $owner->last_name,
+                            'password' => $owner->getAttributes()['password'],
                         ],
                     ],
                 ]);
@@ -81,7 +81,7 @@ final class TenantController extends BaseApiController
             );
         } catch (\Throwable $e) {
             Log::error('Failed to create tenant', [
-                'name'  => $data['name'],
+                'name' => $data['name'],
                 'error' => $e->getMessage(),
             ]);
 

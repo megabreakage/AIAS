@@ -40,7 +40,7 @@ final class TenantUserController extends BaseApiController
         $data['password'] = Hash::make($data['password']);
         $data['is_active'] = $data['is_active'] ?? true;
 
-        Log::info('SuperAdmin creating tenant user', [
+        Log::info('Creating tenant user', [
             'tenant' => $tenantId,
             'email' => $data['email'],
             'role' => $role,
@@ -89,7 +89,7 @@ final class TenantUserController extends BaseApiController
                 return $user;
             });
 
-            Log::info('Tenant user created by SuperAdmin', [
+            Log::info('Tenant user created', [
                 'identifier' => $user->identifier,
                 'tenant' => $tenantId,
                 'role' => $role,

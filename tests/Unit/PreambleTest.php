@@ -11,11 +11,11 @@ use App\Http\Requests\Tenant\Preambles\CreatePreambleRequest;
 use App\Http\Requests\Tenant\Preambles\UpdatePreambleRequest;
 use App\Http\Resources\Tenant\Preamble\PreambleCollection;
 use App\Http\Resources\Tenant\Preamble\PreambleResource;
+use App\Models\Concerns\TenantConnection;
 use App\Models\Tenant\Preamble;
 use App\Models\User;
 use App\Policies\PreamblePolicy;
 use App\Repositories\Tenant\PreambleRepository;
-use App\Support\Concerns\HasUuidIdentifier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -125,9 +125,9 @@ describe('Preamble model traits', function (): void {
             ->toContain(HasFactory::class);
     });
 
-    it('uses HasUuidIdentifier', function (): void {
+    it('uses TenantConnection', function (): void {
         expect(class_uses_recursive(Preamble::class))
-            ->toContain(HasUuidIdentifier::class);
+            ->toContain(TenantConnection::class);
     });
 });
 

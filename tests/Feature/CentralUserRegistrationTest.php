@@ -3,8 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Requests\Central\User\RegisterCentralUserRequest;
-use App\Models\Central\CentralUser;
-use App\Models\Central\SuperAdmin;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
@@ -15,16 +14,16 @@ use Stancl\Tenancy\Events\TenantDeleted;
 uses(DatabaseTransactions::class);
 
 beforeEach(function (): void {
-    ensurePassportPersonalAccessClient('super_admins');
+    ensurePassportPersonalAccessClient('users');
 });
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-function authenticatedSuperAdminForUserTest(): SuperAdmin
+function authenticatedSuperAdminForUserTest(): User
 {
-    $admin = SuperAdmin::factory()->create();
-    Passport::actingAs($admin, [], 'super_admin');
+    $admin = User::factory()->superAdmin()->create();
+    Passport::actingAs($admin, [], 'api');
 
     return $admin;
 }
@@ -66,7 +65,7 @@ describe('CentralUser route registration', function (): void {
         $route = collect(app('router')->getRoutes()->getRoutes())
             ->first(fn ($r) => $r->uri() === 'api/v1/users' && in_array('POST', $r->methods(), true));
 
-        expect($route->gatherMiddleware())->toContain('auth:super_admin');
+        expect($route->gatherMiddleware())->toContain('auth:api');
     });
 });
 
@@ -242,7 +241,7 @@ describe('Step 1 — Register central user (tenant owner)', function (): void {
         $response->assertCreated();
 
         $identifier = $response->json('data.identifier');
-        $user = CentralUser::on('central')->where('identifier', $identifier)->first();
+        $user = User::where('identifier', $identifier)->first();
 
         expect($user)->not->toBeNull();
         expect($user->getAttributes()['password'])->not->toBe('Password1');
@@ -271,7 +270,7 @@ describe('Steps 1+2 — Register owner then create tenant', function (): void {
         $userResponse = $this->postJson('/api/v1/users', validCentralUserPayload());
         $userResponse->assertCreated();
 
-        $ownerId = CentralUser::on('central')
+        $ownerId = User::query()
             ->where('email', 'jane.owner@example.com')
             ->value('id');
 
@@ -285,17 +284,17 @@ describe('Steps 1+2 — Register owner then create tenant', function (): void {
             ->assertJsonPath('data.name', 'Jane Mwangi Holdings');
     });
 
-    it('rejects tenant creation when owner_id is a super_admin id', function (): void {
-        $admin = SuperAdmin::factory()->create();
-        Passport::actingAs($admin, [], 'super_admin');
+    it('allows using any valid user id as owner_id', function (): void {
+        $admin = User::factory()->superAdmin()->create();
+        Passport::actingAs($admin, [], 'api');
 
-        // Attempt to use the SuperAdmin's id as owner_id (no longer valid)
+        $owner = User::factory()->create();
+
         $this->postJson('/api/v1/tenants', [
-            'name' => 'Invalid Owner Corp',
-            'owner_id' => $admin->id,
+            'name' => 'Valid Owner Corp',
+            'owner_id' => $owner->id,
         ])
-            ->assertUnprocessable()
-            ->assertJsonPath('error.code', 'VALIDATION_FAILED')
-            ->assertJsonPath('error.details.owner_id.0', fn ($v) => str_contains($v, 'owner'));
+            ->assertCreated()
+            ->assertJsonPath('data.name', 'Valid Owner Corp');
     });
 });

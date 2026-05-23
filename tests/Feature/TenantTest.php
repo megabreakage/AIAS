@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Enums\TenantStatus;
 use App\Filters\Central\Tenant\Filters\ReferenceNumberFilter;
 use App\Filters\Central\Tenant\Filters\SearchTermFilter;
 use App\Filters\Central\Tenant\TenantFilters;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\Tenant\TenantResource;
-use App\Models\Central\CentralUser;
-use App\Models\Central\SuperAdmin;
 use App\Models\Central\Tenant;
-use App\Models\Central\TenantStatus;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,14 +28,14 @@ uses(DatabaseTransactions::class);
 // ---------------------------------------------------------------------------
 // Helper — create a central user (tenant owner) and authenticate as super admin
 // ---------------------------------------------------------------------------
-function createTenantOwner(): CentralUser
+function createTenantOwner(): User
 {
-    return CentralUser::factory()->create();
+    return User::factory()->create();
 }
-function authenticatedSuperAdmin(): SuperAdmin
+function authenticatedSuperAdmin(): User
 {
-    $admin = SuperAdmin::factory()->create();
-    Passport::actingAs($admin, [], 'super_admin');
+    $admin = User::factory()->superAdmin()->create();
+    Passport::actingAs($admin, [], 'api');
 
     return $admin;
 }
@@ -1935,17 +1934,17 @@ describe('Tenant multiple operations', function (): void {
 
 describe('Tenant relationships', function (): void {
 
-    it('belongs to owner (SuperAdmin)', function (): void {
+    it('belongs to owner (User)', function (): void {
         $tenant = new Tenant;
         expect($tenant->owner())->toBeInstanceOf(BelongsTo::class);
     });
 
-    it('belongs to creator (SuperAdmin)', function (): void {
+    it('belongs to creator (User)', function (): void {
         $tenant = new Tenant;
         expect($tenant->creator())->toBeInstanceOf(BelongsTo::class);
     });
 
-    it('belongs to updater (SuperAdmin)', function (): void {
+    it('belongs to updater (User)', function (): void {
         $tenant = new Tenant;
         expect($tenant->updater())->toBeInstanceOf(BelongsTo::class);
     });
@@ -1966,13 +1965,13 @@ describe('Tenant authentication guard specificity', function (): void {
         Event::fake([TenantCreated::class, TenantDeleted::class]);
     });
 
-    it('requires super_admin guard for tenant list', function (): void {
+    it('requires auth for tenant list', function (): void {
         // Regular user token should not work
         $this->getJson('/api/v1/tenants')
             ->assertUnauthorized();
     });
 
-    it('requires super_admin guard for tenant creation', function (): void {
+    it('requires auth for tenant creation', function (): void {
         $this->postJson('/api/v1/tenants', [
             'name' => 'Guard Test Corp',
             'owner_id' => 1,
@@ -1980,12 +1979,12 @@ describe('Tenant authentication guard specificity', function (): void {
             ->assertUnauthorized();
     });
 
-    it('requires super_admin guard for tenant show', function (): void {
+    it('requires auth for tenant show', function (): void {
         $this->getJson('/api/v1/tenants/1')
             ->assertUnauthorized();
     });
 
-    it('requires super_admin guard for tenant deletion', function (): void {
+    it('requires auth for tenant deletion', function (): void {
         $this->deleteJson('/api/v1/tenants/1')
             ->assertUnauthorized();
     });

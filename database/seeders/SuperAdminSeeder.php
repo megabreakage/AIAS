@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Central\SuperAdmin;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -21,8 +21,8 @@ class SuperAdminSeeder extends Seeder
         $firstName = $nameParts[0];
         $lastName = $nameParts[1] ?? 'Admin';
 
-        $superAdmin = SuperAdmin::withoutEvents(function () use ($email, $password, $firstName, $lastName): SuperAdmin {
-            return SuperAdmin::on('central')->firstOrCreate(
+        $superAdmin = User::withoutEvents(function () use ($email, $password, $firstName, $lastName): User {
+            return User::firstOrCreate(
                 ['email' => $email],
                 [
                     'identifier' => (string) Str::uuid(),

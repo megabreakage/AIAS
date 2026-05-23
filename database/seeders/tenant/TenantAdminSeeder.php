@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Seeders\Tenant;
 
-use App\Models\Central\CentralUser;
 use App\Models\Central\Tenant;
 use App\Models\User;
 use App\Notifications\TenantAdminWelcomeNotification;
@@ -26,21 +25,21 @@ class TenantAdminSeeder extends Seeder
             return User::firstOrCreate(
                 ['email' => $ownerData['email']],
                 [
-                    'identifier'         => (string) Str::uuid(),
-                    'title'              => null,
-                    'first_name'         => $ownerData['first_name'],
-                    'middle_name'        => null,
-                    'last_name'          => $ownerData['last_name'],
-                    'username'           => $ownerData['username'],
-                    'email_verified_at'  => now(),
-                    'country_code'       => '+254',
-                    'phone'              => null,
-                    'password'           => $ownerData['password'],
+                    'identifier' => (string) Str::uuid(),
+                    'title' => null,
+                    'first_name' => $ownerData['first_name'],
+                    'middle_name' => null,
+                    'last_name' => $ownerData['last_name'],
+                    'username' => $ownerData['username'],
+                    'email_verified_at' => now(),
+                    'country_code' => '+254',
+                    'phone' => null,
+                    'password' => $ownerData['password'],
                     'preferred_timezone' => 'Africa/Nairobi',
-                    'office_location'    => null,
-                    'is_active'          => true,
-                    'avatar'             => null,
-                    'notes'              => null,
+                    'office_location' => null,
+                    'is_active' => true,
+                    'avatar' => null,
+                    'notes' => null,
                 ],
             );
         });
@@ -49,13 +48,13 @@ class TenantAdminSeeder extends Seeder
             ->where('guard_name', 'api')
             ->first();
 
-        if (! $tenantRole) {
+        if (!$tenantRole) {
             $this->command->error('tenant role not found. Run TenantRolePermissionsSeeder first.');
 
             return;
         }
 
-        if (! $admin->hasRole('tenant', 'api')) {
+        if (!$admin->hasRole('tenant', 'api')) {
             $admin->assignRole($tenantRole);
         }
 
@@ -63,7 +62,7 @@ class TenantAdminSeeder extends Seeder
             $currentTenant->update([
                 'data' => array_merge((array) ($currentTenant->data ?? []), [
                     'admin_user_id' => $admin->id,
-                    'admin_email'   => $admin->email,
+                    'admin_email' => $admin->email,
                 ]),
             ]);
 
@@ -93,27 +92,27 @@ class TenantAdminSeeder extends Seeder
         if ($currentTenant !== null) {
             $ownerPayload = (array) ($currentTenant->data['owner'] ?? []);
 
-            if (! empty($ownerPayload['email'])) {
+            if (!empty($ownerPayload['email'])) {
                 return [
-                    'email'      => $ownerPayload['email'],
+                    'email' => $ownerPayload['email'],
                     'first_name' => $ownerPayload['first_name'] ?? 'Tenant',
-                    'last_name'  => $ownerPayload['last_name'] ?? 'Owner',
-                    'username'   => $ownerPayload['username'] ?? 'tenant_owner_'.Str::random(4),
-                    'password'   => $ownerPayload['password'] ?? Hash::make('password'),
+                    'last_name' => $ownerPayload['last_name'] ?? 'Owner',
+                    'username' => $ownerPayload['username'] ?? 'tenant_owner_'.Str::random(4),
+                    'password' => $ownerPayload['password'] ?? Hash::make('password'),
                 ];
             }
 
-            // 2. Look up CentralUser via owner_id
-            if (! empty($currentTenant->owner_id)) {
-                $centralUser = CentralUser::on('central')->find($currentTenant->owner_id);
+            // 2. Look up User via owner_id
+            if (!empty($currentTenant->owner_id)) {
+                $centralUser = User::find($currentTenant->owner_id);
 
                 if ($centralUser !== null) {
                     return [
-                        'email'      => $centralUser->email,
+                        'email' => $centralUser->email,
                         'first_name' => $centralUser->first_name,
-                        'last_name'  => $centralUser->last_name,
-                        'username'   => $centralUser->username,
-                        'password'   => $centralUser->getAttributes()['password'],
+                        'last_name' => $centralUser->last_name,
+                        'username' => $centralUser->username,
+                        'password' => $centralUser->getAttributes()['password'],
                     ];
                 }
             }
@@ -121,15 +120,14 @@ class TenantAdminSeeder extends Seeder
 
         // 3. Env-based fallback for legacy / manual seeding
         $tenantDomain = $currentTenant?->domain ?? $currentTenant?->domains?->first()?->domain ?? 'tenant.localhost';
-        $email        = (string) env('TEST_TENANT_ADMIN_EMAIL', "admin@{$tenantDomain}");
+        $email = (string) env('TEST_TENANT_ADMIN_EMAIL', "admin@{$tenantDomain}");
 
         return [
-            'email'      => $email,
+            'email' => $email,
             'first_name' => 'Tenant',
-            'last_name'  => 'Owner',
-            'username'   => 'tenant_owner_'.Str::random(4),
-            'password'   => Hash::make((string) env('TEST_TENANT_ADMIN_PASSWORD', 'password')),
+            'last_name' => 'Owner',
+            'username' => 'tenant_owner_'.Str::random(4),
+            'password' => Hash::make((string) env('TEST_TENANT_ADMIN_PASSWORD', 'password')),
         ];
     }
 }
-

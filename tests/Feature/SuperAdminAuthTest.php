@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\Central\SuperAdmin;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\Passport;
@@ -10,7 +10,7 @@ use Laravel\Passport\Passport;
 uses(DatabaseTransactions::class);
 
 beforeEach(function (): void {
-    ensurePassportPersonalAccessClient('super_admins');
+    ensurePassportPersonalAccessClient('users');
 });
 
 // ---------------------------------------------------------------------------
@@ -19,7 +19,7 @@ beforeEach(function (): void {
 
 describe('SuperAdmin login', function (): void {
     it('authenticates with valid credentials and returns a token', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
         $this->postJson('/api/v1/auth/login', [
             'email' => $admin->email,
@@ -34,7 +34,7 @@ describe('SuperAdmin login', function (): void {
     });
 
     it('returns a JWT access token', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
         $token = $this->postJson('/api/v1/auth/login', [
             'email' => $admin->email,
@@ -45,7 +45,7 @@ describe('SuperAdmin login', function (): void {
     });
 
     it('stores a non-revoked token in oauth_access_tokens', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
         $this->postJson('/api/v1/auth/login', [
             'email' => $admin->email,
@@ -64,7 +64,7 @@ describe('SuperAdmin login', function (): void {
     });
 
     it('rejects wrong password with 401', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
         $this->postJson('/api/v1/auth/login', [
             'email' => $admin->email,
@@ -84,7 +84,7 @@ describe('SuperAdmin login', function (): void {
     });
 
     it('rejects inactive admin with 403', function (): void {
-        $admin = SuperAdmin::factory()->inactive()->create();
+        $admin = User::factory()->superAdmin()->inactive()->create();
 
         $this->postJson('/api/v1/auth/login', [
             'email' => $admin->email,
@@ -122,7 +122,7 @@ describe('SuperAdmin login', function (): void {
     });
 
     it('does not expose password in login response', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
         $response = $this->postJson('/api/v1/auth/login', [
             'email' => $admin->email,
@@ -139,9 +139,9 @@ describe('SuperAdmin login', function (): void {
 
 describe('SuperAdmin /me endpoint', function (): void {
     it('returns admin profile when authenticated', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
-        Passport::actingAs($admin, [], 'super_admin');
+        Passport::actingAs($admin, [], 'api');
 
         $this->getJson('/api/v1/auth/me')
             ->assertOk()
@@ -156,9 +156,9 @@ describe('SuperAdmin /me endpoint', function (): void {
     });
 
     it('does not expose password in profile', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
-        Passport::actingAs($admin, [], 'super_admin');
+        Passport::actingAs($admin, [], 'api');
 
         expect(
             $this->getJson('/api/v1/auth/me')->assertOk()->json('data')
@@ -166,9 +166,9 @@ describe('SuperAdmin /me endpoint', function (): void {
     });
 
     it('returns identifier not database id in profile', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
-        Passport::actingAs($admin, [], 'super_admin');
+        Passport::actingAs($admin, [], 'api');
 
         $id = $this->getJson('/api/v1/auth/me')->assertOk()->json('data.id');
 
@@ -182,9 +182,9 @@ describe('SuperAdmin /me endpoint', function (): void {
 
 describe('SuperAdmin logout', function (): void {
     it('revokes the token on logout', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
-        Passport::actingAs($admin, [], 'super_admin');
+        Passport::actingAs($admin, [], 'api');
 
         $this->postJson('/api/v1/auth/logout')
             ->assertOk()
@@ -203,9 +203,9 @@ describe('SuperAdmin logout', function (): void {
 
 describe('SuperAdmin protected route access', function (): void {
     it('can access protected endpoints with a valid token', function (): void {
-        $admin = SuperAdmin::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
 
-        Passport::actingAs($admin, [], 'super_admin');
+        Passport::actingAs($admin, [], 'api');
 
         $this->getJson('/api/v1/tenants')
             ->assertOk();

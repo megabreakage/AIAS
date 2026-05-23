@@ -25,6 +25,7 @@ final class AuthController extends BaseApiController
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
+        /** @var User $user */
         $user = User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
@@ -79,6 +80,9 @@ final class AuthController extends BaseApiController
 
     public function me(Request $request): JsonResponse
     {
-        return $this->success(UserResource::make($request->user())->resolve());
+        $user = $request->user();
+        $user->load(['roles', 'tenant']);
+
+        return $this->success(UserResource::make($user)->resolve());
     }
 }

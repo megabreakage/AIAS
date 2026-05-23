@@ -6,7 +6,6 @@ namespace App\Providers;
 
 use App\Models\Central\Continent;
 use App\Models\Central\Country;
-use App\Models\Central\SuperAdmin;
 use App\Models\Tenant\Preamble;
 use App\Models\User;
 use App\Policies\ContinentPolicy;
@@ -26,13 +25,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Register policies
         Gate::policy(Continent::class, ContinentPolicy::class);
         Gate::policy(Country::class, CountryPolicy::class);
         Gate::policy(Preamble::class, PreamblePolicy::class);
         Gate::policy(User::class, UserPolicy::class);
 
-        // Reset Spatie permission cache when switching tenant context
         Event::listen(TenancyBootstrapped::class, function (): void {
             app(PermissionRegistrar::class)->forgetCachedPermissions();
         });
@@ -41,9 +38,8 @@ class AppServiceProvider extends ServiceProvider
             app(PermissionRegistrar::class)->forgetCachedPermissions();
         });
 
-        // Super admin bypasses all gate checks
         Gate::before(function (mixed $user, string $ability): ?bool {
-            if ($user instanceof SuperAdmin && $user->hasRole('super-admin')) {
+            if ($user instanceof User && $user->hasRole('super-admin')) {
                 return true;
             }
 

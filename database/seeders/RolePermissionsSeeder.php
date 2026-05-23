@@ -17,7 +17,7 @@ class RolePermissionsSeeder extends Seeder
                 'name' => 'super-admin',
                 'display_name' => 'Super Admin',
                 'description' => 'Has access to all system features and settings',
-                'guard_name' => 'super_admin',
+                'guard_name' => 'api',
             ],
             [
                 'name' => 'admin',
@@ -39,9 +39,9 @@ class RolePermissionsSeeder extends Seeder
             ],
         ];
 
-        // Create super-admin role under super_admin guard for SuperAdmin model
+        // Create super-admin role under api guard
         Role::on('central')->firstOrCreate(
-            ['name' => 'super-admin', 'guard_name' => 'super_admin'],
+            ['name' => 'super-admin', 'guard_name' => 'api'],
             ['display_name' => 'Super Admin', 'description' => 'Has access to all system features and settings'],
         );
 
