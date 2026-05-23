@@ -45,7 +45,7 @@ scripts:
               pm.expect(c).to.have.property('short_code');
               pm.expect(c).to.have.property('iso_code');
               pm.expect(c).to.have.property('status');
-              pm.collectionVariables.set('country_identifier', c.identifier);
+              pm.environment.set('country_identifier', c.identifier);
               console.log('country_identifier set to first result: ' + c.identifier);
           }
       });

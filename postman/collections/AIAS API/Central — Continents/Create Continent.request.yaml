@@ -40,7 +40,7 @@ scripts:
           pm.expect(b.data).to.have.property('short_code');
           pm.expect(b.data).to.have.property('iso_code');
           pm.expect(b.data).to.have.property('status');
-          pm.collectionVariables.set('continent_identifier', b.data.identifier);
+          pm.environment.set('continent_identifier', b.data.identifier);
           console.log('continent_identifier auto-saved: ' + b.data.identifier);
       });
     language: text/javascript

@@ -60,7 +60,7 @@ scripts:
           pm.expect(b.data).to.have.property('email');
           pm.expect(b.data).to.have.property('username');
           pm.expect(b.data).to.have.property('is_active');
-          pm.collectionVariables.set('user_identifier', b.data.identifier);
+          pm.environment.set('user_identifier', b.data.identifier);
           console.log('user_identifier auto-saved: ' + b.data.identifier);
       });
     language: text/javascript

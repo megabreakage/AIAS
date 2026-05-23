@@ -41,7 +41,7 @@ scripts:
               pm.expect(u).to.have.property('last_name');
               pm.expect(u).to.have.property('email');
               pm.expect(u).to.have.property('is_active');
-              pm.collectionVariables.set('user_identifier', u.identifier);
+              pm.environment.set('user_identifier', u.identifier);
               console.log('user_identifier set to first result: ' + u.identifier);
           }
       });

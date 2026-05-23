@@ -21,7 +21,7 @@ scripts:
               pm.expect(t).to.have.property('name');
               pm.expect(t).to.have.property('plan');
               pm.expect(t).to.have.property('status');
-              pm.collectionVariables.set('tenant_id', t.id);
+              pm.environment.set('tenant_id', t.id);
               console.log('tenant_id set to first result: ' + t.id);
           }
       });

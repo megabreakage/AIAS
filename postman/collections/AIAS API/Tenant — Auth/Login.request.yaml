@@ -33,7 +33,7 @@ scripts:
           pm.expect(b.data).to.have.property('user');
           pm.expect(b.data.user).to.have.property('id');
           pm.expect(b.data.user).to.have.property('email');
-          pm.collectionVariables.set('tenant_token', b.data.token);
+          pm.environment.set('tenant_token', b.data.token);
           console.log('tenant_token saved for: ' + b.data.user.email);
       });
     language: text/javascript

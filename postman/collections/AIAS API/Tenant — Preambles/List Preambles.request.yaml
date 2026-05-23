@@ -40,7 +40,7 @@ scripts:
               pm.expect(p).to.have.property('reference_number');
               pm.expect(p).to.have.property('name');
               pm.expect(p).to.have.property('status');
-              pm.collectionVariables.set('preamble_identifier', p.identifier);
+              pm.environment.set('preamble_identifier', p.identifier);
               console.log('preamble_identifier set to first result: ' + p.identifier);
           }
       });

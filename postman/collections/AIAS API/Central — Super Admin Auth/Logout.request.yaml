@@ -18,7 +18,7 @@ scripts:
           const b = pm.response.json();
           pm.expect(b.data).to.have.property('message', 'Logged out successfully.');
       });
-      pm.collectionVariables.set('sa_token', '');
+      pm.environment.set('sa_token', '');
       console.log('sa_token cleared.');
     language: text/javascript
 order: 3000

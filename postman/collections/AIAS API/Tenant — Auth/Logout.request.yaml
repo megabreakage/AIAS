@@ -19,7 +19,7 @@ scripts:
           const b = pm.response.json();
           pm.expect(b.data).to.have.property('message', 'Logged out successfully.');
       });
-      pm.collectionVariables.set('tenant_token', '');
+      pm.environment.set('tenant_token', '');
       console.log('tenant_token cleared.');
     language: text/javascript
 order: 4000

@@ -1,4 +1,5 @@
 $kind: collection
+name: AIAS API
 description: |-
   Adaptive Intelligent Auditing System — Multi-tenant Laravel 13 API.
 
@@ -27,6 +28,7 @@ variables:
   tenant_token: ""
   tenant_user_identifier: ""
   user_identifier: ""
+  tenant_owner_id: ""
 auth:
   - id: 9939e173-de38-43f8-91d0-c54c2845bcfb
     type: bearer

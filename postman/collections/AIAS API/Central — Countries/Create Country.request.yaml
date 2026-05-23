@@ -54,7 +54,7 @@ scripts:
           pm.expect(b.data).to.have.property('iso_code');
           pm.expect(b.data).to.have.property('currency');
           pm.expect(b.data).to.have.property('status');
-          pm.collectionVariables.set('country_identifier', b.data.identifier);
+          pm.environment.set('country_identifier', b.data.identifier);
           console.log('country_identifier auto-saved: ' + b.data.identifier);
       });
     language: text/javascript

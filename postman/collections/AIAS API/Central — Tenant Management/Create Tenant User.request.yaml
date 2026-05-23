@@ -50,7 +50,7 @@ scripts:
           pm.expect(b.data).to.have.property('email');
           pm.expect(b.data).to.have.property('roles');
           pm.expect(b.data.roles).to.be.an('array').with.length.above(0);
-          pm.collectionVariables.set('tenant_user_identifier', b.data.identifier);
+          pm.environment.set('tenant_user_identifier', b.data.identifier);
           pm.environment.set('tenant_user_identifier', b.data.identifier);
           console.log('tenant_user_identifier auto-saved: ' + b.data.identifier);
       });

@@ -43,7 +43,7 @@ scripts:
           pm.expect(b.data).to.have.property('status');
           pm.expect(b.data).to.have.property('effective_date');
           pm.expect(b.data).to.have.property('is_featured');
-          pm.collectionVariables.set('preamble_identifier', b.data.identifier);
+          pm.environment.set('preamble_identifier', b.data.identifier);
           console.log('preamble_identifier auto-saved: ' + b.data.identifier);
       });
     language: text/javascript

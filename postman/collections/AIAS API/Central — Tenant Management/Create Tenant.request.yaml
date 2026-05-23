@@ -44,7 +44,7 @@ scripts:
           pm.expect(b.data).to.have.property("status", "active");
           pm.expect(b.data).to.have.property("owner");
           pm.expect(b.data).to.have.property("domains");
-          pm.collectionVariables.set("tenant_id", b.data.id);
+          pm.environment.set("tenant_id", b.data.id);
           console.log("tenant_id auto-saved: " + b.data.id);
           console.log("Tenant DB provisioning triggered in background.");
       });

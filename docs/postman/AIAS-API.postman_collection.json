@@ -171,7 +171,7 @@
                   "    pm.expect(b.data.user).to.have.property('email');",
                   "    pm.expect(b.data.user).to.have.property('first_name');",
                   "    pm.expect(b.data.user).to.have.property('last_name');",
-                  "    pm.collectionVariables.set('sa_token', b.data.token);",
+                  "    pm.environment.set('sa_token', b.data.token);",
                   "    console.log('sa_token saved for: ' + b.data.user.email);",
                   "});"
                 ]
@@ -269,7 +269,7 @@
                   "    const b = pm.response.json();",
                   "    pm.expect(b.data).to.have.property('message', 'Logged out successfully.');",
                   "});",
-                  "pm.collectionVariables.set('sa_token', '');",
+                  "pm.environment.set('sa_token', '');",
                   "console.log('sa_token cleared.');"
                 ]
               }
@@ -318,7 +318,7 @@
                   "    pm.expect(b.data).to.have.property(\"identifier\");",
                   "    pm.expect(b.data).to.have.property(\"email\");",
                   "    pm.expect(b.data.roles).to.be.an(\"array\").that.includes(\"tenant\");",
-                  "    pm.collectionVariables.set(\"tenant_owner_id\", b.data.id);",
+                  "    pm.environment.set(\"tenant_owner_id\", b.data.id);",
                   "    pm.environment.set(\"tenant_owner_id\", b.data.id);",
                   "    console.log(\"tenant_owner_id auto-saved: \" + b.data.id);",
                   "});"
@@ -379,7 +379,7 @@
                   "        pm.expect(t).to.have.property('name');",
                   "        pm.expect(t).to.have.property('plan');",
                   "        pm.expect(t).to.have.property('status');",
-                  "        pm.collectionVariables.set('tenant_id', t.id);",
+                  "        pm.environment.set('tenant_id', t.id);",
                   "        console.log('tenant_id set to first result: ' + t.id);",
                   "    }",
                   "});"
@@ -425,7 +425,7 @@
                   "    pm.expect(b.data).to.have.property(\"status\", \"active\");",
                   "    pm.expect(b.data).to.have.property(\"owner\");",
                   "    pm.expect(b.data).to.have.property(\"domains\");",
-                  "    pm.collectionVariables.set(\"tenant_id\", b.data.id);",
+                  "    pm.environment.set(\"tenant_id\", b.data.id);",
                   "    console.log(\"tenant_id auto-saved: \" + b.data.id);",
                   "    console.log(\"Tenant DB provisioning triggered in background.\");",
                   "});"
@@ -562,7 +562,7 @@
                   "    pm.expect(b.data).to.have.property('email');",
                   "    pm.expect(b.data).to.have.property('roles');",
                   "    pm.expect(b.data.roles).to.be.an('array').with.length.above(0);",
-                  "    pm.collectionVariables.set('tenant_user_identifier', b.data.identifier);",
+                  "    pm.environment.set('tenant_user_identifier', b.data.identifier);",
                   "    pm.environment.set('tenant_user_identifier', b.data.identifier);",
                   "    console.log('tenant_user_identifier auto-saved: ' + b.data.identifier);",
                   "});"
@@ -633,7 +633,7 @@
                   "        pm.expect(c).to.have.property('short_code');",
                   "        pm.expect(c).to.have.property('iso_code');",
                   "        pm.expect(c).to.have.property('status');",
-                  "        pm.collectionVariables.set('continent_identifier', c.identifier);",
+                  "        pm.environment.set('continent_identifier', c.identifier);",
                   "        console.log('continent_identifier set to first result: ' + c.identifier);",
                   "    }",
                   "});"
@@ -709,7 +709,7 @@
                   "    pm.expect(b.data).to.have.property('short_code');",
                   "    pm.expect(b.data).to.have.property('iso_code');",
                   "    pm.expect(b.data).to.have.property('status');",
-                  "    pm.collectionVariables.set('continent_identifier', b.data.identifier);",
+                  "    pm.environment.set('continent_identifier', b.data.identifier);",
                   "    console.log('continent_identifier auto-saved: ' + b.data.identifier);",
                   "});"
                 ]
@@ -956,7 +956,7 @@
                   "        pm.expect(c).to.have.property('short_code');",
                   "        pm.expect(c).to.have.property('iso_code');",
                   "        pm.expect(c).to.have.property('status');",
-                  "        pm.collectionVariables.set('country_identifier', c.identifier);",
+                  "        pm.environment.set('country_identifier', c.identifier);",
                   "        console.log('country_identifier set to first result: ' + c.identifier);",
                   "    }",
                   "});"
@@ -1039,7 +1039,7 @@
                   "    pm.expect(b.data).to.have.property('iso_code');",
                   "    pm.expect(b.data).to.have.property('currency');",
                   "    pm.expect(b.data).to.have.property('status');",
-                  "    pm.collectionVariables.set('country_identifier', b.data.identifier);",
+                  "    pm.environment.set('country_identifier', b.data.identifier);",
                   "    console.log('country_identifier auto-saved: ' + b.data.identifier);",
                   "});"
                 ]
@@ -1351,7 +1351,7 @@
                   "    pm.expect(b.data.user).to.have.property('email');",
                   "    pm.expect(b.data.user).to.have.property('first_name');",
                   "    pm.expect(b.data.user).to.have.property('last_name');",
-                  "    pm.collectionVariables.set('tenant_token', b.data.token);",
+                  "    pm.environment.set('tenant_token', b.data.token);",
                   "    console.log('tenant_token saved for: ' + b.data.user.email);",
                   "});"
                 ]
@@ -1412,7 +1412,7 @@
                   "    pm.expect(b.data).to.have.property('user');",
                   "    pm.expect(b.data.user).to.have.property('id');",
                   "    pm.expect(b.data.user).to.have.property('email');",
-                  "    pm.collectionVariables.set('tenant_token', b.data.token);",
+                  "    pm.environment.set('tenant_token', b.data.token);",
                   "    console.log('tenant_token saved for: ' + b.data.user.email);",
                   "});"
                 ]
@@ -1515,7 +1515,7 @@
                   "    const b = pm.response.json();",
                   "    pm.expect(b.data).to.have.property('message', 'Logged out successfully.');",
                   "});",
-                  "pm.collectionVariables.set('tenant_token', '');",
+                  "pm.environment.set('tenant_token', '');",
                   "console.log('tenant_token cleared.');"
                 ]
               }
@@ -1578,7 +1578,7 @@
                   "        pm.expect(p).to.have.property('reference_number');",
                   "        pm.expect(p).to.have.property('name');",
                   "        pm.expect(p).to.have.property('status');",
-                  "        pm.collectionVariables.set('preamble_identifier', p.identifier);",
+                  "        pm.environment.set('preamble_identifier', p.identifier);",
                   "        console.log('preamble_identifier set to first result: ' + p.identifier);",
                   "    }",
                   "});"
@@ -1655,7 +1655,7 @@
                   "    pm.expect(b.data).to.have.property('status');",
                   "    pm.expect(b.data).to.have.property('effective_date');",
                   "    pm.expect(b.data).to.have.property('is_featured');",
-                  "    pm.collectionVariables.set('preamble_identifier', b.data.identifier);",
+                  "    pm.environment.set('preamble_identifier', b.data.identifier);",
                   "    console.log('preamble_identifier auto-saved: ' + b.data.identifier);",
                   "});"
                 ]
@@ -1911,7 +1911,7 @@
                   "        pm.expect(u).to.have.property('last_name');",
                   "        pm.expect(u).to.have.property('email');",
                   "        pm.expect(u).to.have.property('is_active');",
-                  "        pm.collectionVariables.set('user_identifier', u.identifier);",
+                  "        pm.environment.set('user_identifier', u.identifier);",
                   "        console.log('user_identifier set to first result: ' + u.identifier);",
                   "    }",
                   "});"
@@ -1987,7 +1987,7 @@
                   "    pm.expect(b.data).to.have.property('email');",
                   "    pm.expect(b.data).to.have.property('username');",
                   "    pm.expect(b.data).to.have.property('is_active');",
-                  "    pm.collectionVariables.set('user_identifier', b.data.identifier);",
+                  "    pm.environment.set('user_identifier', b.data.identifier);",
                   "    console.log('user_identifier auto-saved: ' + b.data.identifier);",
                   "});"
                 ]
