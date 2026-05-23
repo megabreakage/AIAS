@@ -29,7 +29,10 @@ final class UserResource extends JsonResource
             'notes' => $this->notes,
             'is_active' => $this->is_active,
             'last_login_at' => $this->last_login_at?->toISOString(),
-            'roles' => $this->whenLoaded('roles', fn () => $this->roles->pluck('name')),
+            'roles' => $this->whenLoaded('roles', fn () => $this->roles->map(fn ($role) => [
+                'name' => $role->name,
+                'display_name' => $role->display_name,
+            ])->values()),
             'created_by' => $this->whenLoaded('createdBy', fn () => [
                 'identifier' => $this->createdBy?->identifier,
                 'name' => trim(($this->createdBy?->first_name ?? '').' '.($this->createdBy?->last_name ?? '')),
