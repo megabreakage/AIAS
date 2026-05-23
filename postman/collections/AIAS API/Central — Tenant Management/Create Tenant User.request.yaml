@@ -27,11 +27,11 @@ body:
   content: |-
     {
       "title": "Mrs.",
-      "first_name": "Martin",
+      "first_name": "Elma",
       "middle_name": null,
-      "last_name": "Njuguna",
-      "username": "martin",
-      "email": "martin@airtraffic.com",
+      "last_name": "Wambui",
+      "username": "elma",
+      "email": "elma@airtraffic.com",
       "country_code": "+254",
       "phone": "0727905402",
       "password": "T@ngo540",
