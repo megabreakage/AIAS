@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('username')->unique()->index();
             $table->string('email')->unique()->index();
-            $table->foreignId('country_id')->nullable()->constrained('countries')->nullOnDelete();
+            $table->unsignedBigInteger('country_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('country_code')->default('+254');
             $table->string('phone')->nullable();
