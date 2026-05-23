@@ -56,12 +56,12 @@ final class CentralUser extends Model implements Auditable
     {
         return [
             'email_verified_at' => 'datetime',
-            'last_login_at'     => 'datetime',
-            'is_active'         => 'boolean',
-            'password'          => 'hashed',
-            'created_at'        => 'datetime',
-            'updated_at'        => 'datetime',
-            'deleted_at'        => 'datetime',
+            'last_login_at' => 'datetime',
+            'is_active' => 'boolean',
+            'password' => 'hashed',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
         ];
     }
 
