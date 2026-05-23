@@ -1056,9 +1056,35 @@ def build_module_folder(mod: dict) -> dict:
 
 
 def build_collection(base_url: str, collection_id: str) -> dict:
-    folders = [build_auth_folder(base_url)]
+    central_folders: list[dict] = []
+    tenant_folders: list[dict] = []
+
     for mod in MODULES:
-        folders.append(build_module_folder(mod))
+        folder = build_module_folder(mod)
+        if mod["scope"] == "central":
+            central_folders.append(folder)
+        else:
+            tenant_folders.append(folder)
+
+    central_group = {
+        "name": "Central",
+        "description": (
+            "Cross-tenant (central database) resources: "
+            "IAM, reference data, audit standards, and regulation frameworks. "
+            "Accessible without tenant context — requires Bearer token only."
+        ),
+        "item": central_folders,
+    }
+
+    tenant_group = {
+        "name": "Tenant",
+        "description": (
+            "Tenant-scoped resources isolated per organisation database. "
+            "Requires Bearer token with InitializeTenancyFromUser middleware. "
+            "Covers audit engagements, findings, risk, compliance, controls, and reports."
+        ),
+        "item": tenant_folders,
+    }
 
     return {
         "info": {
@@ -1071,7 +1097,7 @@ def build_collection(base_url: str, collection_id: str) -> dict:
             "type": "bearer",
             "bearer": [{"key": "token", "value": "{{access_token}}", "type": "string"}],
         },
-        "item": folders,
+        "item": [build_auth_folder(base_url), central_group, tenant_group],
         "variable": [
             {"key": "base_url", "value": base_url, "type": "string"},
         ],
@@ -1120,29 +1146,47 @@ def jq_summary(collection_path: Path) -> None:
         print("\n  Tip: `pip3 install jq` for a post-generation folder/request summary.\n")
         return
 
-    raw = collection_path.read_text()
-    total_folders = jq_lib.first(".item | length", json.loads(raw))
-    total_requests = jq_lib.first("[.item[].item | length] | add", json.loads(raw))
+    data = json.loads(collection_path.read_text())
 
-    folder_counts: list[tuple[str, int]] = []
-    data = json.loads(raw)
-    for folder in data.get("item", []):
-        folder_counts.append((folder.get("name", ""), len(folder.get("item", []))))
+    # Count total sub-folders and total requests across two-level hierarchy.
+    # Structure: Auth (flat), Central (sub-folders), Tenant (sub-folders).
+    total_subfolders = 0
+    total_requests = 0
+    display_rows: list[tuple[str, int]] = []
+
+    for group in data.get("item", []):
+        group_name: str = group.get("name", "")
+        group_items: list[dict] = group.get("item", [])
+
+        # Determine if items are sub-folders (have their own "item") or direct requests
+        if group_items and "item" in group_items[0]:
+            # Central / Tenant groups — items are sub-folders
+            display_rows.append((f"── {group_name} ──", -1))
+            for subfolder in group_items:
+                req_count = len(subfolder.get("item", []))
+                total_subfolders += 1
+                total_requests += req_count
+                display_rows.append((f"  {subfolder['name']}", req_count))
+        else:
+            # Auth folder — items are direct requests
+            req_count = len(group_items)
+            total_requests += req_count
+            display_rows.append((group_name, req_count))
 
     line = "\u2500" * 60
     print(f"\n{line}")
     print(f"  Collection  : {COLLECTION_NAME}")
-    print(f"  Folders     : {total_folders}")
+    print(f"  Sub-Folders : {total_subfolders}")
     print(f"  Requests    : {total_requests}")
     print(f"{line}")
 
-    cols = 2
-    rows = [folder_counts[i: i + cols] for i in range(0, len(folder_counts), cols)]
-    for row in rows:
-        parts = []
-        for name, count in row:
-            parts.append(f"  {name:<26}{count:>3}")
-        print("".join(parts))
+    for name, count in display_rows:
+        if count == -1:
+            # Section header
+            print(f"\n  {name}")
+        else:
+            print(f"  {name:<30}{count:>3}")
+
     print(f"{line}\n")
 
 
