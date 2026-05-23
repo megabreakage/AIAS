@@ -17,10 +17,10 @@ composer dev                         # Start all services
 php artisan migrate --seed           # Central DB
 php artisan tenants:migrate          # All tenant DBs
 
-# Testing (ALWAYS use ./test.sh - prevents MySQL locks)
-./test.sh                           # All tests
-./test.sh tests/Feature/AuditEngagementTest.php # Specific file
-./test.sh --filter=testMethodName   # Specific test
+# Testing (ALWAYS use docs/scripts/test.sh - prevents MySQL locks)
+docs/scripts/test.sh                           # All tests
+docs/scripts/test.sh tests/Feature/AuditEngagementTest.php # Specific file
+docs/scripts/test.sh --filter=testMethodName   # Specific test
 
 # Code Quality
 vendor/bin/pint --dirty             # Format changed PHP files
@@ -462,23 +462,23 @@ Authorization checks in `authorize()` method.
 
 ## Testing
 
-**Always use `./test.sh`** to run tests. Creates unique MySQL test databases per run, ensuring isolation and preventing conflicts.
+**Always use `docs/scripts/test.sh`** to run tests. Creates unique MySQL test databases per run, ensuring isolation and preventing conflicts.
 
 ```bash
 # Run all tests
-./test.sh
+docs/scripts/test.sh
 
 # Run specific test
-./test.sh --filter=test_can_create_audit_engagement
+docs/scripts/test.sh --filter=test_can_create_audit_engagement
 
 # Run specific test file
-./test.sh tests/Feature/AuditEngagementTest.php
+docs/scripts/test.sh tests/Feature/AuditEngagementTest.php
 
 # Run tests in parallel (requires paratest)
-./test.sh --parallel
+docs/scripts/test.sh --parallel
 ```
 
-**Why `./test.sh`?**
+**Why `docs/scripts/test.sh`?**
 
 - Creates unique MySQL database per run to avoid conflicts
 - Ensures complete isolation between test runs
@@ -520,7 +520,7 @@ class MyTest extends TestCase
 - [ ] Feature documentation created/updated
 - [ ] Features README.md updated
 - [ ] Permissions added/updated in config
-- [ ] Tests written and passing (using MySQL via `./test.sh`)
+- [ ] Tests written and passing (using MySQL via `docs/scripts/test.sh`)
 - [ ] Tests use `RefreshDatabaseWithTenancy` trait (not `RefreshDatabase`)
 - [ ] Tenant resources created inside `$this->tenant->run(fn)` in test setup
 - [ ] Tests cover: happy paths, failure paths, tenant isolation (cross-tenant leakage)
@@ -528,7 +528,7 @@ class MyTest extends TestCase
 - [ ] Breaking changes documented
 - [ ] Code formatted: `vendor/bin/pint --dirty`
 - [ ] Layer boundaries verified: `composer analyse`
-- [ ] All tests passing: `./test.sh`
+- [ ] All tests passing: `docs/scripts/test.sh`
 
 ## Common Scenarios
 

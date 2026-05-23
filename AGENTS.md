@@ -66,12 +66,12 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 - Migrate/seed (central): `php artisan migrate --seed`
 - Tenants migrate: `php artisan tenants:migrate`
 - Passport keys/clients: `php artisan passport:install`
-- **Tests**: `./test.sh` (ALWAYS use this script to avoid MySQL locks)
+- **Tests**: `docs/scripts/test.sh` (ALWAYS use this script to avoid MySQL locks)
 - Dev script: `composer dev` runs app, vite, schedule, queue, logs
 
 ## Testing Configuration
 
-- **ALWAYS use `./test.sh`** to run tests - this ensures proper database isolation
+- **ALWAYS use `docs/scripts/test.sh`** to run tests - this ensures proper database isolation
 - **Script**: Creates unique MySQL database per test run (e.g., `aias_test_<timestamp>_<pid>`)
 - **Database**: MySQL (matching production) for accurate testing with automatic cleanup
 - **Benefits**: Production-like environment, proper isolation, supports parallel execution
@@ -81,16 +81,16 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 
 ```bash
 # Run all tests
-./test.sh
+docs/scripts/test.sh
 
 # Run specific test
-./test.sh --filter=test_can_create_audit_engagement
+docs/scripts/test.sh --filter=test_can_create_audit_engagement
 
 # Run specific test file
-./test.sh tests/Feature/AuditEngagementTest.php
+docs/scripts/test.sh tests/Feature/AuditEngagementTest.php
 
 # Run tests in parallel (requires paratest)
-./test.sh --parallel
+docs/scripts/test.sh --parallel
 ```
 
 ### Test Class Requirements
@@ -152,7 +152,7 @@ When adding new features or updating existing ones, follow this comprehensive wo
 - [ ] Feature documentation created/updated
 - [ ] Features README.md updated
 - [ ] Permissions added/updated in config
-- [ ] Tests written and passing (using MySQL via `./test.sh`)
+- [ ] Tests written and passing (using MySQL via `docs/scripts/test.sh`)
 - [ ] Tests use `RefreshDatabaseWithTenancy` trait (not `RefreshDatabase`)
 - [ ] Tenant resources created inside `$this->tenant->run(fn)` in test setup
 - [ ] Tests cover: happy paths, failure paths, tenant isolation (cross-tenant leakage)
@@ -162,7 +162,7 @@ When adding new features or updating existing ones, follow this comprehensive wo
 - [ ] Breaking changes documented
 - [ ] Code formatted: `vendor/bin/pint --dirty`
 - [ ] Layer boundaries verified: `composer analyse`
-- [ ] All tests passing: `./test.sh`
+- [ ] All tests passing: `docs/scripts/test.sh`
 
 **See `CLAUDE.md` for detailed workflow and examples.**
 
