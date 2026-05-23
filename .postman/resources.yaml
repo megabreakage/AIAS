@@ -4,6 +4,7 @@ localResources:
   collections:
     - ../docs/postman/AIAS-API.postman_collection.json
     - ../postman/collections/AIAS API
+    - ../postman/collections/AIAS_APIS.postman_collection.json
   environments:
     - ../docs/postman/AIAS-API.local.postman_environment.json
     - ../docs/postman/AIAS-API.staging.postman_environment.json
@@ -11,6 +12,6 @@ localResources:
 cloudResources:
   collections:
     ../postman/collections/AIAS API: 51316521-19a6dfb7-a417-401c-9866-9bb67842e80f
-    ../docs/postman/AIAS-API.postman_collection.json: 51316521-aias-api-v1
+    ../postman/collections/AIAS_APIS.postman_collection.json: 51316521-aias-a1b2c3d4-e5f6-7890-abcd-ef1234567890
   environments:
     ../postman/environments/AIAS API — Staging.environment.yaml: 51316521-63dc98ed-8621-493e-a5e7-05ec677996ea
