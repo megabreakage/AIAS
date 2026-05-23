@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders\Tenant;
 
+use App\Models\Central\CentralUser;
 use App\Models\Central\Tenant;
 use App\Models\User;
 use App\Notifications\TenantAdminWelcomeNotification;
@@ -16,65 +17,48 @@ class TenantAdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $tenantDomain = tenant()?->domain ?? tenant()?->domains?->first()?->domain ?? 'tenant.localhost';
-        $email = (string) env('TEST_TENANT_ADMIN_EMAIL', "admin@{$tenantDomain}");
-        $password = (string) env('TEST_TENANT_ADMIN_PASSWORD', 'password');
-        $firstName = 'Tenant';
-        $lastName = 'Owner';
+        $currentTenant = tenant();
 
-        $admin = User::withoutEvents(function () use ($email, $password, $firstName, $lastName): User {
+        // Resolve owner from tenant.data (stored during tenant creation in TenantController)
+        $ownerData = $this->resolveOwnerData($currentTenant);
+
+        $admin = User::withoutEvents(function () use ($ownerData): User {
             return User::firstOrCreate(
-                ['email' => $email],
+                ['email' => $ownerData['email']],
                 [
-                    'identifier' => (string) Str::uuid(),
-                    'title' => null,
-                    'first_name' => $firstName,
-                    'middle_name' => null,
-                    'last_name' => $lastName,
-                    'username' => 'tenant_owner_'.Str::random(4),
-                    'email_verified_at' => now(),
-                    'country_code' => '+254',
-                    'phone' => null,
-                    'password' => Hash::make($password),
+                    'identifier'         => (string) Str::uuid(),
+                    'title'              => null,
+                    'first_name'         => $ownerData['first_name'],
+                    'middle_name'        => null,
+                    'last_name'          => $ownerData['last_name'],
+                    'username'           => $ownerData['username'],
+                    'email_verified_at'  => now(),
+                    'country_code'       => '+254',
+                    'phone'              => null,
+                    'password'           => $ownerData['password'],
                     'preferred_timezone' => 'Africa/Nairobi',
-                    'office_location' => null,
-                    'is_active' => true,
-                    'avatar' => null,
-                    'notes' => null,
+                    'office_location'    => null,
+                    'is_active'          => true,
+                    'avatar'             => null,
+                    'notes'              => null,
                 ],
             );
         });
 
-        $this->createTenant($admin);
-
-        $tenantAdminRole = Role::where('name', 'tenant')
+        $tenantRole = Role::where('name', 'tenant')
             ->where('guard_name', 'api')
             ->first();
 
-        if (!$tenantAdminRole) {
+        if (! $tenantRole) {
             $this->command->error('tenant role not found. Run TenantRolePermissionsSeeder first.');
 
             return;
         }
 
-        if (!$admin->hasRole('tenant', 'api')) {
-            $admin->assignRole($tenantAdminRole);
+        if (! $admin->hasRole('tenant', 'api')) {
+            $admin->assignRole($tenantRole);
         }
 
-        if ($admin->wasRecentlyCreated) {
-            $this->command->info("Created default tenant admin: {$email}");
-        } else {
-            $this->command->line("Default tenant admin already exists: {$email}");
-        }
-    }
-
-    private function createTenant(User $admin): void
-    {
-        $currentTenant = tenant();
-
-        // In tenant context: DB, migrations, and seeding were already completed by the
-        // TenantCreated event pipeline (CreateDatabase → MigrateDatabase → SeedDatabase).
-        // Associate the admin user with the existing tenant record and send a welcome notification.
         if ($currentTenant !== null) {
             $currentTenant->update([
                 'data' => array_merge((array) ($currentTenant->data ?? []), [
@@ -84,26 +68,68 @@ class TenantAdminSeeder extends Seeder
             ]);
 
             $admin->notify(new TenantAdminWelcomeNotification($currentTenant));
-
-            return;
         }
 
-        // Central context: create the tenant record in the central database.
-        // Stancl fires TenantCreated automatically after create(), which triggers the job pipeline:
-        // CreateDatabase → MigrateDatabase → SeedDatabase (re-runs this seeder in tenant context).
-        $emailDomain = Str::after($admin->email, '@');
-        $tenantId    = Str::slug(Str::before($emailDomain, '.'));
+        if ($admin->wasRecentlyCreated) {
+            $this->command->info("Created tenant owner: {$ownerData['email']}");
+        } else {
+            $this->command->line("Tenant owner already exists: {$ownerData['email']}");
+        }
+    }
 
-        /** @var Tenant $tenant */
-        $tenant = Tenant::create([
-            'id'     => $tenantId,
-            'name'   => Str::title(Str::replace(['.', '-', '_'], ' ', Str::before($emailDomain, '.'))).' Organization',
-            'plan'   => 'starter',
-            'status' => 'active',
-        ]);
+    /**
+     * Resolve owner credentials from the tenant record.
+     *
+     * Priority:
+     *   1. tenant.data['owner'] — set by TenantController during tenant creation
+     *   2. Environment variable fallback for legacy / manual seeding
+     *
+     * @param  \Stancl\Tenancy\Database\Models\Tenant|null  $currentTenant
+     * @return array{email: string, first_name: string, last_name: string, username: string, password: string}
+     */
+    private function resolveOwnerData(mixed $currentTenant): array
+    {
+        // 1. Tenant has owner data stored at creation time
+        if ($currentTenant !== null) {
+            $ownerPayload = (array) ($currentTenant->data['owner'] ?? []);
 
-        $tenant->domains()->create(['domain' => $emailDomain]);
+            if (! empty($ownerPayload['email'])) {
+                return [
+                    'email'      => $ownerPayload['email'],
+                    'first_name' => $ownerPayload['first_name'] ?? 'Tenant',
+                    'last_name'  => $ownerPayload['last_name'] ?? 'Owner',
+                    'username'   => $ownerPayload['username'] ?? 'tenant_owner_'.Str::random(4),
+                    'password'   => $ownerPayload['password'] ?? Hash::make('password'),
+                ];
+            }
 
-        $this->command->info("Tenant '{$tenant->name}' created: {$tenant->id}");
+            // 2. Look up CentralUser via owner_id
+            if (! empty($currentTenant->owner_id)) {
+                $centralUser = CentralUser::on('central')->find($currentTenant->owner_id);
+
+                if ($centralUser !== null) {
+                    return [
+                        'email'      => $centralUser->email,
+                        'first_name' => $centralUser->first_name,
+                        'last_name'  => $centralUser->last_name,
+                        'username'   => $centralUser->username,
+                        'password'   => $centralUser->getAttributes()['password'],
+                    ];
+                }
+            }
+        }
+
+        // 3. Env-based fallback for legacy / manual seeding
+        $tenantDomain = $currentTenant?->domain ?? $currentTenant?->domains?->first()?->domain ?? 'tenant.localhost';
+        $email        = (string) env('TEST_TENANT_ADMIN_EMAIL', "admin@{$tenantDomain}");
+
+        return [
+            'email'      => $email,
+            'first_name' => 'Tenant',
+            'last_name'  => 'Owner',
+            'username'   => 'tenant_owner_'.Str::random(4),
+            'password'   => Hash::make((string) env('TEST_TENANT_ADMIN_PASSWORD', 'password')),
+        ];
     }
 }
+

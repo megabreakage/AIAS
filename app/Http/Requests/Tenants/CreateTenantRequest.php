@@ -17,7 +17,7 @@ final class CreateTenantRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255', 'unique:central.tenants,name'],
-            'owner_id' => ['required', 'integer', 'exists:central.super_admins,id'],
+            'owner_id' => ['required', 'integer', 'exists:central.users,id'],
             'domain' => ['nullable', 'string', 'max:255', 'unique:central.tenants,domain'],
             'logo' => ['nullable', 'string', 'max:255'],
             'country_id' => ['nullable', 'integer'],

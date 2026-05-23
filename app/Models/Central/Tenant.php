@@ -99,7 +99,7 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
 
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(SuperAdmin::class, 'owner_id');
+        return $this->belongsTo(CentralUser::class, 'owner_id');
     }
 
     public function creator(): BelongsTo

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\SuperAdminAuthController;
+use App\Http\Controllers\Api\V1\Central\CentralUserController;
 use App\Http\Controllers\Api\V1\Central\ContinentController;
 use App\Http\Controllers\Api\V1\Central\CountryController;
 use App\Http\Controllers\Api\V1\Central\TenantUserController;
@@ -36,6 +37,9 @@ Route::prefix('v1')->group(function () {
 
     // Tenant management (super-admin only)
     Route::middleware('auth:super_admin')->group(function () {
+        // Step 1 — Register a tenant owner user on the central database
+        Route::post('/users', [CentralUserController::class, 'store']);
+
         Route::get('/tenants', [TenantController::class, 'index']);
         Route::post('/tenants', [TenantController::class, 'store']);
         Route::get('/tenants/{id}', [TenantController::class, 'show']);

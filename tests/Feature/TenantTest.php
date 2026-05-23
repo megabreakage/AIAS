@@ -7,6 +7,7 @@ use App\Filters\Central\Tenant\Filters\SearchTermFilter;
 use App\Filters\Central\Tenant\TenantFilters;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\Tenant\TenantResource;
+use App\Models\Central\CentralUser;
 use App\Models\Central\SuperAdmin;
 use App\Models\Central\Tenant;
 use App\Models\Central\TenantStatus;
@@ -26,8 +27,12 @@ use Stancl\Tenancy\Events\TenantDeleted;
 uses(DatabaseTransactions::class);
 
 // ---------------------------------------------------------------------------
-// Helper — authenticate as super admin
+// Helper — create a central user (tenant owner) and authenticate as super admin
 // ---------------------------------------------------------------------------
+function createTenantOwner(): CentralUser
+{
+    return CentralUser::factory()->create();
+}
 function authenticatedSuperAdmin(): SuperAdmin
 {
     $admin = SuperAdmin::factory()->create();
@@ -272,10 +277,11 @@ describe('Tenant CRUD', function (): void {
 
     it('can create a tenant with auto-generated domain', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Acme Corporation',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated()
@@ -290,10 +296,11 @@ describe('Tenant CRUD', function (): void {
 
     it('can create a tenant with explicit domain', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Beta Labs',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'custom.example.com',
         ]);
 
@@ -303,10 +310,11 @@ describe('Tenant CRUD', function (): void {
 
     it('can create a tenant with all optional fields', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Full Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'full.localhost',
             'logo' => 'https://example.com/logo.png',
             'country_id' => 1,
@@ -321,11 +329,12 @@ describe('Tenant CRUD', function (): void {
 
     it('can show a tenant by id', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         // Create tenant first
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Show Test Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $tenantId = $createResponse->json('data.id');
 
@@ -344,10 +353,11 @@ describe('Tenant CRUD', function (): void {
 
     it('can soft delete a tenant', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Delete Test Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $tenantId = $createResponse->json('data.id');
 
@@ -379,9 +389,10 @@ describe('Tenant creation validation', function (): void {
 
     it('requires name', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])
             ->assertUnprocessable()
             ->assertJsonPath('error.code', 'VALIDATION_FAILED')
@@ -413,17 +424,18 @@ describe('Tenant creation validation', function (): void {
 
     it('rejects duplicate tenant name', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         // Create first tenant
         $this->postJson('/api/v1/tenants', [
             'name' => 'Unique Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         // Try duplicate
         $this->postJson('/api/v1/tenants', [
             'name' => 'Unique Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])
             ->assertUnprocessable()
             ->assertJsonPath('error.code', 'VALIDATION_FAILED')
@@ -432,18 +444,19 @@ describe('Tenant creation validation', function (): void {
 
     it('rejects duplicate domain', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         // Create first tenant with explicit domain
         $this->postJson('/api/v1/tenants', [
             'name' => 'Domain Test A',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'same-domain.localhost',
         ])->assertCreated();
 
         // Try duplicate domain
         $this->postJson('/api/v1/tenants', [
             'name' => 'Domain Test B',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'same-domain.localhost',
         ])
             ->assertUnprocessable()
@@ -453,10 +466,11 @@ describe('Tenant creation validation', function (): void {
 
     it('rejects invalid status value', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Bad Status Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'status' => 'invalid_status',
         ])
             ->assertUnprocessable()
@@ -477,10 +491,11 @@ describe('Domain auto-generation', function (): void {
 
     it('generates domain from tenant name slug', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'My Cool Company',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated()
@@ -489,10 +504,11 @@ describe('Domain auto-generation', function (): void {
 
     it('uses explicit domain when provided', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Explicit Domain Co',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'custom.example.com',
         ]);
 
@@ -552,10 +568,11 @@ describe('Tenant identifier', function (): void {
 
     it('auto-generates UUID identifier on creation', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'UUID Test Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated();
@@ -579,10 +596,11 @@ describe('Tenant reference number', function (): void {
 
     it('auto-generates reference_number in AT-{id}-{timestamp} format', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'RefNum Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated();
@@ -596,10 +614,11 @@ describe('Tenant reference number', function (): void {
 
     it('cannot be set via mass assignment', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Mass Assign Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'reference_number' => 'CUSTOM-REF-123',
         ]);
 
@@ -612,14 +631,15 @@ describe('Tenant reference number', function (): void {
 
     it('is unique across tenants', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response1 = $this->postJson('/api/v1/tenants', [
             'name' => 'Unique Ref A',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $response2 = $this->postJson('/api/v1/tenants', [
             'name' => 'Unique Ref B',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response1->assertCreated();
@@ -631,10 +651,11 @@ describe('Tenant reference number', function (): void {
 
     it('is included in API response', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Response Ref Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated()
@@ -656,15 +677,16 @@ describe('Tenant filtering', function (): void {
 
     it('can filter tenants by search term matching name', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Searchable Alpha Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Beta Industries',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         $response = $this->getJson('/api/v1/tenants?search=Searchable');
@@ -677,17 +699,18 @@ describe('Tenant filtering', function (): void {
 
     it('can filter tenants by reference_number parameter', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Ref Filter Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $createResponse->assertCreated();
         $refNum = $createResponse->json('data.reference_number');
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Other Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         $response = $this->getJson("/api/v1/tenants?reference_number={$refNum}");
@@ -700,10 +723,11 @@ describe('Tenant filtering', function (): void {
 
     it('can filter tenants by search term matching reference_number', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Search Ref Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $createResponse->assertCreated();
         $refNum = $createResponse->json('data.reference_number');
@@ -725,12 +749,13 @@ describe('Tenant filtering', function (): void {
 
     it('supports pagination via per_page parameter', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         // Create 3 tenants
         foreach (['Paginate A', 'Paginate B', 'Paginate C'] as $name) {
             $this->postJson('/api/v1/tenants', [
                 'name' => $name,
-                'owner_id' => $admin->id,
+                'owner_id' => $owner->id,
             ])->assertCreated();
         }
 
@@ -755,10 +780,11 @@ describe('Tenant soft delete behavior', function (): void {
 
     it('excludes soft-deleted tenants from listing', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Will Be Deleted Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $createResponse->assertCreated();
         $tenantId = $createResponse->json('data.id');
@@ -766,7 +792,7 @@ describe('Tenant soft delete behavior', function (): void {
         // Also create one that stays
         $this->postJson('/api/v1/tenants', [
             'name' => 'Stays Alive Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         // Delete first tenant
@@ -782,10 +808,11 @@ describe('Tenant soft delete behavior', function (): void {
 
     it('returns 404 when showing a soft-deleted tenant', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Deleted Show Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $tenantId = $createResponse->json('data.id');
 
@@ -798,10 +825,11 @@ describe('Tenant soft delete behavior', function (): void {
 
     it('returns 404 when deleting an already soft-deleted tenant', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Double Delete Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $tenantId = $createResponse->json('data.id');
 
@@ -814,10 +842,11 @@ describe('Tenant soft delete behavior', function (): void {
 
     it('sets deleted_at timestamp on soft delete', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Timestamp Delete Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $tenantId = $createResponse->json('data.id');
 
@@ -830,10 +859,11 @@ describe('Tenant soft delete behavior', function (): void {
 
     it('preserves tenant data after soft delete', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Data Preserved Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'preserved.localhost',
         ]);
         $tenantId = $createResponse->json('data.id');
@@ -858,6 +888,7 @@ describe('Tenant pagination edge cases', function (): void {
 
     it('defaults to 15 per page when per_page not specified', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->getJson('/api/v1/tenants');
 
@@ -867,6 +898,7 @@ describe('Tenant pagination edge cases', function (): void {
 
     it('caps per_page at 100', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->getJson('/api/v1/tenants?per_page=500');
 
@@ -876,6 +908,7 @@ describe('Tenant pagination edge cases', function (): void {
 
     it('enforces minimum page of 1', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->getJson('/api/v1/tenants?page=0');
 
@@ -885,6 +918,7 @@ describe('Tenant pagination edge cases', function (): void {
 
     it('enforces minimum page of 1 for negative values', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->getJson('/api/v1/tenants?page=-5');
 
@@ -894,6 +928,7 @@ describe('Tenant pagination edge cases', function (): void {
 
     it('returns empty data array for page beyond results', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->getJson('/api/v1/tenants?page=9999');
 
@@ -903,11 +938,12 @@ describe('Tenant pagination edge cases', function (): void {
 
     it('returns pagination links in response', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         foreach (range(1, 3) as $i) {
             $this->postJson('/api/v1/tenants', [
                 'name' => "Paginated Corp {$i}",
-                'owner_id' => $admin->id,
+                'owner_id' => $owner->id,
             ])->assertCreated();
         }
 
@@ -923,11 +959,12 @@ describe('Tenant pagination edge cases', function (): void {
 
     it('returns correct total count in pagination meta', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         foreach (['Count A', 'Count B', 'Count C'] as $name) {
             $this->postJson('/api/v1/tenants', [
                 'name' => $name,
-                'owner_id' => $admin->id,
+                'owner_id' => $owner->id,
             ])->assertCreated();
         }
 
@@ -940,10 +977,11 @@ describe('Tenant pagination edge cases', function (): void {
 
     it('handles per_page=1 correctly', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Single Page Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         $response = $this->getJson('/api/v1/tenants?per_page=1');
@@ -966,16 +1004,17 @@ describe('Tenant search filter edge cases', function (): void {
 
     it('can filter by search term matching domain', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Domain Searchable Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'searchme.example.com',
         ])->assertCreated();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Not This One',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         $response = $this->getJson('/api/v1/tenants?search=searchme');
@@ -987,10 +1026,11 @@ describe('Tenant search filter edge cases', function (): void {
 
     it('can filter by search term matching identifier', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Identifier Search Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $createResponse->assertCreated();
         $identifier = $createResponse->json('data.identifier');
@@ -1007,10 +1047,11 @@ describe('Tenant search filter edge cases', function (): void {
 
     it('performs case-insensitive search on name', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'CamelCase Industries',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         $response = $this->getJson('/api/v1/tenants?search=camelcase');
@@ -1022,10 +1063,11 @@ describe('Tenant search filter edge cases', function (): void {
 
     it('returns empty results for non-matching search', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Existing Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         $response = $this->getJson('/api/v1/tenants?search=zzz_nonexistent_zzz');
@@ -1036,10 +1078,11 @@ describe('Tenant search filter edge cases', function (): void {
 
     it('handles partial name match', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'International Widget Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         $response = $this->getJson('/api/v1/tenants?search=Widget');
@@ -1051,10 +1094,11 @@ describe('Tenant search filter edge cases', function (): void {
 
     it('returns all tenants when search param is empty string', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Empty Search Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         // Empty search param should not filter (Request::filled returns false for empty)
@@ -1066,10 +1110,11 @@ describe('Tenant search filter edge cases', function (): void {
 
     it('supports partial reference_number filter', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Partial Ref Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $createResponse->assertCreated();
         $refNum = $createResponse->json('data.reference_number');
@@ -1094,18 +1139,19 @@ describe('Tenant combined filters', function (): void {
 
     it('combines search and pagination', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         foreach (range(1, 5) as $i) {
             $this->postJson('/api/v1/tenants', [
                 'name' => "Combo Search Corp {$i}",
-                'owner_id' => $admin->id,
+                'owner_id' => $owner->id,
             ])->assertCreated();
         }
 
         // Other tenants that should not match
         $this->postJson('/api/v1/tenants', [
             'name' => 'Unrelated Industries',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         $response = $this->getJson('/api/v1/tenants?search=Combo Search&per_page=2');
@@ -1120,17 +1166,18 @@ describe('Tenant combined filters', function (): void {
 
     it('combines search and reference_number filters', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Dual Filter Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $createResponse->assertCreated();
         $refNum = $createResponse->json('data.reference_number');
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Other Filter Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         // Both filters must match
@@ -1144,10 +1191,11 @@ describe('Tenant combined filters', function (): void {
 
     it('returns empty when filters are mutually exclusive', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Exclusive Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $createResponse->assertCreated();
         $refNum = $createResponse->json('data.reference_number');
@@ -1172,10 +1220,11 @@ describe('Tenant model lifecycle hooks', function (): void {
 
     it('tracks created_by from authenticated user', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Created By Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $response->assertCreated();
 
@@ -1184,10 +1233,11 @@ describe('Tenant model lifecycle hooks', function (): void {
 
     it('tracks updated_by from authenticated user on creation', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Updated By Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $response->assertCreated();
 
@@ -1196,10 +1246,11 @@ describe('Tenant model lifecycle hooks', function (): void {
 
     it('auto-generates UUID identifier on creation', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'UUID Lifecycle Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $response->assertCreated();
 
@@ -1210,12 +1261,13 @@ describe('Tenant model lifecycle hooks', function (): void {
 
     it('generates unique identifiers for each tenant', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $ids = [];
         foreach (range(1, 3) as $i) {
             $response = $this->postJson('/api/v1/tenants', [
                 'name' => "Unique ID Corp {$i}",
-                'owner_id' => $admin->id,
+                'owner_id' => $owner->id,
             ]);
             $response->assertCreated();
             $ids[] = $response->json('data.identifier');
@@ -1226,10 +1278,11 @@ describe('Tenant model lifecycle hooks', function (): void {
 
     it('generates reference_number in AT-{id}-{timestamp} format after creation', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'RefNum Lifecycle Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $response->assertCreated();
 
@@ -1253,10 +1306,11 @@ describe('Tenant response structure', function (): void {
 
     it('includes meta with request_id and version in success response', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Meta Test Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated()
@@ -1295,10 +1349,11 @@ describe('Tenant response structure', function (): void {
 
     it('includes domains in show response', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Domains Show Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'domains-show.localhost',
         ]);
         $tenantId = $createResponse->json('data.id');
@@ -1313,10 +1368,11 @@ describe('Tenant response structure', function (): void {
 
     it('includes domains in list response', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Domains List Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'domains-list.localhost',
         ])->assertCreated();
 
@@ -1330,10 +1386,11 @@ describe('Tenant response structure', function (): void {
 
     it('returns ISO 8601 formatted timestamps', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Timestamp Format Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $response->assertCreated();
 
@@ -1347,10 +1404,11 @@ describe('Tenant response structure', function (): void {
 
     it('returns all expected fields in create response', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'All Fields Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'all-fields.localhost',
             'logo' => 'https://example.com/logo.png',
             'country_id' => 42,
@@ -1377,10 +1435,11 @@ describe('Tenant response structure', function (): void {
 
     it('returns 204 No Content on successful delete', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Delete Response Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $tenantId = $createResponse->json('data.id');
 
@@ -1403,10 +1462,11 @@ describe('Domain auto-generation edge cases', function (): void {
 
     it('handles special characters in name for domain generation', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => "O'Reilly & Sons LLC",
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated();
@@ -1420,18 +1480,19 @@ describe('Domain auto-generation edge cases', function (): void {
 
     it('generates unique domain with timestamp when slug collides', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         // Create first tenant with domain "collision-test.localhost"
         $this->postJson('/api/v1/tenants', [
             'name' => 'Collision Test',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])->assertCreated();
 
         // Create second tenant with explicit same domain
         // (unique validation prevents this, but test domain gen collision)
         $secondResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Collision Test Variant',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $secondResponse->assertCreated();
 
@@ -1442,10 +1503,11 @@ describe('Domain auto-generation edge cases', function (): void {
 
     it('generates domain from multi-word name', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Three Word Name',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated()
@@ -1454,10 +1516,11 @@ describe('Domain auto-generation edge cases', function (): void {
 
     it('generates domain from single word name', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Acme',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated()
@@ -1466,10 +1529,11 @@ describe('Domain auto-generation edge cases', function (): void {
 
     it('generates domain with numbers in name', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Tech 360 Solutions',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated()
@@ -1489,10 +1553,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('rejects name exceeding 255 characters', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => str_repeat('A', 256),
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])
             ->assertUnprocessable()
             ->assertJsonPath('error.code', 'VALIDATION_FAILED');
@@ -1500,10 +1565,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('accepts name at exactly 200 characters', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => str_repeat('A', 200),
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated();
@@ -1522,10 +1588,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('rejects domain exceeding 255 characters', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Long Domain Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => str_repeat('a', 256),
         ])
             ->assertUnprocessable()
@@ -1534,10 +1601,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('rejects data_center exceeding 255 characters', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Long DC Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'data_center' => str_repeat('x', 256),
         ])
             ->assertUnprocessable()
@@ -1546,11 +1614,12 @@ describe('Tenant validation edge cases', function (): void {
 
     it('accepts all valid status values without validation error', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         foreach (['active', 'inactive', 'suspended', 'pending_setup'] as $i => $status) {
             $response = $this->postJson('/api/v1/tenants', [
                 'name' => "Status {$status} Corp",
-                'owner_id' => $admin->id,
+                'owner_id' => $owner->id,
                 'status' => $status,
             ]);
 
@@ -1560,10 +1629,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('ignores unknown fields in request payload', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Extra Fields Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'unknown_field' => 'should be ignored',
             'hack_attempt' => true,
         ]);
@@ -1574,10 +1644,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('rejects empty name string', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => '',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])
             ->assertUnprocessable()
             ->assertJsonPath('error.code', 'VALIDATION_FAILED');
@@ -1585,10 +1656,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('rejects name as null', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => null,
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ])
             ->assertUnprocessable()
             ->assertJsonPath('error.code', 'VALIDATION_FAILED');
@@ -1618,10 +1690,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('rejects logo exceeding 255 characters', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Long Logo Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'logo' => 'https://example.com/'.str_repeat('a', 250),
         ])
             ->assertUnprocessable()
@@ -1630,10 +1703,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('creates tenant without error when status not provided', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Default Status Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $response->assertCreated();
@@ -1641,10 +1715,11 @@ describe('Tenant validation edge cases', function (): void {
 
     it('accepts null optional fields', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Null Fields Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => null,
             'logo' => null,
             'country_id' => null,
@@ -1670,10 +1745,11 @@ describe('Tenant data integrity', function (): void {
 
     it('persists all fields to database', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Persist All Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'persist-all.localhost',
             'logo' => 'https://cdn.example.com/logo.png',
             'country_id' => 254,
@@ -1694,10 +1770,11 @@ describe('Tenant data integrity', function (): void {
 
     it('creates domain record in domains table', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Domain Record Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'domain-record.localhost',
         ]);
         $response->assertCreated();
@@ -1711,10 +1788,11 @@ describe('Tenant data integrity', function (): void {
 
     it('maintains relationship between tenant and domain records', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Relationship Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
             'domain' => 'relationship.localhost',
         ]);
         $tenantId = $response->json('data.id');
@@ -1727,10 +1805,11 @@ describe('Tenant data integrity', function (): void {
 
     it('stores data in central database connection', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Central DB Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $response->assertCreated();
 
@@ -1760,13 +1839,14 @@ describe('Tenant multiple operations', function (): void {
 
     it('can create multiple tenants and list them all', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $names = ['Multi Corp A', 'Multi Corp B', 'Multi Corp C', 'Multi Corp D'];
 
         foreach ($names as $name) {
             $this->postJson('/api/v1/tenants', [
                 'name' => $name,
-                'owner_id' => $admin->id,
+                'owner_id' => $owner->id,
             ])->assertCreated();
         }
 
@@ -1781,12 +1861,13 @@ describe('Tenant multiple operations', function (): void {
 
     it('assigns unique IDs to each tenant', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $ids = [];
         foreach (range(1, 3) as $i) {
             $response = $this->postJson('/api/v1/tenants', [
                 'name' => "Unique ID Test {$i}",
-                'owner_id' => $admin->id,
+                'owner_id' => $owner->id,
             ]);
             $response->assertCreated();
             $ids[] = $response->json('data.id');
@@ -1797,12 +1878,13 @@ describe('Tenant multiple operations', function (): void {
 
     it('can show each tenant individually after batch create', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $created = [];
         foreach (['Show Batch A', 'Show Batch B'] as $name) {
             $response = $this->postJson('/api/v1/tenants', [
                 'name' => $name,
-                'owner_id' => $admin->id,
+                'owner_id' => $owner->id,
             ]);
             $response->assertCreated();
             $created[] = [
@@ -1820,14 +1902,15 @@ describe('Tenant multiple operations', function (): void {
 
     it('can delete specific tenant without affecting others', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         $responseA = $this->postJson('/api/v1/tenants', [
             'name' => 'Keep This Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $responseB = $this->postJson('/api/v1/tenants', [
             'name' => 'Delete This Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
 
         $idA = $responseA->json('data.id');
@@ -1909,6 +1992,7 @@ describe('Tenant authentication guard specificity', function (): void {
 
     it('allows authenticated super admin to access all endpoints', function (): void {
         $admin = authenticatedSuperAdmin();
+        $owner = createTenantOwner();
 
         // List
         $this->getJson('/api/v1/tenants')->assertOk();
@@ -1916,7 +2000,7 @@ describe('Tenant authentication guard specificity', function (): void {
         // Create
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Admin Access Corp',
-            'owner_id' => $admin->id,
+            'owner_id' => $owner->id,
         ]);
         $createResponse->assertCreated();
         $tenantId = $createResponse->json('data.id');
