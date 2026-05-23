@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Filters\Central\Tenant\TenantFilters;
 use App\Http\Requests\Tenants\CreateTenantRequest;
-use App\Http\Resources\TenantResource;
+use App\Http\Resources\Tenant\TenantResource;
 use App\Models\Central\Tenant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

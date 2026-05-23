@@ -41,7 +41,8 @@ final class SuperAdminAuthController extends BaseApiController
             'token_type' => 'Bearer',
             'user' => [
                 'id' => $admin->identifier,
-                'name' => $admin->first_name.' '.$admin->last_name,
+                'first_name' => $admin->first_name,
+                'last_name' => $admin->last_name,
                 'email' => $admin->email,
             ],
         ]);
@@ -59,7 +60,11 @@ final class SuperAdminAuthController extends BaseApiController
         $admin = $request->user();
 
         return $this->success([
-            'user' => AdminResource::make($admin)->resolve(),
+            'id' => $admin->identifier,
+            'first_name' => $admin->first_name,
+            'last_name' => $admin->last_name,
+            'email' => $admin->email,
+            'is_active' => $admin->is_active,
         ]);
     }
 }
