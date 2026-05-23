@@ -19,11 +19,13 @@ final class TenantResource extends JsonResource
             'domain' => $this->domain,
             'logo' => $this->logo,
             'status' => $this->status?->value ?? $this->status,
+            'owner_id' => $this->owner_id,
             'owner' => $this->whenLoaded('owner', fn () => [
                 'identifier' => $this->owner?->identifier,
                 'name' => trim(($this->owner?->first_name ?? '').' '.($this->owner?->last_name ?? '')),
                 'role' => $this->owner?->roles?->firstWhere('name', 'tenant-admin')?->name,
             ]),
+            'country_id' => $this->country_id,
             'country' => $this->whenLoaded('country', fn () => [
                 'identifier' => $this->country?->identifier,
                 'name' => $this->country?->name,
@@ -31,14 +33,8 @@ final class TenantResource extends JsonResource
             ]),
             'data_center' => $this->data_center,
             'domains' => $this->whenLoaded('domains', fn () => $this->domains->pluck('domain')),
-            'created_by' => $this->whenLoaded('creator', fn () => [
-                'identifier' => $this->createdBy?->identifier,
-                'name' => trim(($this->createdBy?->first_name ?? '').' '.($this->createdBy?->last_name ?? '')),
-            ]),
-            'updated_by' => $this->whenLoaded('updater', fn () => [
-                'identifier' => $this->updatedBy?->identifier,
-                'name' => trim(($this->updatedBy?->first_name ?? '').' '.($this->updatedBy?->last_name ?? '')),
-            ]),
+            'created_by' => $this->created_by,
+            'updated_by' => $this->updated_by,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

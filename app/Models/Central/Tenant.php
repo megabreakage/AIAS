@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Central;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Auditable;
@@ -96,36 +97,29 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
         return 'identifier';
     }
 
-    /**
-     * Get the user who created the record.
-     */
-    public function createdBy()
+    public function owner(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class, 'created_by');
+        return $this->belongsTo(SuperAdmin::class, 'owner_id');
     }
 
-    /**
-     * Get the user who last updated the record.
-     */
-    public function updatedBy()
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class, 'updated_by');
+        return $this->belongsTo(SuperAdmin::class, 'created_by');
     }
 
-    /**
-     * Get the user who created the record.
-     */
-    public function creator()
+    public function updater(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class, 'created_by');
+        return $this->belongsTo(SuperAdmin::class, 'updated_by');
     }
 
-    /**
-     * Get the user who last updated the record.
-     */
-    public function updater()
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class, 'updated_by');
+        return $this->belongsTo(SuperAdmin::class, 'created_by');
+    }
+
+    public function updatedBy(): BelongsTo
+    {
+        return $this->belongsTo(SuperAdmin::class, 'updated_by');
     }
 
     /**

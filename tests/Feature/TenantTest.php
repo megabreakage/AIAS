@@ -6,7 +6,7 @@ use App\Filters\Central\Tenant\Filters\ReferenceNumberFilter;
 use App\Filters\Central\Tenant\Filters\SearchTermFilter;
 use App\Filters\Central\Tenant\TenantFilters;
 use App\Http\Requests\Tenants\CreateTenantRequest;
-use App\Http\Resources\TenantResource;
+use App\Http\Resources\Tenant\TenantResource;
 use App\Models\Central\SuperAdmin;
 use App\Models\Central\Tenant;
 use App\Models\Central\TenantStatus;
