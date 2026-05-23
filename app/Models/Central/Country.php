@@ -5,22 +5,17 @@ declare(strict_types=1);
 namespace App\Models\Central;
 
 use App\Models\BaseModel;
-use App\Support\Concerns\HasAuditTrail;
-use App\Support\Concerns\HasUuidIdentifier;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-final class Country extends BaseModel implements Auditable
+final class Country extends BaseModel implements AuditableContract
 {
-    use HasAuditTrail;
-    use HasFactory;
-    use HasUuidIdentifier;
-    use SoftDeletes;
+    use Auditable;
 
     protected $connection = 'central';
 
+    /** @var list<string> */
     protected $fillable = [
         'identifier',
         'name',
@@ -38,15 +33,14 @@ final class Country extends BaseModel implements Auditable
         'updated_by',
     ];
 
+    /** @return array<string, string> */
     protected function casts(): array
     {
         return [
+            ...parent::casts(),
             'continent_id' => 'integer',
             'phone_digits' => 'integer',
             'status' => 'boolean',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'deleted_at' => 'datetime',
         ];
     }
 

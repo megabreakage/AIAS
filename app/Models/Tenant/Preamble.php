@@ -4,27 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models\Tenant;
 
+use App\Enums\PreambleStatus;
 use App\Models\BaseModel;
-use App\Support\Concerns\HasUuidIdentifier;
+use App\Models\Concerns\TenantConnection;
 
-class Preamble extends BaseModel
+final class Preamble extends BaseModel
 {
-    use HasUuidIdentifier;
+    use TenantConnection;
 
-    // Status constants
-    public const string STATUS_DRAFT = 'draft';
-
-    public const string STATUS_ACTIVE = 'active';
-
-    public const string STATUS_ARCHIVED = 'archived';
-
-    public const array STATUSES = [
-        self::STATUS_DRAFT,
-        self::STATUS_ACTIVE,
-        self::STATUS_ARCHIVED,
-    ];
-
-    // id and identifier are not fillable — id is DB-generated, identifier is set by HasUuidIdentifier
+    /** @var list<string> */
     protected $fillable = [
         'tenant_id',
         'reference_number',
@@ -37,21 +25,17 @@ class Preamble extends BaseModel
         'updated_by',
     ];
 
+    /** @return array<string, string> */
     protected function casts(): array
     {
         return [
+            ...parent::casts(),
+            'status' => PreambleStatus::class,
             'effective_date' => 'date',
             'is_featured' => 'boolean',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'deleted_at' => 'datetime',
         ];
     }
 
-    /**
-     * Generate the reference number for this preamble.
-     * Format: PR-{id}-{unix_timestamp}
-     */
     public function generateReferenceNumber(): string
     {
         return 'PR-'.$this->id.'-'.now()->timestamp;

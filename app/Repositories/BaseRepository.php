@@ -8,47 +8,48 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 abstract class BaseRepository
 {
+    /** @return class-string<Model> */
     abstract protected function model(): string;
 
-    public function newQuery(): Builder
+    public function query(): Builder
     {
         return ($this->model())::query();
     }
 
-    public function findByIdentifier(string $identifier): Model
+    public function newQuery(): Builder
     {
-        return ($this->model())::query()->where('identifier', $identifier)->firstOrFail();
+        return $this->query();
     }
 
-    public function browseAll(): Collection
+    public function read(string $identifier): Model
     {
-        $results = $this->newQuery()->get();
-        if ($results->count() > 1000) {
-            Log::warning('browseAll() returned a large result set', [
-                'model' => $this->model(),
-                'count' => $results->count(),
-            ]);
-        }
-        return $results;
+        return $this->query()->where('identifier', $identifier)->firstOrFail();
     }
 
-    public function paginate(int $perPage = 15): LengthAwarePaginator
+    public function browse(): Collection
     {
-        return $this->newQuery()->paginate($perPage);
+        return $this->query()->get();
     }
 
-    public function create(array $data): Model
+    public function paginate(int $perPage = 15, int $page = 1): LengthAwarePaginator
     {
-        return ($this->model())::query()->create($data);
+        return $this->query()->paginate(perPage: $perPage, page: $page);
     }
 
+    /** @param array<string, mixed> $data */
+    public function insert(array $data): Model
+    {
+        return $this->query()->create($data);
+    }
+
+    /** @param array<string, mixed> $data */
     public function update(Model $model, array $data): Model
     {
         $model->fill($data)->save();
+
         return $model;
     }
 

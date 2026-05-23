@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Central;
+namespace App\Enums;
 
 enum TenantStatus: string
 {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\Central;
 
+use App\Enums\TenantStatus;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -23,6 +25,7 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
 
     protected $keyType = 'int';
 
+    /** @var list<string> */
     protected $fillable = [
         'identifier',
         'owner_id',
@@ -35,15 +38,20 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
         'updated_by',
     ];
 
-    protected $casts = [
-        'data' => 'array',
-        'status' => TenantStatus::class,
-        'owner_id' => 'integer',
-        'country_id' => 'integer',
-        'created_by' => 'integer',
-        'updated_by' => 'integer',
-    ];
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return [
+            'data' => 'array',
+            'status' => TenantStatus::class,
+            'owner_id' => 'integer',
+            'country_id' => 'integer',
+            'created_by' => 'integer',
+            'updated_by' => 'integer',
+        ];
+    }
 
+    /** @return list<string> */
     public static function getCustomColumns(): array
     {
         return [
@@ -89,9 +97,6 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
         });
     }
 
-    /**
-     * Get the route key name for route model binding.
-     */
     public function getRouteKeyName(): string
     {
         return 'identifier';
@@ -99,42 +104,16 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
 
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(CentralUser::class, 'owner_id');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(SuperAdmin::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function updater(): BelongsTo
     {
-        return $this->belongsTo(SuperAdmin::class, 'updated_by');
-    }
-
-    public function createdBy(): BelongsTo
-    {
-        return $this->belongsTo(SuperAdmin::class, 'created_by');
-    }
-
-    public function updatedBy(): BelongsTo
-    {
-        return $this->belongsTo(SuperAdmin::class, 'updated_by');
-    }
-
-    /**
-     * Scope to get records created by a specific user.
-     */
-    public function scopeCreatedBy($query, $userId)
-    {
-        return $query->where('created_by', $userId);
-    }
-
-    /**
-     * Scope to get records updated by a specific user.
-     */
-    public function scopeUpdatedBy($query, $userId)
-    {
-        return $query->where('updated_by', $userId);
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

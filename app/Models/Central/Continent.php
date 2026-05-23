@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace App\Models\Central;
 
-// use App\Models\BaseModel;
 use App\Models\BaseModel;
-use App\Support\Concerns\HasAuditTrail;
-use App\Support\Concerns\HasUuidIdentifier;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-final class Continent extends BaseModel implements Auditable
+final class Continent extends BaseModel implements AuditableContract
 {
-    use HasAuditTrail;
-    use HasFactory;
-    use HasUuidIdentifier;
-    use SoftDeletes;
+    use Auditable;
 
     protected $connection = 'central';
 
+    /** @var list<string> */
     protected $fillable = [
         'identifier',
         'name',
@@ -33,13 +27,12 @@ final class Continent extends BaseModel implements Auditable
         'updated_by',
     ];
 
+    /** @return array<string, string> */
     protected function casts(): array
     {
         return [
+            ...parent::casts(),
             'status' => 'boolean',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'deleted_at' => 'datetime',
         ];
     }
 

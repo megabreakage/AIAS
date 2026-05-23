@@ -5,37 +5,49 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Models\Central\Country;
-use App\Models\Central\SuperAdmin;
+use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CountryPolicy
+final class CountryPolicy
 {
-    public function viewAny(SuperAdmin $user): bool
+    use HandlesAuthorization;
+
+    public function before(User $user, string $ability): ?bool
     {
-        return $user->hasRole('super-admin');
+        if ($user->hasRole('super-admin')) {
+            return true;
+        }
+
+        return null;
     }
 
-    public function view(SuperAdmin $user, Country $country): bool
+    public function viewAny(User $user): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('view countries');
     }
 
-    public function create(SuperAdmin $user): bool
+    public function view(User $user, Country $country): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('view countries');
     }
 
-    public function update(SuperAdmin $user, Country $country): bool
+    public function create(User $user): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('create countries');
     }
 
-    public function delete(SuperAdmin $user, Country $country): bool
+    public function update(User $user, Country $country): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('edit countries');
     }
 
-    public function restore(SuperAdmin $user, Country $country): bool
+    public function delete(User $user, Country $country): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('delete countries');
+    }
+
+    public function restore(User $user, Country $country): bool
+    {
+        return $user->hasPermissionTo('restore countries');
     }
 }

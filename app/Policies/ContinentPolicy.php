@@ -5,37 +5,49 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Models\Central\Continent;
-use App\Models\Central\SuperAdmin;
+use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ContinentPolicy
+final class ContinentPolicy
 {
-    public function viewAny(SuperAdmin $user): bool
+    use HandlesAuthorization;
+
+    public function before(User $user, string $ability): ?bool
     {
-        return $user->hasRole('super-admin');
+        if ($user->hasRole('super-admin')) {
+            return true;
+        }
+
+        return null;
     }
 
-    public function view(SuperAdmin $user, Continent $continent): bool
+    public function viewAny(User $user): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('view continents');
     }
 
-    public function create(SuperAdmin $user): bool
+    public function view(User $user, Continent $continent): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('view continents');
     }
 
-    public function update(SuperAdmin $user, Continent $continent): bool
+    public function create(User $user): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('create continents');
     }
 
-    public function delete(SuperAdmin $user, Continent $continent): bool
+    public function update(User $user, Continent $continent): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('edit continents');
     }
 
-    public function restore(SuperAdmin $user, Continent $continent): bool
+    public function delete(User $user, Continent $continent): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasPermissionTo('delete continents');
+    }
+
+    public function restore(User $user, Continent $continent): bool
+    {
+        return $user->hasPermissionTo('restore continents');
     }
 }
