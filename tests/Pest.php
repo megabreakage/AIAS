@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Central\CentralUser;
 use App\Models\Central\PassportClient;
 use App\Models\Central\SuperAdmin;
 use App\Models\Central\Tenant;
@@ -87,10 +88,16 @@ function provisionTenantWithSeededAdmin(): array
     $_SERVER['TEST_TENANT_ADMIN_EMAIL'] = $email;
     $_SERVER['TEST_TENANT_ADMIN_PASSWORD'] = $password;
 
+    // Step 1 — register a central user as tenant owner
+    $owner = CentralUser::factory()->create([
+        'email'    => $email,
+        'password' => bcrypt($password),
+    ]);
+
     $response = test()->postJson('/api/v1/tenants', [
-        'name' => 'Tenant Admin Auth '.Str::upper(Str::random(4)),
-        'owner_id' => $superAdmin->id,
-        'domain' => $domain,
+        'name'     => 'Tenant Admin Auth '.Str::upper(Str::random(4)),
+        'owner_id' => $owner->id,
+        'domain'   => $domain,
     ]);
 
     $response->assertCreated();

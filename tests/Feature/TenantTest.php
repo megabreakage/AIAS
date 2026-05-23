@@ -1430,7 +1430,7 @@ describe('Tenant response structure', function (): void {
         expect($response->json('data.logo'))->toBe('https://example.com/logo.png');
         expect($response->json('data.country_id'))->toBe(42);
         expect($response->json('data.data_center'))->toBe('eu-west-1');
-        expect($response->json('data.owner.id'))->toBe($admin->identifier);
+        expect($response->json('data.owner.id'))->toBe($owner->identifier);
     });
 
     it('returns 204 No Content on successful delete', function (): void {
@@ -1761,7 +1761,7 @@ describe('Tenant data integrity', function (): void {
         $tenant = Tenant::find($tenantId);
 
         expect($tenant->name)->toBe('Persist All Corp');
-        expect($tenant->owner_id)->toBe($admin->id);
+        expect($tenant->owner_id)->toBe($owner->id);
         expect($tenant->domain)->toBe('persist-all.localhost');
         expect($tenant->logo)->toBe('https://cdn.example.com/logo.png');
         expect($tenant->country_id)->toBe(254);

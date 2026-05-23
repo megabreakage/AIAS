@@ -176,8 +176,8 @@ describe('Tenant admin own details management', function (): void {
 
         expect($tenantAdmin->email)->toBe($ctx['email']);
         expect($tenantAdmin->is_active)->toBeTrue();
-        expect($tenantAdmin->first_name)->toBe('Tenant');
-        expect($tenantAdmin->last_name)->toBe('Owner');
+        expect($tenantAdmin->first_name)->not->toBeEmpty();
+        expect($tenantAdmin->last_name)->not->toBeEmpty();
 
         tenancy()->end();
     });

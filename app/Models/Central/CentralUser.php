@@ -70,6 +70,11 @@ final class CentralUser extends Model implements Auditable
         return 'identifier';
     }
 
+    public function guardName(): string
+    {
+        return 'api';
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim(implode(' ', array_filter([$this->first_name, $this->middle_name, $this->last_name])));
