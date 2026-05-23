@@ -6,11 +6,11 @@ applyTo: "tests/**"
 
 ## Framework
 - PEST v4 + PHPUnit v12 on MySQL (not SQLite)
-- Parallel testing: `composer test` (4 processes)
-- Sequential: `composer test:seq`
+- **ALWAYS use `./test.sh`** — never raw `php artisan test` or `composer test`
+- `./test.sh` creates a unique MySQL database per run — prevents lock issues and ensures isolation
 
 ## Test Class Requirements
-- All tests use `RefreshDatabaseWithTenancy` trait — NEVER `RefreshDatabase`
+- All tests use `RefreshDatabaseWithTenancy` trait — **NEVER** `RefreshDatabase`
 - Use factories for model creation — check factory states before manual setup
 - Use `fake()` for faker calls (project convention)
 
@@ -19,16 +19,26 @@ applyTo: "tests/**"
 - Unit tests: `tests/Unit/` — pure logic, no DB
 - Create: `php artisan make:test --pest {Name}` (no directory prefix)
 
-## Patterns
-- Assert JSON structure, status codes, database state
-- Test authorization (forbidden for wrong roles/tenants)
-- Test validation (missing fields, invalid data)
-- Test soft deletes and restore operations
-- Test filter combinations (search, status, pagination)
-
 ## Running
 ```bash
-composer test                                    # All parallel
-composer test:seq                                # Sequential
-php artisan test --compact --filter=testName     # Single test
+./test.sh                                        # All tests (REQUIRED)
+./test.sh tests/Feature/SomeTest.php             # Specific file
+./test.sh --filter=testName                      # Specific test
+./test.sh --parallel                             # Parallel (requires paratest)
 ```
+
+## Tenant-Aware Test Setup
+- Create tenant resources inside `$this->tenant->run(fn)` context
+- Set Spatie team before role assignment in `setUp()`:
+  ```php
+  setPermissionsTeamId($this->tenant->id);
+  $this->user->assignRole('admin');
+  ```
+
+## Required Test Coverage
+- Happy paths (successful operation)
+- Failure paths (validation errors, not found)
+- Authorization (403 for wrong roles, wrong tenant)
+- Tenant isolation — assert cross-tenant data is **never** leaked
+- Soft deletes and restore operations
+- Filter combinations (search, status, pagination)
