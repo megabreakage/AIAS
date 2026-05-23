@@ -1,9 +1,0 @@
-$kind: collection
-description: |-
-  Central country management endpoints (super-admin only).
-
-  All endpoints require super-admin Bearer token (sa_token).
-
-  Create Country auto-saves country_identifier for subsequent requests.
-  Countries belong to continents — continent_id required on create.
-order: 5000

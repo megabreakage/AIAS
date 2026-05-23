@@ -59,6 +59,11 @@
       "key": "tenant_user_identifier",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "user_identifier",
+      "value": "",
+      "type": "string"
     }
   ],
   "auth": {
@@ -1809,6 +1814,338 @@
               ]
             },
             "description": "Requires tenant_token.\n\nRestores a previously soft-deleted preamble.\n\nError responses:\n  401 — Unauthenticated\n  403 — Token belongs to a different tenant\n  404 — Preamble not found in trash"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tenant — Users",
+      "description": "Tenant-scoped user management endpoints.\n\nRequires tenant_token (Bearer auth) and valid tenant resolution via {{tenant_base_url}}.\n\nCreate User auto-saves user_identifier for subsequent requests.",
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{tenant_token}}",
+            "type": "string"
+          }
+        ]
+      },
+      "item": [
+        {
+          "name": "List Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Users array', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.data).to.be.an('array');",
+                  "    pm.expect(b).to.have.property('meta');",
+                  "    if (b.data.length > 0) {",
+                  "        const u = b.data[0];",
+                  "        pm.expect(u).to.have.property('identifier');",
+                  "        pm.expect(u).to.have.property('first_name');",
+                  "        pm.expect(u).to.have.property('last_name');",
+                  "        pm.expect(u).to.have.property('email');",
+                  "        pm.expect(u).to.have.property('is_active');",
+                  "        pm.collectionVariables.set('user_identifier', u.identifier);",
+                  "        console.log('user_identifier set to first result: ' + u.identifier);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{tenant_base_url}}/users?page=1&per_page=15",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "is_active",
+                  "value": "true",
+                  "disabled": true
+                },
+                {
+                  "key": "sort_by",
+                  "value": "created_at",
+                  "disabled": true
+                },
+                {
+                  "key": "sort_order",
+                  "value": "desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Requires tenant_token.\n\nReturns paginated list of users in the resolved tenant. Supports filters: search, is_active, sort_by, sort_order.\n\nSets user_identifier to the first result."
+          },
+          "response": []
+        },
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('User created', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.data).to.have.property('identifier');",
+                  "    pm.expect(b.data).to.have.property('first_name');",
+                  "    pm.expect(b.data).to.have.property('last_name');",
+                  "    pm.expect(b.data).to.have.property('email');",
+                  "    pm.expect(b.data).to.have.property('username');",
+                  "    pm.expect(b.data).to.have.property('is_active');",
+                  "    pm.collectionVariables.set('user_identifier', b.data.identifier);",
+                  "    console.log('user_identifier auto-saved: ' + b.data.identifier);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mr.\",\n  \"first_name\": \"John\",\n  \"middle_name\": \"Doe\",\n  \"last_name\": \"Smith\",\n  \"username\": \"john.smith\",\n  \"email\": \"john.smith@example.com\",\n  \"country_code\": \"+254\",\n  \"phone\": \"0712345678\",\n  \"password\": \"Password1\",\n  \"preferred_timezone\": \"Africa/Nairobi\",\n  \"office_location\": \"Nairobi HQ\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{tenant_base_url}}/users",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            },
+            "description": "Requires tenant_token.\n\nCreates a new user in the resolved tenant.\n\nField rules:\n  title          — nullable, max 50\n  first_name     — required, max 100\n  middle_name    — nullable, max 100\n  last_name      — required, max 100\n  username       — required, unique within tenant, max 100\n  email          — required, unique within tenant, max 255\n  country_code   — nullable, e.g. \"+254\"\n  phone          — nullable, max 30\n  password       — required, min 8, must include letters and numbers\n  preferred_timezone — nullable\n  office_location — nullable\n  avatar         — nullable, URL string\n  notes          — nullable\n  is_active      — nullable boolean (defaults to true)\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.create permission)\n  422 — Validation failed"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('User object', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.data).to.have.property('identifier');",
+                  "    pm.expect(b.data).to.have.property('first_name');",
+                  "    pm.expect(b.data).to.have.property('last_name');",
+                  "    pm.expect(b.data).to.have.property('full_name');",
+                  "    pm.expect(b.data).to.have.property('email');",
+                  "    pm.expect(b.data).to.have.property('username');",
+                  "    pm.expect(b.data).to.have.property('is_active');",
+                  "    pm.expect(b.data).to.have.property('created_at');",
+                  "    pm.expect(b.data).to.have.property('updated_at');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{tenant_base_url}}/users/{{user_identifier}}",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{user_identifier}}"
+              ]
+            },
+            "description": "Requires tenant_token.\n\nFetches a single user by identifier.\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.view permission)\n  404 — User not found"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('User updated', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.data).to.have.property('identifier');",
+                  "    pm.expect(b.data).to.have.property('first_name');",
+                  "    pm.expect(b.data).to.have.property('updated_at');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Jonathan\",\n  \"office_location\": \"Mombasa Office\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{tenant_base_url}}/users/{{user_identifier}}",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{user_identifier}}"
+              ]
+            },
+            "description": "Requires tenant_token.\n\nUpdates an existing user. All fields are optional (partial update).\nSend password only when changing it.\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.edit permission)\n  404 — User not found\n  422 — Validation failed"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));",
+                  "console.log('User soft-deleted.');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{tenant_base_url}}/users/{{user_identifier}}",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{user_identifier}}"
+              ]
+            },
+            "description": "Requires tenant_token.\n\nSoft-deletes the user. Cannot delete yourself.\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.delete permission or attempting self-delete)\n  404 — User not found"
+          },
+          "response": []
+        },
+        {
+          "name": "Restore User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('User restored', () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.data).to.have.property('identifier');",
+                  "    pm.expect(b.data).to.have.property('is_active');",
+                  "    pm.expect(b.data.deleted_at).to.be.null;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{tenant_base_url}}/users/{{user_identifier}}/restore",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{user_identifier}}",
+                "restore"
+              ]
+            },
+            "description": "Requires tenant_token.\n\nRestores a soft-deleted user.\n\nError responses:\n  401 — Unauthenticated\n  403 — Forbidden (missing user.restore permission)\n  404 — User not found in trash"
           },
           "response": []
         }
