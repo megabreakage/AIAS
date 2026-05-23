@@ -104,4 +104,10 @@
 - [ ] Postman `docs/postman/COLLECTION_GUIDE.md` + `docs/postman/QUICK_REFERENCE.md` updated
 - [ ] New .env vars documented
 
-ARCHITECTURE GUIDELINES FOR REFERENCE: [GUIDELINES.md](GUIDELINES.md)
+---
+
+## References
+
+1. [GUIDELINES](GUIDELINES.md)
+2. [CENTRAL MODEL ARCHITECTURE](CENTRAL_MODEL.md)
+3. [TENANT MODEL ARCHITECTURE](TENANT_MODEL.md)
