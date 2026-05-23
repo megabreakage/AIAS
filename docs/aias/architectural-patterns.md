@@ -1465,4 +1465,4 @@ return Application::configure(basePath: dirname(__DIR__))
 | Factory | Model factories with states | `database/factories/` |
 | Test | PHPUnit + RefreshDatabaseWithTenancy | `tests/Feature/` and `tests/Unit/` |
 | Routes | API resource routes | `routes/api.php` |
-| Config | Role-permission map | `config/role-permission-map.php` |
+| Config | Role-permission map | `config/permissions_map.php` |

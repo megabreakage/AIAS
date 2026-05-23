@@ -209,10 +209,10 @@ try {
 
 ```bash
 # Always use test.sh
-./test.sh                                              # All tests
-./test.sh tests/Feature/FindingTest.php               # Specific file
-./test.sh --filter=test_can_create_finding            # Specific test
-./test.sh --parallel                                   # Parallel
+docs/scripts/test.sh                                              # All tests
+docs/scripts/test.sh tests/Feature/FindingTest.php               # Specific file
+docs/scripts/test.sh --filter=test_can_create_finding            # Specific test
+docs/scripts/test.sh --parallel                                   # Parallel
 
 # NEVER use artisan test directly
 php artisan test   # ❌ No DB isolation

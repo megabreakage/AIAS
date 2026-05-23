@@ -75,7 +75,7 @@ Fast lookup for DRY decisions, AIAS-specific patterns, and transaction ordering.
 **File:** `scripts/pre-execution.sh`
 **Type:** Shell validation hook
 
-Validates that tests are run via `./test.sh` rather than directly through `php artisan test`, ensuring proper MySQL database isolation per test run.
+Validates that tests are run via `docs/scripts/test.sh` rather than directly through `php artisan test`, ensuring proper MySQL database isolation per test run.
 
 ---
 

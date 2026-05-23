@@ -387,7 +387,7 @@ bootstrap/
   providers.php
 config/
   tenancy.php
-  role-permission-map.php
+  permissions_map.php
   passport.php
   permission.php
   audit.php
@@ -434,7 +434,7 @@ docs/
 ### Test Infrastructure
 
 - **MySQL** with unique test databases per run (production-like)
-- **`./test.sh`** script creates `aias_test_<timestamp>_<pid>` databases
+- **`docs/scripts/test.sh`** script creates `aias_test_<timestamp>_<pid>` databases
 - All test classes use `RefreshDatabaseWithTenancy` trait
 - Pest v3 (NOT PHPUnit directly — Pest wraps PHPUnit under the hood)
 
@@ -475,10 +475,10 @@ php artisan tenants:migrate          # All tenant DBs
 # Auth
 php artisan passport:install         # Generate Passport keys/clients
 
-# Testing (ALWAYS use ./test.sh)
-./test.sh                           # All tests
-./test.sh tests/Feature/AuditEngagementTest.php  # Specific file
-./test.sh --filter=testMethodName   # Specific test
+# Testing (ALWAYS use docs/scripts/test.sh)
+docs/scripts/test.sh                           # All tests
+docs/scripts/test.sh tests/Feature/AuditEngagementTest.php  # Specific file
+docs/scripts/test.sh --filter=testMethodName   # Specific test
 
 # Code formatting
 vendor/bin/pint --dirty              # Format changed files
@@ -498,7 +498,7 @@ When adding or updating features:
 - [ ] Create Form Request classes for validation
 - [ ] Create Resource/Collection for API responses
 - [ ] Create Policy for authorization
-- [ ] Add permissions to `config/role-permission-map.php`
+- [ ] Add permissions to `config/permissions_map.php`
 - [ ] Add routes to `routes/api.php`
 - [ ] Create OpenAPI documentation in `storage/api-docs/`
 - [ ] Create feature documentation in `docs/features/`
@@ -506,7 +506,7 @@ When adding or updating features:
 - [ ] Tests use `RefreshDatabaseWithTenancy` trait
 - [ ] Update Postman collection
 - [ ] Code formatted with `vendor/bin/pint --dirty`
-- [ ] All tests passing via `./test.sh`
+- [ ] All tests passing via `docs/scripts/test.sh`
 
 ---
 

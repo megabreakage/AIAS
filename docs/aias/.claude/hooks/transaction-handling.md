@@ -418,7 +418,7 @@ DB::transaction(function () use ($data) {
 
 - **Code Review**: All PRs must follow this pattern
 - **Linting**: `vendor/bin/pint --dirty` enforces code style
-- **Testing**: Use `./test.sh` for MySQL-based tests (NOT `php artisan test` directly)
+- **Testing**: Use `docs/scripts/test.sh` for MySQL-based tests (NOT `php artisan test` directly)
 - **Documentation**: Reference this document when building new AIAS features
 
 ---

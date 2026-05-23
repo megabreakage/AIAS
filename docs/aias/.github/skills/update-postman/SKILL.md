@@ -34,7 +34,7 @@ under `postman/environments/` from the canonical MODULES registry in
 | IDs | UUID strings, stored as `{{resource_identifier}}` env vars |
 | Soft deletes | All models; `restore` action at `POST /{id}/restore` |
 | Pagination | `?page=&per_page=&search=&sort_by=&sort_order=` |
-| Testing | Pest v3, `./test.sh`, `RefreshDatabaseWithTenancy` trait |
+| Testing | Pest v3, `docs/scripts/test.sh`, `RefreshDatabaseWithTenancy` trait |
 | DB naming | `aias_tenant_<uuid>_db` (tenant), `aias_test_<ts>_<pid>` (test) |
 
 ## Procedure

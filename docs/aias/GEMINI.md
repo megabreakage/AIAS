@@ -102,7 +102,7 @@ When adding new features or updating existing ones, follow this comprehensive wo
 2. **Create OpenAPI Documentation** - `storage/api-docs/{feature-name}.openapi.yaml` with comprehensive API specs
 3. **Create Feature Documentation** - `docs/features/{feature-name}.md` with overview, API, permissions
 4. **Update Features Index** - Add to `docs/features/README.md` with proper categorization
-5. **Update Permissions** - Add to `config/role-permission-map.php` if applicable
+5. **Update Permissions** - Add to `config/permissions_map.php` if applicable
 6. **Write Comprehensive Tests** - Unit, feature, edge cases, integration tests
 7. **Update Postman Collection** - Add endpoints to Postman collection
 8. **Document Breaking Changes** - API changes, permissions, database, config
@@ -152,7 +152,7 @@ Update API documentation and testing using the comprehensive Postman collection:
 - [ ] Postman environment variables updated
 - [ ] Breaking changes documented
 - [ ] Code formatted with Laravel Pint: `vendor/bin/pint --dirty`
-- [ ] All tests passing: `./test.sh`
+- [ ] All tests passing: `docs/scripts/test.sh`
 
 ## Verification Scripts
 
@@ -282,7 +282,7 @@ Update API documentation and testing using the comprehensive Postman collection:
 - Use `php artisan make:test {name}` to create tests (Pest format).
 - If you see a test using PHPUnit class syntax, convert it to Pest.
 - Tests should cover happy paths, failure paths, and weird paths.
-- **ALWAYS use `./test.sh`** to run tests.
+- **ALWAYS use `docs/scripts/test.sh`** to run tests.
 - Run minimal tests using an appropriate filter before finalizing.
 
 === tailwindcss/v4 rules ===

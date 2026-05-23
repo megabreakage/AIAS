@@ -61,7 +61,7 @@ AIAS is a multi-tenant Laravel 13 API for audit management. Hooks enforce the ar
 
 **File:** `pre-execution.sh`
 
-**Purpose:** Validates that tests are run via `./test.sh` rather than directly through `php artisan test`, ensuring proper MySQL database isolation.
+**Purpose:** Validates that tests are run via `docs/scripts/test.sh` rather than directly through `php artisan test`, ensuring proper MySQL database isolation.
 
 **When it runs:** Before executing test commands
 

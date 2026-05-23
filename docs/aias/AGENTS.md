@@ -42,7 +42,7 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 - Team scoping: `app/Http/Middleware/SetSpatieTeamFromTenant.php` sets Spatie team from the `{tenant}` path or current user
 - Repositories + Filters: `app/Repositories` provide `browse/read/insert/update/delete`; filters live under `app/Filters` and compose small single-responsibility classes
 - Resources: `app/Http/Resources` enforce the response envelope in controllers
-- Permissions map: `config/role-permission-map.php` defines module permissions and role assignments
+- Permissions map: `config/permissions_map.php` defines module permissions and role assignments
 
 ## Developer Workflows
 
@@ -50,12 +50,12 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 - Migrate/seed (central): `php artisan migrate --seed`
 - Tenants migrate: `php artisan tenants:migrate`
 - Passport keys/clients: `php artisan passport:install`
-- **Tests**: `./test.sh` (ALWAYS use this script to avoid MySQL locks)
+- **Tests**: `docs/scripts/test.sh` (ALWAYS use this script to avoid MySQL locks)
 - Dev script: `composer dev` runs app, vite, schedule, queue, logs
 
 ## Testing Configuration
 
-- **ALWAYS use `./test.sh`** to run tests - this ensures proper database isolation
+- **ALWAYS use `docs/scripts/test.sh`** to run tests - this ensures proper database isolation
 - **Script**: Creates unique MySQL database per test run (e.g., `aias_test_<timestamp>_<pid>`)
 - **Database**: MySQL (matching production) for accurate testing with automatic cleanup
 - **Benefits**: Production-like environment, proper isolation, supports parallel execution
@@ -65,16 +65,16 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 
 ```bash
 # Run all tests
-./test.sh
+docs/scripts/test.sh
 
 # Run specific test
-./test.sh --filter=test_can_create_audit_engagement
+docs/scripts/test.sh --filter=test_can_create_audit_engagement
 
 # Run specific test file
-./test.sh tests/Feature/AuditEngagementTest.php
+docs/scripts/test.sh tests/Feature/AuditEngagementTest.php
 
 # Run tests in parallel (requires paratest)
-./test.sh --parallel
+docs/scripts/test.sh --parallel
 ```
 
 ### Test Class Requirements
@@ -106,7 +106,7 @@ class MyTest extends TestCase
 4. Compose filters in `app/Filters/{Domain}` and apply in `browse(...)`
 5. Create Resource/Collection in `app/Http/Resources` for response envelope
 6. Add Policy in `app/Policies` and register if needed
-7. Update `config/role-permission-map.php` if new permissions are required
+7. Update `config/permissions_map.php` if new permissions are required
 
 ## Feature Development Workflow
 
@@ -118,7 +118,7 @@ When adding new features or updating existing ones, follow this comprehensive wo
 2. **Create OpenAPI Documentation** - `storage/api-docs/{feature-name}.openapi.yaml` with comprehensive API specs
 3. **Create Feature Documentation** - `docs/features/{feature-name}.md` with overview, API, permissions
 4. **Update Features Index** - Add to `docs/features/README.md` with proper categorization
-5. **Update Permissions** - Add to `config/role-permission-map.php` if applicable
+5. **Update Permissions** - Add to `config/permissions_map.php` if applicable
 6. **Write Comprehensive Tests** - Unit, feature, edge cases, integration tests
 7. **Update Postman Collection** - Add endpoints to `postman/collections/`
 8. **Document Breaking Changes** - API changes, permissions, database, config
@@ -130,14 +130,14 @@ When adding new features or updating existing ones, follow this comprehensive wo
 - [ ] Feature documentation created/updated
 - [ ] Features README.md updated
 - [ ] Permissions added/updated in config
-- [ ] Tests written and passing (using MySQL via `./test.sh`)
+- [ ] Tests written and passing (using MySQL via `docs/scripts/test.sh`)
 - [ ] Tests use `RefreshDatabaseWithTenancy` trait (not `RefreshDatabase`)
 - [ ] **Postman collection updated** with new endpoints, test scripts, and examples
 - [ ] **Postman documentation updated**: `COLLECTION_GUIDE.md` and `QUICK_REFERENCE.md`
 - [ ] **Environment variables added** for any new variables required
 - [ ] Breaking changes documented
 - [ ] Code formatted: `vendor/bin/pint --dirty`
-- [ ] All tests passing: `./test.sh`
+- [ ] All tests passing: `docs/scripts/test.sh`
 
 **See `CLAUDE.md` for detailed workflow and examples.**
 

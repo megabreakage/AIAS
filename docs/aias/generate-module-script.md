@@ -232,7 +232,7 @@ The script prints these at the end of every successful run:
    Gate::policy(\App\Models\{Model}::class, \App\Policies\{Model}Policy::class);
    ```
 
-2. **Add permissions** to `config/role-permission-map.php`:
+2. **Add permissions** to `config/permissions_map.php`:
 
    ```php
    '{plural-kebab}.view', '{plural-kebab}.create', '{plural-kebab}.edit', '{plural-kebab}.delete'
@@ -260,8 +260,8 @@ The script prints these at the end of every successful run:
 5. **Run tests**:
 
    ```bash
-   ./test.sh tests/Feature/{Model}Test.php
-   ./test.sh tests/Unit/{Model}UnitTest.php
+   docs/scripts/test.sh tests/Feature/{Model}Test.php
+   docs/scripts/test.sh tests/Unit/{Model}UnitTest.php
    ```
 
 6. **Format**:
@@ -300,7 +300,7 @@ The script accepts any casing for input — `audit_standard`, `AuditStandard`, a
 | Tenant model connection | Custom `TenantConnection` | Stancl `TenantConnection` trait |
 | Auditing | Not used | Central models use `Auditable` + `AuditableContract` |
 | Test format | PHPUnit classes (`TestCase`) | Pest v3 (`it()` / `uses()` functions) |
-| Test runner | `./test.sh` → `php artisan test` | `./test.sh` → `vendor/bin/pest` |
+| Test runner | `docs/scripts/test.sh` → `php artisan test` | `docs/scripts/test.sh` → `vendor/bin/pest` |
 | Livewire | Generated (List, Create, Edit, View) | Not generated (API-only) |
 | Collection class | `BaseResourceCollection` | Custom `ResourceCollection` subclass |
 | Policy method | `can()` | `hasPermissionTo()` |

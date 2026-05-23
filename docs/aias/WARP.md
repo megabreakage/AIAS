@@ -130,15 +130,15 @@ php artisan passport:install              # Generate encryption keys & OAuth cli
 
 ### Testing
 
-**ALWAYS use `./test.sh`** to run tests — this prevents MySQL lock issues by creating unique test databases.
+**ALWAYS use `docs/scripts/test.sh`** to run tests — this prevents MySQL lock issues by creating unique test databases.
 
 ```bash
-./test.sh                                          # Run all tests (recommended)
-./test.sh tests/Feature/AuditEngagementTest.php   # Run specific test file
-./test.sh --filter=testName                       # Run specific test by name
+docs/scripts/test.sh                                          # Run all tests (recommended)
+docs/scripts/test.sh tests/Feature/AuditEngagementTest.php   # Run specific test file
+docs/scripts/test.sh --filter=testName                       # Run specific test by name
 ```
 
-**Why use `./test.sh`?**
+**Why use `docs/scripts/test.sh`?**
 
 - Creates unique MySQL database per test run (e.g., `aias_test_<timestamp>_<pid>`)
 - Ensures complete isolation between test runs
@@ -253,7 +253,7 @@ Model changes tracked via `audits` table — **central models only** (User, Tena
 
 ### Testing Standards
 
-- **ALWAYS use `./test.sh`** to run tests
+- **ALWAYS use `docs/scripts/test.sh`** to run tests
 - Use Pest v3 (not raw PHPUnit class syntax)
 - Use `RefreshDatabaseWithTenancy` trait (not `RefreshDatabase`)
 - Most tests should be feature tests
@@ -315,7 +315,7 @@ When creating central/shared models:
 2. **Create OpenAPI Documentation** — `storage/api-docs/{feature-name}.openapi.yaml`
 3. **Create Feature Documentation** — `docs/features/{feature-name}.md`
 4. **Update Features Index** — Add to `docs/features/README.md`
-5. **Update Permissions** — Add to `config/role-permission-map.php` if applicable
+5. **Update Permissions** — Add to `config/permissions_map.php` if applicable
 6. **Write Comprehensive Tests** — Unit, feature, edge cases
 7. **Update Postman Collection**
 8. **Document Breaking Changes**
@@ -326,12 +326,12 @@ When creating central/shared models:
 - [ ] OpenAPI YAML documentation created
 - [ ] Feature documentation created/updated
 - [ ] Permissions added/updated
-- [ ] Tests written and passing (`./test.sh`)
+- [ ] Tests written and passing (`docs/scripts/test.sh`)
 - [ ] Tests use `RefreshDatabaseWithTenancy` trait
 - [ ] Postman collection updated
 - [ ] Breaking changes documented
 - [ ] Code formatted: `vendor/bin/pint --dirty`
-- [ ] All tests passing: `./test.sh`
+- [ ] All tests passing: `docs/scripts/test.sh`
 
 ## Project-Specific Notes
 
