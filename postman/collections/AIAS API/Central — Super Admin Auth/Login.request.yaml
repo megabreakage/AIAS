@@ -1,4 +1,5 @@
 $kind: http-request
+name: Login
 description: |-
   Public endpoint. Throttled: 10 requests/minute.
 
@@ -36,7 +37,10 @@ scripts:
           pm.expect(b.data.user).to.have.property('email');
           pm.expect(b.data.user).to.have.property('first_name');
           pm.expect(b.data.user).to.have.property('last_name');
-          pm.collectionVariables.set('sa_token', b.data.token);
+          pm.environment.set('sa_token', b.data.token);
+          
+          pm.environment.set('sa_email', b.data.email)
+          pm.var
           console.log('sa_token saved for: ' + b.data.user.email);
       });
     language: text/javascript

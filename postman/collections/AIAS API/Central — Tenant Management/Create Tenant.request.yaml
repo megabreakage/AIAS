@@ -1,4 +1,5 @@
 $kind: http-request
+name: Create Tenant
 description: |-
   Requires sa_token.
 
@@ -24,10 +25,10 @@ body:
   type: json
   content: |-
     {
-      "name": "Acme Corporation",
-      "id": "acme-corp",
+      "name": "AirTraffic Ltd",
+      "id": "airtraffic",
       "plan": "starter",
-      "domain": "acme-corp.localhost"
+      "domain": "airtraffic.co.ke"
     }
 scripts:
   - type: afterResponse
