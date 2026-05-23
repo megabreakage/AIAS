@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Tenant;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,12 +19,26 @@ final class TenantResource extends JsonResource
             'domain' => $this->domain,
             'logo' => $this->logo,
             'status' => $this->status?->value ?? $this->status,
-            'owner_id' => $this->owner_id,
-            'country_id' => $this->country_id,
+            'owner' => $this->whenLoaded('owner', fn () => [
+                'identifier' => $this->owner?->identifier,
+                'name' => trim(($this->owner?->first_name ?? '').' '.($this->owner?->last_name ?? '')),
+                'role' => $this->owner?->roles?->firstWhere('name', 'tenant-admin')?->name,
+            ]),
+            'country' => $this->whenLoaded('country', fn () => [
+                'identifier' => $this->country?->identifier,
+                'name' => $this->country?->name,
+                'short_code' => $this->country?->short_code,
+            ]),
             'data_center' => $this->data_center,
             'domains' => $this->whenLoaded('domains', fn () => $this->domains->pluck('domain')),
-            'created_by' => $this->created_by,
-            'updated_by' => $this->updated_by,
+            'created_by' => $this->whenLoaded('createdBy', fn () => [
+                'identifier' => $this->createdBy?->identifier,
+                'name' => trim(($this->createdBy?->first_name ?? '').' '.($this->createdBy?->last_name ?? '')),
+            ]),
+            'updated_by' => $this->whenLoaded('updatedBy', fn () => [
+                'identifier' => $this->updatedBy?->identifier,
+                'name' => trim(($this->updatedBy?->first_name ?? '').' '.($this->updatedBy?->last_name ?? '')),
+            ]),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];
