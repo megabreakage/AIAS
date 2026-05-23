@@ -16,7 +16,26 @@ applyTo: "**/*.{php,ts,tsx,js,jsx,kt}"
 - Form Requests for validation, Policies for authorization
 - `DB::transaction(fn() => ...)` closures — never manual begin/commit/rollback
 - Gate checks BEFORE transactions
+- Logging AFTER transactions
+- Run `vendor/bin/pint --dirty` before finalizing any PHP changes
+- Run `composer analyse` to enforce repository-only boundaries in production layers
 - See [CLAUDE.md](../../CLAUDE.md) for transaction patterns and architecture
+
+## Layer Boundaries (Enforced)
+- Production layers (`app/Http/Controllers`, `app/Jobs`, `app/Services`) MUST use repositories for all record access and mutations
+- Direct model queries in production layers are **FORBIDDEN**: `Model::query()`, `Model::find()`, `Model::where()`, `Model::create()`, `Model::update()`, `Model::delete()`
+- Privileged scripts (`tests/`, `database/factories/`, `database/seeders/`) may use Eloquent directly
+- Enforce this boundary with `composer analyse` (PHPStan/Larastan) in CI
+
+## Code Quality
+- Explicit return types on all methods
+- PHP 8 constructor property promotion
+- Curly braces on all control structures (even single-line)
+- PHPDoc blocks over inline comments
+- No `dd()` — use `Log::debug()` for debugging
+- Eloquent over raw `DB::` queries
+- No `env()` outside config files — use `config()` instead
+- Production-ready code only — no debugging artifacts
 
 ## TypeScript/React
 - Functional components + hooks only
