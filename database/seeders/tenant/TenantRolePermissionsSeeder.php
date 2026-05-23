@@ -14,7 +14,7 @@ class TenantRolePermissionsSeeder extends Seeder
     {
         $roles = [
             [
-                'name' => 'tenant-admin',
+                'name' => 'admin',
                 'display_name' => 'Tenant Admin',
                 'description' => 'Has access to the specific tenant database features and settings',
                 'guard_name' => 'api',
