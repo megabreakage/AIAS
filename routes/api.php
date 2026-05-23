@@ -29,7 +29,8 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/tenants', [TenantController::class, 'index']);
         Route::post('/tenants', [TenantController::class, 'store']);
-        Route::get('/tenants/{id}', [TenantController::class, 'show']);
+        Route::get('/tenants/{identifier}', [TenantController::class, 'show']);
+        Route::put('/tenants/{identifier}', [TenantController::class, 'update']);
         Route::delete('/tenants/{id}', [TenantController::class, 'destroy']);
 
         Route::post('/tenants/{id}/users', [TenantUserController::class, 'store']);

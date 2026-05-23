@@ -6,18 +6,23 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Filters\Central\Tenant\TenantFilters;
 use App\Http\Requests\Tenants\CreateTenantRequest;
+use App\Http\Requests\Tenants\UpdateTenantRequest;
 use App\Http\Resources\Tenant\TenantResource;
 use App\Models\Central\Tenant;
 use App\Models\User;
+use App\Repositories\Central\TenantRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 final class TenantController extends BaseApiController
 {
+    public function __construct(protected TenantRepository $repository) {}
+
     public function index(Request $request): JsonResponse
     {
         $query = Tenant::query()->with('domains', 'owner');
@@ -105,6 +110,31 @@ final class TenantController extends BaseApiController
                 Response::HTTP_NOT_FOUND,
             );
         }
+
+        return $this->success(TenantResource::make($tenant)->resolve());
+    }
+
+    public function update(UpdateTenantRequest $request, string $identifier): JsonResponse
+    {
+        $tenant = $this->repository->readTenant($identifier);
+
+        Gate::authorize('update', $tenant);
+
+        $data = $request->validated();
+
+        // Resolve owner identifier → primary key when provided
+        if (isset($data['owner_id'])) {
+            $owner = User::where('identifier', $data['owner_id'])->firstOrFail();
+            $data['owner_id'] = $owner->id;
+        }
+
+        Log::info('Updating tenant', ['identifier' => $identifier]);
+
+        $tenant = DB::connection('central')->transaction(function () use ($identifier, $data): Tenant {
+            return $this->repository->updateTenant($identifier, $data);
+        });
+
+        Log::info('Tenant updated', ['identifier' => $tenant->identifier]);
 
         return $this->success(TenantResource::make($tenant)->resolve());
     }
