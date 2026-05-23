@@ -95,12 +95,11 @@ final class TenantUserController extends BaseApiController
                 'role' => $role,
             ]);
 
+            $userData = UserResource::make($user->load(['roles']))->resolve();
+
             tenancy()->end();
 
-            return $this->success(
-                UserResource::make($user->load(['roles']))->resolve(),
-                Response::HTTP_CREATED,
-            );
+            return $this->success($userData, Response::HTTP_CREATED);
         } catch (\Throwable $e) {
             tenancy()->end();
 
