@@ -28,7 +28,7 @@ class UserRepository extends BaseRepository
         ?string $sortBy = null,
         bool $sortDesc = false,
     ): LengthAwarePaginator {
-        $query = $this->newQuery()->with(['createdBy', 'updatedBy']);
+        $query = $this->newQuery()->with(['createdBy', 'updatedBy', 'roles']);
 
         $filters->apply($query);
 
@@ -54,7 +54,7 @@ class UserRepository extends BaseRepository
         /** @var User */
         return $this->newQuery()
             ->where('identifier', $identifier)
-            ->with(['createdBy', 'updatedBy'])
+            ->with(['createdBy', 'updatedBy', 'roles'])
             ->firstOrFail();
     }
 
@@ -69,7 +69,7 @@ class UserRepository extends BaseRepository
         return $this->newQuery()
             ->withTrashed()
             ->where('identifier', $identifier)
-            ->with(['createdBy', 'updatedBy'])
+            ->with(['createdBy', 'updatedBy', 'roles'])
             ->firstOrFail();
     }
 
@@ -94,7 +94,7 @@ class UserRepository extends BaseRepository
         $user = $this->readUser($identifier);
         $user->fill($data)->save();
 
-        return $user->fresh(['createdBy', 'updatedBy']);
+        return $user->fresh(['createdBy', 'updatedBy', 'roles']);
     }
 
     /**
@@ -114,6 +114,6 @@ class UserRepository extends BaseRepository
         $user = $this->readTrashedUser($identifier);
         $user->restore();
 
-        return $user->fresh(['createdBy', 'updatedBy']);
+        return $user->fresh(['createdBy', 'updatedBy', 'roles']);
     }
 }
