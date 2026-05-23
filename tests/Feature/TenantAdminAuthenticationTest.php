@@ -90,13 +90,13 @@ describe('Tenant admin authentication', function (): void {
         expect($accessToken->tenant_id)->toBe((string) $ctx['tenant']->id);
     });
 
-    it('assigns tenant-admin role to seeded admin', function (): void {
+    it('assigns tenant role to seeded admin', function (): void {
         $ctx = provisionTenantWithSeededAdmin();
         tenancy()->initialize($ctx['tenant']);
 
         /** @var User $tenantAdmin */
         $tenantAdmin = User::query()->where('email', $ctx['email'])->firstOrFail();
-        expect($tenantAdmin->hasRole('tenant-admin', 'api'))->toBeTrue();
+        expect($tenantAdmin->hasRole('tenant', 'api'))->toBeTrue();
 
         tenancy()->end();
     });

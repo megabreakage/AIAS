@@ -26,7 +26,7 @@ class RolePermissionsSeeder extends Seeder
                 'guard_name' => 'api',
             ],
             [
-                'name' => 'tenant-admin',
+                'name' => 'tenant',
                 'display_name' => 'Tenant Admin',
                 'description' => 'Has access to tenant-specific admin features',
                 'guard_name' => 'api',
@@ -51,11 +51,11 @@ class RolePermissionsSeeder extends Seeder
                 ['display_name' => $roleData['display_name'], 'description' => $roleData['description']],
             );
 
-            if ($role?->name !== 'tenant-admin') {
+            if ($role?->name !== 'tenant') {
                 $this->syncCentralPermissions($role, $roleData['guard_name']);
             }
 
-            if ($role?->name === 'tenant-admin') {
+            if ($role?->name === 'tenant') {
                 $this->syncTenantAdminPermissions($role, $roleData['guard_name']);
             }
 

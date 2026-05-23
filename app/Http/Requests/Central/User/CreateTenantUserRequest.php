@@ -31,7 +31,7 @@ final class CreateTenantUserRequest extends FormRequest
             'avatar' => ['nullable', 'string', 'max:500'],
             'notes' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],
-            'role' => ['required', 'string', 'in:tenant-admin,auditor,client,viewer'],
+            'role' => ['required', 'string', 'in:tenant,auditor,client,viewer'],
         ];
     }
 
@@ -44,7 +44,7 @@ final class CreateTenantUserRequest extends FormRequest
             'email.required' => 'Email address is required.',
             'password.required' => 'Password is required.',
             'role.required' => 'A role must be assigned to the user.',
-            'role.in' => 'Role must be one of: tenant-admin, auditor, client, viewer.',
+            'role.in' => 'Role must be one of: tenant, auditor, client, viewer.',
         ];
     }
 }

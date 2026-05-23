@@ -47,17 +47,17 @@ class TenantAdminSeeder extends Seeder
 
         $this->createTenant($admin);
 
-        $tenantAdminRole = Role::where('name', 'tenant-admin')
+        $tenantAdminRole = Role::where('name', 'tenant')
             ->where('guard_name', 'api')
             ->first();
 
         if (!$tenantAdminRole) {
-            $this->command->error('tenant-admin role not found. Run TenantRolePermissionsSeeder first.');
+            $this->command->error('tenant role not found. Run TenantRolePermissionsSeeder first.');
 
             return;
         }
 
-        if (!$admin->hasRole('tenant-admin', 'api')) {
+        if (!$admin->hasRole('tenant', 'api')) {
             $admin->assignRole($tenantAdminRole);
         }
 

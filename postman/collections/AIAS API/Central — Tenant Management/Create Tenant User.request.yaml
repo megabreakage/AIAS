@@ -6,7 +6,7 @@ description: |-
   Creates a user inside a specific tenant's database. The super-admin provides the tenant ID and all user details including the role to assign.
 
   Roles (must match a seeded role in the tenant DB):
-    tenant-admin — full tenant access
+    tenant — full tenant access
     auditor      — audit operations
     client       — read-only client access
     viewer       — read-only viewer access
@@ -35,7 +35,7 @@ body:
       "country_code": "+254",
       "phone": "0727905402",
       "password": "T@ngo540",
-      "role": "tenant-admin",
+      "role": "tenant",
       "preferred_timezone": "Africa/Nairobi",
       "office_location": "Lengai House, Wilson Airport",
       "notes": null,

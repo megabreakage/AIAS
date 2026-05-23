@@ -544,7 +544,7 @@
                 "users"
               ]
             },
-            "description": "Requires sa_token.\n\nCreates a user inside a specific tenant's database. The super-admin provides the tenant ID and all user details including the role to assign.\n\nRoles (must match a seeded role in the tenant DB):\n  tenant-admin \u2014 full tenant access\n  auditor      \u2014 audit operations\n  client       \u2014 read-only client access\n  viewer       \u2014 read-only viewer access\n\nPassword rules: min 8 characters, must contain letters and numbers.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Tenant not found (TENANT_NOT_FOUND)\n  422 \u2014 Validation failed / EMAIL_TAKEN / USERNAME_TAKEN / ROLE_NOT_FOUND"
+            "description": "Requires sa_token.\n\nCreates a user inside a specific tenant's database. The super-admin provides the tenant ID and all user details including the role to assign.\n\nRoles (must match a seeded role in the tenant DB):\n  tenant \u2014 full tenant access\n  auditor      \u2014 audit operations\n  client       \u2014 read-only client access\n  viewer       \u2014 read-only viewer access\n\nPassword rules: min 8 characters, must contain letters and numbers.\n\nError responses:\n  401 \u2014 Unauthenticated\n  404 \u2014 Tenant not found (TENANT_NOT_FOUND)\n  422 \u2014 Validation failed / EMAIL_TAKEN / USERNAME_TAKEN / ROLE_NOT_FOUND"
           },
           "response": []
         }

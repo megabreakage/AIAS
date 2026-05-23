@@ -76,8 +76,8 @@ function provisionTenantWithSeededAdmin(): array
     $superAdmin = SuperAdmin::factory()->create();
     Passport::actingAs($superAdmin, [], 'super_admin');
 
-    $domain = 'tenant-admin-'.Str::lower(Str::random(8)).'.localhost';
-    $email = 'tenant-admin-'.Str::lower(Str::random(8)).'@'.$domain;
+    $domain = 'tenant-'.Str::lower(Str::random(8)).'.localhost';
+    $email = 'tenant-'.Str::lower(Str::random(8)).'@'.$domain;
     $password = 'StrongPass123!';
 
     putenv('TEST_TENANT_ADMIN_EMAIL='.$email);

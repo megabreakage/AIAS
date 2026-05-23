@@ -194,7 +194,7 @@ describe('CreateTenantUserRequest validation', function (): void {
         $validator = Validator::make(validTenantUserPayload(['role' => $role]), (new CreateTenantUserRequest)->rules());
 
         expect($validator->passes())->toBeTrue();
-    })->with(['tenant-admin', 'auditor', 'client', 'viewer']);
+    })->with(['tenant', 'auditor', 'client', 'viewer']);
 });
 
 // ===========================================================================
@@ -217,7 +217,7 @@ describe('TenantUser HTTP validation', function (): void {
 
         $this->postJson('/api/v1/tenants/999/users', validTenantUserPayload(['role' => 'super-admin']))
             ->assertUnprocessable()
-            ->assertJsonPath('error.details.role.0', 'Role must be one of: tenant-admin, auditor, client, viewer.');
+            ->assertJsonPath('error.details.role.0', 'Role must be one of: tenant, auditor, client, viewer.');
     });
 
     it('returns 422 with invalid email', function (): void {
