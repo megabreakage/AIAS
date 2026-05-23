@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Exceptions\ApiException;
 use App\Http\Middleware\EnsureTokenMatchesTenant;
+use App\Http\Middleware\ForceJsonBody;
 use App\Providers\AuthServiceProvider;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -24,6 +25,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->api(prepend: [
+            ForceJsonBody::class,
+        ]);
+
         $middleware->alias([
             'tenant.token' => EnsureTokenMatchesTenant::class,
         ]);
