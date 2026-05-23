@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class SuperAdminSeeder extends Seeder
 {
@@ -37,8 +39,13 @@ class SuperAdminSeeder extends Seeder
             );
         });
 
-        if (!$superAdmin->hasRole('super-admin')) {
-            $superAdmin->assignRole('super-admin');
+        $superAdminRole = Role::on('central')
+            ->where('name', 'super-admin')
+            ->where('guard_name', 'api')
+            ->first();
+
+        if ($superAdminRole !== null && !$superAdmin->hasRole('super-admin', 'api')) {
+            $superAdmin->assignRole($superAdminRole);
             $this->command->info("Assigned super-admin role to: {$email}");
         }
 
@@ -50,7 +57,14 @@ class SuperAdminSeeder extends Seeder
         }
 
         if (!empty($centralPermissions)) {
-            $superAdmin->syncPermissions($centralPermissions);
+            $permissions = Permission::on('central')
+                ->where('guard_name', 'api')
+                ->whereIn('name', $centralPermissions)
+                ->get();
+
+            if ($permissions->isNotEmpty()) {
+                $superAdmin->syncPermissions($permissions);
+            }
         }
 
         if ($superAdmin->wasRecentlyCreated) {
