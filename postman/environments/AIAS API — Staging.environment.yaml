@@ -24,6 +24,9 @@ values:
   - key: tenant_token
     value: ''
     description: Tenant user Bearer token. Auto-set by Tenant Login/Register.
+  - key: tenant_user_identifier
+    value: ''
+    description: Tenant user identifier. Auto-set by Create Tenant User.
   - key: sa_email
     value: ''
     description: Staging super-admin email.

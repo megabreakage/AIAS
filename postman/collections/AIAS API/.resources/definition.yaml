@@ -24,6 +24,7 @@ variables:
   country_identifier: ""
   preamble_identifier: ""
   user_identifier: ""
+  tenant_user_identifier: ""
   sa_token: ""
   tenant_token: ""
 auth:

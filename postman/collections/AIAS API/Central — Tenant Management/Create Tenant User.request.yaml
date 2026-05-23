@@ -1,0 +1,74 @@
+$kind: http-request
+description: |-
+  Requires sa_token.
+
+  Creates a user inside a specific tenant's database. The super-admin provides the tenant ID and all user details including the role to assign.
+
+  Roles (must match a seeded role in the tenant DB):
+    tenant-admin — full tenant access
+    auditor      — audit operations
+    client       — read-only client access
+    viewer       — read-only viewer access
+
+  Password rules: min 8 characters, must contain letters and numbers.
+
+  Field rules:
+    first_name  — required, max 100
+    last_name   — required, max 100
+    username    — required, max 100 (must be unique in tenant)
+    email       — required, valid email (must be unique in tenant)
+    password    — required, min 8 chars, letters + numbers
+    role        — required, one of: tenant-admin | auditor | client | viewer
+    title       — optional, max 50
+    middle_name — optional, max 100
+    phone       — optional, max 30
+    country_code — optional, max 10
+    preferred_timezone — optional, max 100
+    office_location    — optional, max 255
+    notes       — optional
+    is_active   — optional, boolean (default: true)
+
+  Error responses:
+    401 — Unauthenticated
+    404 — Tenant not found (TENANT_NOT_FOUND)
+    422 — Validation failed / email taken (EMAIL_TAKEN) / username taken (USERNAME_TAKEN) / role not found (ROLE_NOT_FOUND)
+url: "{{central_base_url}}/tenants/{{tenant_id}}/users"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "username": "jane.doe",
+      "email": "jane.doe@example.com",
+      "password": "Password1",
+      "role": "auditor",
+      "title": null,
+      "middle_name": null,
+      "phone": null,
+      "country_code": null,
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": null,
+      "notes": null,
+      "is_active": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 201', () => pm.response.to.have.status(201));
+      pm.test('User created with role', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('email');
+          pm.expect(b.data).to.have.property('roles');
+          pm.expect(b.data.roles).to.be.an('array').with.length.above(0);
+          pm.collectionVariables.set('tenant_user_identifier', b.data.identifier);
+          pm.environment.set('tenant_user_identifier', b.data.identifier);
+          console.log('tenant_user_identifier auto-saved: ' + b.data.identifier);
+      });
+    language: text/javascript
+order: 5000
