@@ -1,0 +1,59 @@
+$kind: http-request
+name: Create Tenant User
+description: |-
+  Requires sa_token.
+
+  Creates a user inside a specific tenant's database. The super-admin provides the tenant ID and all user details including the role to assign.
+
+  Roles (must match a seeded role in the tenant DB):
+    tenant-admin — full tenant access
+    auditor      — audit operations
+    client       — read-only client access
+    viewer       — read-only viewer access
+
+  Password rules: min 8 characters, must contain letters and numbers.
+
+  Error responses:
+    401 — Unauthenticated
+    404 — Tenant not found (TENANT_NOT_FOUND)
+    422 — Validation failed / EMAIL_TAKEN / USERNAME_TAKEN / ROLE_NOT_FOUND
+url: "{{central_base_url}}/tenants/{{tenant_id}}/users"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": null,
+      "first_name": "Martin",
+      "middle_name": null,
+      "last_name": "Njuguna",
+      "username": "martin.njau",
+      "email": "martin@airtraffic.com",
+      "country_code": "+254",
+      "phone": "0727905402",
+      "password": "T@ngo540",
+      "role": "auditor",
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": null,
+      "notes": null,
+      "is_active": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 201', () => pm.response.to.have.status(201));
+      pm.test('User created with role', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('email');
+          pm.expect(b.data).to.have.property('roles');
+          pm.expect(b.data.roles).to.be.an('array').with.length.above(0);
+          pm.collectionVariables.set('tenant_user_identifier', b.data.identifier);
+          pm.environment.set('tenant_user_identifier', b.data.identifier);
+          console.log('tenant_user_identifier auto-saved: ' + b.data.identifier);
+      });
+    language: text/javascript
+order: 5000

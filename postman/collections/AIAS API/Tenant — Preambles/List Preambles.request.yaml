@@ -1,0 +1,48 @@
+$kind: http-request
+description: |-
+  Requires tenant_token.
+
+  Returns paginated list of preambles for the resolved tenant. Supports filters: search, status, sort_by, sort_order.
+
+  Sets preamble_identifier to the first result.
+url: "{{tenant_base_url}}/preambles?page=1&per_page=15"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  - key: page
+    value: "1"
+  - key: per_page
+    value: "15"
+  - key: search
+    value: ""
+    disabled: true
+  - key: status
+    value: ""
+    disabled: true
+  - key: sort_by
+    value: name
+    disabled: true
+  - key: sort_order
+    value: asc
+    disabled: true
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Preamble array', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.be.an('array');
+          pm.expect(b).to.have.property('meta');
+          if (b.data.length > 0) {
+              const p = b.data[0];
+              pm.expect(p).to.have.property('identifier');
+              pm.expect(p).to.have.property('reference_number');
+              pm.expect(p).to.have.property('name');
+              pm.expect(p).to.have.property('status');
+              pm.collectionVariables.set('preamble_identifier', p.identifier);
+              console.log('preamble_identifier set to first result: ' + p.identifier);
+          }
+      });
+    language: text/javascript
+order: 1000

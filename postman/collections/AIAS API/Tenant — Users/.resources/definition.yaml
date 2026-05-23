@@ -1,0 +1,14 @@
+$kind: collection
+description: |-
+  Tenant-scoped user management endpoints.
+
+  Requires tenant_token (Bearer auth) and valid tenant resolution via {{tenant_base_url}}.
+
+  Create User auto-saves user_identifier for subsequent requests.
+auth:
+  - id: 2c51db87-a189-41f5-a552-beb9446dba3e
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{tenant_token}}"
+order: 9000

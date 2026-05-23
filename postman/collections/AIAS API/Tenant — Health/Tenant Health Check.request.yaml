@@ -1,0 +1,26 @@
+$kind: http-request
+description: |-
+  Public endpoint on the tenant domain.
+
+  Confirms that Stancl tenancy resolves the correct tenant from the Host header. Returns the resolved tenant ID.
+
+  Prerequisite: tenant_id collection variable must be set and the tenant must exist in the database.
+url: "{{tenant_base_url}}/health"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Tenant resolved', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('status', 'ok');
+          pm.expect(b.data).to.have.property('tenant');
+          pm.expect(b.data.tenant).to.not.be.null;
+          console.log('Resolved tenant: ' + b.data.tenant);
+      });
+    language: text/javascript
+order: 1000
