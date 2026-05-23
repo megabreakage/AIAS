@@ -30,6 +30,7 @@ body:
   content: |-
     {
       "name": "Kenya",
+      "slug": null,
       "continent_id": 1,
       "short_code": "KE",
       "iso_code": "KEN",
