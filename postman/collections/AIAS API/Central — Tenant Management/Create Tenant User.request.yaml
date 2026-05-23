@@ -26,18 +26,18 @@ body:
   type: json
   content: |-
     {
-      "title": null,
+      "title": "Mrs.",
       "first_name": "Martin",
       "middle_name": null,
       "last_name": "Njuguna",
-      "username": "martin.njau",
+      "username": "martin",
       "email": "martin@airtraffic.com",
       "country_code": "+254",
       "phone": "0727905402",
       "password": "T@ngo540",
-      "role": "auditor",
+      "role": "tenant-admin",
       "preferred_timezone": "Africa/Nairobi",
-      "office_location": null,
+      "office_location": "Lengai House, Wilson Airport",
       "notes": null,
       "is_active": true
     }

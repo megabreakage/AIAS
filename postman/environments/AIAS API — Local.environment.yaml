@@ -2,61 +2,37 @@ name: AIAS API — Local
 values:
   - key: central_base_url
     value: 'http://localhost:8020/api/v1'
-    description:
-      content: 'Central domain. Start server: php artisan serve --host=localhost --port=8020'
-      type: text/plain
+    description: 'Central domain. Start server: php artisan serve --host=localhost --port=8020'
   - key: tenant_base_url
     value: 'http://{{tenant_id}}.localhost:8020/v1'
-    description:
-      content: Tenant domain. Resolved from tenant_id variable. Requires /etc/hosts or local DNS for subdomain routing.
-      type: text/plain
+    description: Tenant domain. Resolved from tenant_id variable. Requires /etc/hosts or local DNS for subdomain routing.
   - key: tenant_id
     value: acme-corp
-    description:
-      content: Active tenant slug. Must match a tenant in the database.
-      type: text/plain
+    description: Active tenant slug. Must match a tenant in the database.
   - key: continent_identifier
     value: ''
-    description:
-      content: Continent identifier. Auto-set by Create/List Continents.
-      type: text/plain
+    description: Continent identifier. Auto-set by Create/List Continents.
   - key: country_identifier
     value: ''
-    description:
-      content: Country identifier. Auto-set by Create/List Countries.
-      type: text/plain
+    description: Country identifier. Auto-set by Create/List Countries.
   - key: preamble_identifier
     value: ''
-    description:
-      content: Preamble identifier. Auto-set by Create/List Preambles.
-      type: text/plain
+    description: Preamble identifier. Auto-set by Create/List Preambles.
   - key: sa_token
     value: ''
-    description:
-      content: Super-admin Bearer token. Auto-set by SA Login.
-      type: text/plain
+    description: Super-admin Bearer token. Auto-set by SA Login.
   - key: tenant_token
     value: ''
-    description:
-      content: Tenant user Bearer token. Auto-set by Tenant Login/Register.
-      type: text/plain
+    description: Tenant user Bearer token. Auto-set by Tenant Login/Register.
   - key: sa_email
     value: sa@aias.system
-    description:
-      content: Default super-admin email (seeded by DatabaseSeeder).
-      type: text/plain
+    description: Default super-admin email (seeded by DatabaseSeeder).
   - key: sa_password
     value: password
-    description:
-      content: Default super-admin password (seeded by DatabaseSeeder).
-      type: text/plain
+    description: Default super-admin password (seeded by DatabaseSeeder).
   - key: tenant_user_identifier
     value: ''
-    description:
-      content: Tenant user identifier. Auto-set by Create Tenant User.
-      type: text/plain
+    description: Tenant user identifier. Auto-set by Create Tenant User.
   - key: user_identifier
     value: ''
-    description:
-      content: Tenant user identifier (UUID). Auto-set by List/Create User.
-      type: text/plain
+    description: Tenant user identifier (UUID). Auto-set by List/Create User.
