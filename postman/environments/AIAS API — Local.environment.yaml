@@ -36,3 +36,6 @@ values:
   - key: user_identifier
     value: ''
     description: Tenant user identifier (UUID). Auto-set by List/Create User.
+  - key: tenant_owner_id
+    value: ''
+    description: Central user ID (integer). Auto-set by Register Tenant Owner (Step 1). Used as owner_id in Create Tenant (Step 2).
