@@ -29,9 +29,9 @@ final class AdminResource extends JsonResource
             'is_active' => $this->is_active,
             'last_login_at' => $this->last_login_at?->toISOString(),
             'roles' => $this->whenLoaded('roles', fn () => $this->roles->pluck('name')),
-            'created_by' => $this->whenLoaded('createdBy', fn () => [
-                'identifier' => $this->createdBy?->identifier,
-                'name' => trim(($this->createdBy?->first_name ?? '').' '.($this->createdBy?->last_name ?? '')),
+            'created_by' => $this->whenLoaded('creator', fn () => [
+                'identifier' => $this->creator?->identifier,
+                'name' => trim(($this->creator?->first_name ?? '').' '.($this->creator?->last_name ?? '')),
             ]),
             'updated_by' => $this->whenLoaded('updatedBy', fn () => [
                 'identifier' => $this->updatedBy?->identifier,

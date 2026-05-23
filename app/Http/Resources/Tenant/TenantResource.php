@@ -31,11 +31,11 @@ final class TenantResource extends JsonResource
             ]),
             'data_center' => $this->data_center,
             'domains' => $this->whenLoaded('domains', fn () => $this->domains->pluck('domain')),
-            'created_by' => $this->whenLoaded('createdBy', fn () => [
+            'created_by' => $this->whenLoaded('creator', fn () => [
                 'identifier' => $this->createdBy?->identifier,
                 'name' => trim(($this->createdBy?->first_name ?? '').' '.($this->createdBy?->last_name ?? '')),
             ]),
-            'updated_by' => $this->whenLoaded('updatedBy', fn () => [
+            'updated_by' => $this->whenLoaded('updater', fn () => [
                 'identifier' => $this->updatedBy?->identifier,
                 'name' => trim(($this->updatedBy?->first_name ?? '').' '.($this->updatedBy?->last_name ?? '')),
             ]),
