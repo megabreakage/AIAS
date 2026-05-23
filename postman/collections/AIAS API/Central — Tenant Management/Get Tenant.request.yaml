@@ -1,6 +1,6 @@
 $kind: http-request
 description: |-
-  Requires sa_token.
+  Requires central_token.
 
   Fetches a single tenant by ID including its domains array.
 

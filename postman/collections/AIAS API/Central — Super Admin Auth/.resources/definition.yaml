@@ -1,3 +1,3 @@
 $kind: collection
-description: Super-admin authentication on the central domain. Login auto-saves sa_token to collection variables. All subsequent super-admin requests inherit the collection-level Bearer auth.
+description: Super-admin authentication on the central domain. Login auto-saves central_token to collection variables. All subsequent super-admin requests inherit the collection-level Bearer auth.
 order: 2000

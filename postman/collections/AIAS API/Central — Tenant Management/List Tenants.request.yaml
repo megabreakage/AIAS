@@ -1,6 +1,6 @@
 $kind: http-request
 description: |-
-  Requires sa_token.
+  Requires central_token.
 
   Returns all tenants with their associated domains. Sets tenant_id to the first result.
 url: "{{central_base_url}}/tenants"

@@ -2,7 +2,7 @@ $kind: http-request
 description: |-
   Public endpoint. Throttled: 10 requests/minute.
 
-  Returns Bearer token + user object. Token is auto-saved to sa_token collection variable.
+  Returns Bearer token + user object. Token is auto-saved to central_token collection variable.
 
   Error responses:
     401 — Invalid credentials
@@ -36,8 +36,8 @@ scripts:
           pm.expect(b.data.user).to.have.property('email');
           pm.expect(b.data.user).to.have.property('first_name');
           pm.expect(b.data.user).to.have.property('last_name');
-          pm.environment.set('sa_token', b.data.token);
-          console.log('sa_token saved for: ' + b.data.user.email);
+          pm.environment.set('central_token', b.data.token);
+          console.log('central_token saved for: ' + b.data.user.email);
       });
     language: text/javascript
 order: 1000

@@ -1,6 +1,6 @@
 $kind: http-request
 description: |-
-  Requires sa_token.
+  Requires central_token.
 
   Creates a new continent.
 

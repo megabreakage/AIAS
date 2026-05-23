@@ -1,6 +1,6 @@
 $kind: http-request
 description: |-
-  Requires sa_token.
+  Requires central_token.
 
   Returns paginated list of continents. Supports filters: search, status, sort_by, sort_order.
 

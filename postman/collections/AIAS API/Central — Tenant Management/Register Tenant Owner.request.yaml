@@ -1,6 +1,6 @@
 $kind: http-request
 description: |-
-  Requires sa_token.
+  Requires central_token.
 
   Step 1 of 2 — Registers a new user on the central database with the `tenant` role.
   The returned `id` (integer) is used as `owner_id` in Step 2 (Create Tenant).

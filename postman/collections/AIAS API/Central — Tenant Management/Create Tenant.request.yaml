@@ -1,6 +1,6 @@
 $kind: http-request
 description: |-
-  Requires sa_token.
+  Requires central_token.
 
   Step 2 of 2 — Creates a new tenant and provisions a dedicated database.
   `owner_id` must reference an existing user on the central database (see Register Tenant Owner — Step 1).

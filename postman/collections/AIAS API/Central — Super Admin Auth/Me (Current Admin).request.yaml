@@ -1,6 +1,6 @@
 $kind: http-request
 description: |-
-  Requires sa_token (Bearer — inherited from collection).
+  Requires central_token (Bearer — inherited from collection).
 
   Returns authenticated super-admin profile including is_active flag.
 

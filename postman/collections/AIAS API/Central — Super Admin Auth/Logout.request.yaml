@@ -1,8 +1,8 @@
 $kind: http-request
 description: |-
-  Requires sa_token (Bearer — inherited from collection).
+  Requires central_token (Bearer — inherited from collection).
 
-  Revokes the Passport access token and clears sa_token collection variable.
+  Revokes the Passport access token and clears central_token collection variable.
 
   Error responses:
     401 — Unauthenticated
@@ -18,7 +18,7 @@ scripts:
           const b = pm.response.json();
           pm.expect(b.data).to.have.property('message', 'Logged out successfully.');
       });
-      pm.environment.set('sa_token', '');
-      console.log('sa_token cleared.');
+      pm.environment.set('central_token', '');
+      console.log('central_token cleared.');
     language: text/javascript
 order: 3000

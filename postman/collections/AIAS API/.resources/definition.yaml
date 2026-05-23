@@ -8,7 +8,7 @@ description: |-
     Tenant domain ({tenant_id}.localhost:8020) — prefix /v1 — tenant user auth + operations
 
   Quick start:
-    1. Super Admin Auth / Login  →  sa_token auto-saved
+    1. Super Admin Auth / Login  →  central_token auto-saved
     2. Tenant Management / Create Tenant  →  tenant_id auto-saved
     3. Tenant Auth / Register or Login  →  tenant_token auto-saved
 
@@ -24,7 +24,7 @@ variables:
   continent_identifier: ""
   country_identifier: ""
   preamble_identifier: ""
-  sa_token: ""
+  central_token: ""
   tenant_token: ""
   tenant_user_identifier: ""
   user_identifier: ""
@@ -34,4 +34,4 @@ auth:
     type: bearer
     name: bearer auth
     credentials:
-      token: "{{sa_token}}"
+      token: "{{central_token}}"

@@ -1,6 +1,6 @@
 $kind: http-request
 description: |-
-  Requires sa_token.
+  Requires central_token.
 
   Soft-deletes the tenant record. Triggers TenantDeleted event which drops the tenant database in the background.
 
