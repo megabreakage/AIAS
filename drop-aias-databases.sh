@@ -5,7 +5,7 @@ set -euo pipefail
 
 MYSQL_HOST="${DB_CENTRAL_HOST:-127.0.0.1}"
 MYSQL_PORT="${DB_CENTRAL_PORT:-3306}"
-MYSQL_USER="${DB_CENTRAL_USERNAME:-aias}"
+MYSQL_USER="${DB_CENTRAL_USERNAME:-root}"
 MYSQL_PASS="${DB_CENTRAL_PASSWORD:-}"
 
 # Load from .env if present
