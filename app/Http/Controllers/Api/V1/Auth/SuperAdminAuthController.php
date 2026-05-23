@@ -33,11 +33,17 @@ final class SuperAdminAuthController extends BaseApiController
         }
 
         $token = $admin->createToken('sa-api-token')->accessToken;
+        $refreshToken = $admin->createToken('sa-refresh-token')->accessToken;
 
         return $this->success([
             'token' => $token,
+            'refresh_token' => $refreshToken,
             'token_type' => 'Bearer',
-            'user' => AdminResource::make($admin)->resolve(),
+            'user' => [
+                'id' => $admin->identifier,
+                'name' => $admin->first_name.' '.$admin->last_name,
+                'email' => $admin->email,
+            ],
         ]);
     }
 
@@ -53,11 +59,7 @@ final class SuperAdminAuthController extends BaseApiController
         $admin = $request->user();
 
         return $this->success([
-            'id' => $admin->identifier,
-            'first_name' => $admin->first_name,
-            'last_name' => $admin->last_name,
-            'email' => $admin->email,
-            'is_active' => $admin->is_active,
+            'user' => AdminResource::make($admin)->resolve(),
         ]);
     }
 }
