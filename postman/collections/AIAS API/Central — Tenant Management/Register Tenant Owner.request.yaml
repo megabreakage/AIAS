@@ -1,24 +1,11 @@
 $kind: http-request
-name: Register Tenant Owner
 description: |-
   Requires sa_token.
 
   Step 1 of 2 — Registers a new user on the central database with the `tenant` role.
   The returned `id` (integer) is used as `owner_id` in Step 2 (Create Tenant).
 
-  Required fields:
-    first_name  — required, max 100
-    last_name   — required, max 100
-    username    — required, unique across central users
-    email       — required, unique across central users
-    password    — required, min 8 characters, must contain letters and numbers
-
-  Optional fields:
-    title, middle_name, phone, country_code, preferred_timezone, office_location,
-    avatar, notes, is_active (default: true)
-
-  After-response script auto-saves the user's `id` as `tenant_owner_id` collection
-  variable for use in Step 2.
+  After-response script auto-saves the user`s `id` as `tenant_owner_id` collection variable.
 
   Error responses:
     401 — Unauthenticated
@@ -46,16 +33,16 @@ body:
 scripts:
   - type: afterResponse
     code: |-
-      pm.test('Status 201', () => pm.response.to.have.status(201));
-      pm.test('Tenant owner registered', () => {
+      pm.test("Status 201", () => pm.response.to.have.status(201));
+      pm.test("Tenant owner registered", () => {
           const b = pm.response.json();
-          pm.expect(b.data).to.have.property('id');
-          pm.expect(b.data).to.have.property('identifier');
-          pm.expect(b.data).to.have.property('email');
-          pm.expect(b.data.roles).to.be.an('array').that.includes('tenant');
-          pm.collectionVariables.set('tenant_owner_id', b.data.id);
-          pm.environment.set('tenant_owner_id', b.data.id);
-          console.log('tenant_owner_id auto-saved: ' + b.data.id);
+          pm.expect(b.data).to.have.property("id");
+          pm.expect(b.data).to.have.property("identifier");
+          pm.expect(b.data).to.have.property("email");
+          pm.expect(b.data.roles).to.be.an("array").that.includes("tenant");
+          pm.collectionVariables.set("tenant_owner_id", b.data.id);
+          pm.environment.set("tenant_owner_id", b.data.id);
+          console.log("tenant_owner_id auto-saved: " + b.data.id);
       });
     language: text/javascript
 order: 1000

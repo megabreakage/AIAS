@@ -19,4 +19,4 @@ scripts:
       pm.test('Status 204', () => pm.response.to.have.status(204));
       console.log('Tenant deleted. TenantDeleted event fires DB drop in background.');
     language: text/javascript
-order: 4000
+order: 5000

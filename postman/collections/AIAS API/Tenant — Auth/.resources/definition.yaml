@@ -5,7 +5,7 @@ description: |-
   This folder uses {{tenant_token}} Bearer auth (not sa_token).
   Register and Login auto-save tenant_token to collection variables.
 auth:
-  - id: 07a4c920-5cb0-4741-a816-11ec8fd16398
+  - id: 8a4110ba-58ad-4470-9557-a8ff2576f380
     type: bearer
     name: bearer auth
     credentials:

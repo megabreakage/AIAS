@@ -25,4 +25,4 @@ scripts:
           pm.expect(b.data.domains).to.be.an('array');
       });
     language: text/javascript
-order: 3000
+order: 4000

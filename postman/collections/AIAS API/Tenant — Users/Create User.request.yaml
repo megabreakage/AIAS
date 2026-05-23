@@ -33,17 +33,19 @@ body:
   type: json
   content: |-
     {
-      "title": "Mr.",
-      "first_name": "John",
-      "middle_name": "Doe",
-      "last_name": "Smith",
-      "username": "john.smith",
-      "email": "john.smith@example.com",
+      "title": "Mrs.",
+      "first_name": "Elma",
+      "middle_name": null,
+      "last_name": "Wambui",
+      "username": "elma",
+      "email": "elma@airtraffic.com",
       "country_code": "+254",
-      "phone": "0712345678",
-      "password": "Password1",
+      "phone": "0727905402",
+      "password": "T@ngo540",
+      "role": "auditor",
       "preferred_timezone": "Africa/Nairobi",
-      "office_location": "Nairobi HQ",
+      "office_location": "Lengai House, Wilson Airport",
+      "notes": null,
       "is_active": true
     }
 scripts:

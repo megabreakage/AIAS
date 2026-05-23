@@ -1,5 +1,4 @@
 $kind: http-request
-name: Create Tenant
 description: |-
   Requires sa_token.
 
@@ -36,18 +35,18 @@ body:
 scripts:
   - type: afterResponse
     code: |-
-      pm.test('Status 201', () => pm.response.to.have.status(201));
-      pm.test('Tenant created', () => {
+      pm.test("Status 201", () => pm.response.to.have.status(201));
+      pm.test("Tenant created", () => {
           const b = pm.response.json();
-          pm.expect(b.data).to.have.property('id');
-          pm.expect(b.data).to.have.property('name');
-          pm.expect(b.data).to.have.property('plan');
-          pm.expect(b.data).to.have.property('status', 'active');
-          pm.expect(b.data).to.have.property('owner');
-          pm.expect(b.data).to.have.property('domains');
-          pm.collectionVariables.set('tenant_id', b.data.id);
-          console.log('tenant_id auto-saved: ' + b.data.id);
-          console.log('Tenant DB provisioning triggered in background.');
+          pm.expect(b.data).to.have.property("id");
+          pm.expect(b.data).to.have.property("name");
+          pm.expect(b.data).to.have.property("plan");
+          pm.expect(b.data).to.have.property("status", "active");
+          pm.expect(b.data).to.have.property("owner");
+          pm.expect(b.data).to.have.property("domains");
+          pm.collectionVariables.set("tenant_id", b.data.id);
+          console.log("tenant_id auto-saved: " + b.data.id);
+          console.log("Tenant DB provisioning triggered in background.");
       });
     language: text/javascript
-order: 2000
+order: 3000

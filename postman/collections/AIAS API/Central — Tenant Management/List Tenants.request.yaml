@@ -26,4 +26,4 @@ scripts:
           }
       });
     language: text/javascript
-order: 1000
+order: 2000

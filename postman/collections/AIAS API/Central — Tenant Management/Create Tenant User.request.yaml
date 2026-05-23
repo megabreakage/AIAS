@@ -1,5 +1,4 @@
 $kind: http-request
-name: Create Tenant User
 description: |-
   Requires sa_token.
 
@@ -35,7 +34,7 @@ body:
       "country_code": "+254",
       "phone": "0727905402",
       "password": "T@ngo540",
-      "role": "tenant",
+      "role": "auditor",
       "preferred_timezone": "Africa/Nairobi",
       "office_location": "Lengai House, Wilson Airport",
       "notes": null,
@@ -56,4 +55,4 @@ scripts:
           console.log('tenant_user_identifier auto-saved: ' + b.data.identifier);
       });
     language: text/javascript
-order: 5000
+order: 6000

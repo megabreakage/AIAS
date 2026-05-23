@@ -6,7 +6,7 @@ description: |-
 
   Create User auto-saves user_identifier for subsequent requests.
 auth:
-  - id: 2c51db87-a189-41f5-a552-beb9446dba3e
+  - id: c2e63756-ee5e-46d1-894b-feb590d428fc
     type: bearer
     name: bearer auth
     credentials:
