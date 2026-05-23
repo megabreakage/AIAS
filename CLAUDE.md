@@ -73,6 +73,7 @@ $engagements = $this->repository->browseEngagements($filters, $page, $perPage);
 ```
 
 **Repository rules:**
+
 - Non-super-admin: always add `where('tenant_id', auth()->user()->tenant_id)`
 - Load relationships on every read/create/update: `->load(['creator', 'updater'])`
 - Inject other repositories (DRY) — never duplicate logic
