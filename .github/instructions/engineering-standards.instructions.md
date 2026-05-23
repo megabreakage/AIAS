@@ -7,55 +7,100 @@ applyTo: "**/*.{php,ts,tsx,js,jsx,kt}"
 ## Principles (All Languages)
 - SOLID, DRY, Clean Architecture — no exceptions
 - Modular, testable, TDD-friendly design
-- Reusable services, repositories, DTOs, actions, components
+- Reusable repositories, services, DTOs, actions, components
 - RESTful + event-driven patterns
 - Performance, security, scalability, observability first
 
-## PHP/Laravel
-- Repository pattern for all DB operations — never query models in controllers
-- Form Requests for validation, Policies for authorization
-- `DB::transaction(fn() => ...)` closures — never manual begin/commit/rollback
-- Gate checks BEFORE transactions
-- Logging AFTER transactions
-- Run `vendor/bin/pint --dirty` before finalizing any PHP changes
-- Run `composer analyse` to enforce repository-only boundaries in production layers
-- See [CLAUDE.md](../../CLAUDE.md) for transaction patterns and architecture
+## Architecture Overview
+- **Repository Pattern**: All DB operations through repositories — never query models in controllers
+- **Resource Pattern**: Consistent API responses via Laravel Resources (`BaseResource`)
+- **Policy-Based Authorization**: Gate-driven permission checks — `Gate::authorize()` before any DB work
+- **Form Request Validation**: Dedicated validation classes — no inline `$request->validate()`
+- **Filter Pattern**: Composable `EloquentFilter` query filters
+- **DRY Principle**: Search for existing implementations before creating new code; inject repositories instead of duplicating logic
 
-## Layer Boundaries (Enforced)
-- Production layers (`app/Http/Controllers`, `app/Jobs`, `app/Services`) MUST use repositories for all record access and mutations
-- Direct model queries in production layers are **FORBIDDEN**: `Model::query()`, `Model::find()`, `Model::where()`, `Model::create()`, `Model::update()`, `Model::delete()`
-- Privileged scripts (`tests/`, `database/factories/`, `database/seeders/`) may use Eloquent directly
-- Enforce this boundary with `composer analyse` (PHPStan/Larastan) in CI
+## Layer Boundaries (Strictly Enforced)
+- **FORBIDDEN** in production layers (`app/Http/Controllers`, `app/Jobs`, `app/Services`): `Model::query()`, `Model::find()`, `Model::where()`, `Model::create()`, `Model::update()`, `Model::delete()`
+- `tests/`, `database/factories/`, `database/seeders/` may use Eloquent directly
+- Verify boundaries: `composer analyse` (PHPStan/Larastan)
 
-## Code Quality
-- Explicit return types on all methods
-- PHP 8 constructor property promotion
-- Curly braces on all control structures (even single-line)
-- PHPDoc blocks over inline comments
-- No `dd()` — use `Log::debug()` for debugging
-- Eloquent over raw `DB::` queries
-- No `env()` outside config files — use `config()` instead
-- Production-ready code only — no debugging artifacts
+## Transaction Pattern (Critical)
+
+```php
+// ✅ CORRECT
+Gate::authorize('create', Model::class);       // 1. Authorization BEFORE transaction
+$data = $request->validated();                 // 2. Validation BEFORE transaction
+Log::info('Creating...', [...]);               // 3. Pre-tx logging (optional)
+$record = DB::transaction(fn() =>             // 4. Transaction wraps ONLY repository call
+    $this->repository->createRecord($data)
+);
+Log::info('Created', ['id' => $record->id]);  // 5. Logging AFTER transaction
+```
+
+```php
+// ❌ NEVER
+DB::beginTransaction();          // manual begin/commit/rollback
+Gate::authorize(...);            // authorization inside transaction
+Log::info(...);                  // logging inside transaction
+DB::transaction(fn() => {
+    Gate::authorize(...);        // WRONG
+    $this->repository->...();
+});
+```
+
+## PHP/Laravel Code Quality
+- PHP 8 constructor property promotion: `public function __construct(protected Repo $repo) {}`
+- Explicit return type declarations on all methods
+- Curly braces on all control structures — even single-line bodies
+- PHPDoc blocks over inline comments; array shape types in PHPDoc
+- TitleCase for Enum keys: `Active`, `InProgress`, `Closed`
+- No `dd()` — use `Log::debug()`
+- No `env()` outside config files — use `config()`
+- Eloquent over raw `DB::` query builder
+- `vendor/bin/pint --dirty` before finalizing any PHP changes
+
+## API Response Envelope (Strictly Default)
+All responses use `BaseResource` — **never** deviate from this envelope:
+- `status` — HTTP status code
+- `message` — human-readable message
+- `data` — resource payload
+- `metadata` — optional context
+
+```php
+return (new SomeResource($record))
+    ->setMessage('Record retrieved successfully')
+    ->addMetadata('count', $count)
+    ->response()
+    ->setStatusCode(Response::HTTP_OK);
+```
+
+## Database — Central vs Tenant
+| Aspect | Central | Tenant |
+|---|---|---|
+| Connection | `protected $connection = 'central'` | `TenantConnection` trait (no explicit connection) |
+| Auditing | ✅ `Auditable` trait | ❌ Never — cross-DB complexity |
+| `tenant_id` | ❌ Not scoped | ✅ Required — plain string field, no FK |
+| Migration location | `database/migrations/` | `database/migrations/tenant/` |
+| Repository filtering | Role/permission-based | Mandatory tenant filter for non-super-admin |
+
+## Security
+- OWASP Top 10 compliance
+- Input validation at system boundaries via Form Requests
+- Parameterized queries — no raw SQL string concatenation
+- JWT/OAuth (Passport) for API auth, biometric for mobile
+- RBAC enforcement — `Gate::authorize()` and Policies always; never trust client-side checks
+- No FK constraints from tenant tables to central database tables
 
 ## TypeScript/React
 - Functional components + hooks only
-- Modular component-driven architecture
 - TypeScript strict mode — no `any` unless truly unavoidable
 - Shadcn UI + Tailwind CSS for styling
-- Responsive, accessible, performant UI/UX
+- Responsive, accessible, performant UI
 
 ## Kotlin/Android
 - Jetpack Compose + MVI (Model-View-Intent)
-- Offline-first where appropriate
-- Secure mobile-first architecture
 - Coroutines for async, Flow for reactive streams
-
-## Security (All Stacks)
-- OWASP Top 10 compliance
-- Input validation at system boundaries
-- Parameterized queries, no raw SQL concatenation
-- JWT/OAuth for API auth, biometric for mobile
-- RBAC enforcement — never trust client-side checks
+- Offline-first where appropriate
 
 ## Communication
 - Remove filler words. No 'a', 'the', 'is', 'am', 'are'
