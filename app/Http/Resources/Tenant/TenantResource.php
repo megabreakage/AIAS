@@ -19,11 +19,9 @@ final class TenantResource extends JsonResource
             'domain' => $this->domain,
             'logo' => $this->logo,
             'status' => $this->status?->value ?? $this->status,
-            'owner_id' => $this->owner_id,
             'owner' => $this->whenLoaded('owner', fn () => [
-                'identifier' => $this->owner?->identifier,
+                'id' => $this->owner?->identifier,
                 'name' => trim(($this->owner?->first_name ?? '').' '.($this->owner?->last_name ?? '')),
-                'role' => $this->owner?->roles?->firstWhere('name', 'tenant-admin')?->name,
             ]),
             'country_id' => $this->country_id,
             'country' => $this->whenLoaded('country', fn () => [
