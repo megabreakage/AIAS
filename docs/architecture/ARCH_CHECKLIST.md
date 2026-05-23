@@ -1,5 +1,5 @@
 
-# AIAS Production Architecture Checklist
+# AIAS Production Architecture Checklist & Guidelines
 
 ## Multi-Tenancy
 

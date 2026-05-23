@@ -321,6 +321,7 @@ When creating models that belong to tenants:
 ### API Response Envelope
 
 **STRICTLY DEFAULT** envelope — never deviate:
+
 ```json
 {
   "status": "success",
@@ -329,6 +330,7 @@ When creating models that belong to tenants:
   "metadata": { ... }
 }
 ```
+
 - Always call `->setMessage()` on resource before returning
 - Use `->addMetadata()` for additional context
 - Unique validation scoped to tenant: `Rule::unique('table')->where('tenant_id', ...)`
