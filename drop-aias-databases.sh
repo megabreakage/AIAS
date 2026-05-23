@@ -3,15 +3,20 @@
 
 set -euo pipefail
 
+ENV_FILE="$(dirname "$0")/.env"
+
+# Load from .env if present
+if [[ -f "$ENV_FILE" ]]; then
+    DB_CENTRAL_HOST=$(grep -m1 '^DB_CENTRAL_HOST=' "$ENV_FILE" | cut -d= -f2)
+    DB_CENTRAL_PORT=$(grep -m1 '^DB_CENTRAL_PORT=' "$ENV_FILE" | cut -d= -f2)
+    DB_CENTRAL_USERNAME=$(grep -m1 '^DB_CENTRAL_USERNAME=' "$ENV_FILE" | cut -d= -f2)
+    DB_CENTRAL_PASSWORD=$(grep -m1 '^DB_CENTRAL_PASSWORD=' "$ENV_FILE" | cut -d= -f2 || true)
+fi
+
 MYSQL_HOST="${DB_CENTRAL_HOST:-127.0.0.1}"
 MYSQL_PORT="${DB_CENTRAL_PORT:-3306}"
 MYSQL_USER="${DB_CENTRAL_USERNAME:-root}"
 MYSQL_PASS="${DB_CENTRAL_PASSWORD:-}"
-
-# Load from .env if present
-if [[ -f "$(dirname "$0")/.env" ]]; then
-    source <(grep -E "^DB_CENTRAL_(HOST|PORT|USERNAME|PASSWORD)=" "$(dirname "$0")/.env" | sed 's/^DB_CENTRAL_/MYSQL_/; s/HOST/HOST/; s/PORT/PORT/; s/USERNAME/USER/; s/PASSWORD/PASS/')
-fi
 
 CONN=(-h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER")
 [[ -n "$MYSQL_PASS" ]] && CONN+=(-p"$MYSQL_PASS")
@@ -31,7 +36,8 @@ echo "Databases to drop:"
 echo "$DATABASES" | sed 's/^/  - /'
 echo ""
 
-read -r -p "Drop all ${#DATABASES[@]} database(s)? [y/N] " CONFIRM
+DB_COUNT=$(echo "$DATABASES" | wc -l | tr -d ' ')
+read -r -p "Drop all ${DB_COUNT} database(s)? [y/N] " CONFIRM
 if [[ "$CONFIRM" != "y" && "$CONFIRM" != "Y" ]]; then
     echo "Aborted."
     exit 0
