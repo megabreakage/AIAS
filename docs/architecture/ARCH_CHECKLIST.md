@@ -1,0 +1,101 @@
+Read memory [](file:///Users/martinnjau/Library/Application%20Support/Code/User/workspaceStorage/2ce1bbaa5524002f057d062c5699c3b3/GitHub.copilot-chat/memory-tool/memories/repo/mattermine_codebase_patterns.md)
+
+Read memory [](file:///Users/martinnjau/Library/Application%20Support/Code/User/workspaceStorage/2ce1bbaa5524002f057d062c5699c3b3/GitHub.copilot-chat/memory-tool/memories/repo/mattermine_pattern_summary.md)
+
+## AIAS Production Architecture Checklist
+
+### Multi-Tenancy
+
+- [ ] Each tenant = isolated MySQL DB (`matterminer_tenant_<id>_db`)
+- [ ] Central DB holds: Users, Tenants, OAuth tokens, Permissions only
+- [ ] **NO FK constraints** from tenant tables → central tables (plain fields)
+- [ ] `tenant_id` stored as regular string/int field, not FK
+- [ ] `InitializeTenancyFromUser` middleware on all tenant-scoped routes
+- [ ] `SetSpatieTeamFromTenant` middleware sets Spatie team before permission checks
+- [ ] **DO NOT** add `Auditable` trait to tenant models — central only (User, Tenant)
+
+### Repository Pattern
+
+- [ ] Controllers inject repository, zero direct model queries
+- [ ] All repos extend `BaseRepository` (`browse/read/insert/update/delete`)
+- [ ] Non-super-admin queries ALWAYS add `where('tenant_id', auth()->user()->tenant_id)`
+- [ ] Reuse existing repos (DRY) — inject `ContactRepository` instead of duplicating
+- [ ] Load relationships on read/create/update: `->load(['creator', 'updater'])`
+
+### Transaction Pattern
+
+- [ ] `Gate::authorize()` BEFORE transaction
+- [ ] `$request->validated()` BEFORE transaction
+- [ ] `DB::transaction(fn)` wraps ONLY repository calls
+- [ ] Logging AFTER transaction
+- [ ] No manual `beginTransaction/commit/rollBack` — let exceptions bubble
+- [ ] No authorization or logging inside transaction closure
+
+### Authorization
+
+- [ ] Policies in Policies — `before()` method for super-admin bypass
+- [ ] Tenant boundary check: `$actor->tenant_id === $model->tenant_id`
+- [ ] Permission check: `$actor->can('module.action')`
+- [ ] `Gate::authorize()` called in controller before any DB work
+
+### Models (Tenant-Scoped)
+
+- [ ] Traits: `HasFactory`, `SoftDeletes`, `TenantConnection`
+- [ ] `boot()` auto-populates: UUID `identifier`, `tenant_id`, `created_by`, `updated_by`
+- [ ] Route binding uses `identifier` (UUID), not `id`
+- [ ] Casts defined in `casts()` method, not `$casts` property
+
+### Migrations (Tenant)
+
+- [ ] Location: tenant
+- [ ] Required fields: `id`, `uuid identifier`, `tenant_id`, `created_by`, `updated_by`, `timestamps`, `softDeletes`
+- [ ] `created_by`/`updated_by` = `unsignedBigInteger()->nullable()` — **no FK**
+- [ ] Tenant-unique constraints: `unique(['tenant_id', 'field'])`
+
+### API Layer
+
+- [ ] All responses via Resource classes extending `BaseResource`
+- [ ] Envelope: `status`, `message`, `data`, optional `metadata`
+- [ ] `->setMessage()`, `->addMetadata()` on resource before return
+- [ ] Form Requests in `app/Http/Requests/{Domain}/` — no inline validation
+- [ ] Unique rules scoped to tenant: `Rule::unique()->where('tenant_id', ...)`
+- [ ] Routes named: `api.{resource}.{action}`
+
+### Filter Pattern
+
+- [ ] Main `{Domain}Filters` extends `EloquentFilter`
+- [ ] Individual filter classes in `app/Filters/{Domain}/Filters/`
+- [ ] Single-responsibility per filter class
+- [ ] Controller: `Filters::fromRequest($request)` → pass to repository
+
+### Permissions
+
+- [ ] All permissions defined in role-permission-map.php
+- [ ] New feature adds module permissions + role assignments
+- [ ] Clear cache after changes: `php artisan cache:clear`
+
+### Testing
+
+- [ ] **ALWAYS** test.sh — never raw `php artisan test`
+- [ ] All test classes use `RefreshDatabaseWithTenancy`, not `RefreshDatabase`
+- [ ] Tenant resources created inside `$this->tenant->run(fn)` context
+- [ ] Test: happy paths + failure paths + tenant isolation (cross-tenant leakage)
+- [ ] Set Spatie team before role assignment in test setup
+- [ ] Use factories — check for existing states before manual setup
+
+### Code Quality
+
+- [ ] `vendor/bin/pint --dirty` before finalizing
+- [ ] PHP 8 constructor property promotion
+- [ ] Explicit return types on all methods
+- [ ] Curly braces on all control structures
+- [ ] PHPDoc blocks over inline comments
+
+### Feature Completion
+
+- [ ] OpenAPI YAML in api-docs
+- [ ] Feature doc in features
+- [ ] README.md updated
+- [ ] Postman collection updated (`AIAS_APIS.postman_collection.json`)
+- [ ] Postman `COLLECTION_GUIDE.md` + `QUICK_REFERENCE.md` updated
+- [ ] New .env vars documented
