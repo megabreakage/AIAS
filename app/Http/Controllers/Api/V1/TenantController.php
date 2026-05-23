@@ -40,7 +40,7 @@ final class TenantController extends BaseApiController
         $domain = $data['domain'] ?? $this->generateUniqueDomain($data['name']);
 
         /** @var User $owner */
-        $owner = User::findOrFail($data['owner_id']);
+        $owner = User::where('identifier', $data['owner_id'])->firstOrFail();
 
         Log::info('Creating tenant', ['name' => $data['name'], 'domain' => $domain, 'owner_id' => $owner->id]);
 

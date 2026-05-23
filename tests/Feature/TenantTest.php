@@ -280,7 +280,7 @@ describe('Tenant CRUD', function (): void {
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Acme Corporation',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
         ]);
 
         $response->assertCreated()
@@ -299,7 +299,7 @@ describe('Tenant CRUD', function (): void {
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Beta Labs',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
             'domain' => 'custom.example.com',
         ]);
 
@@ -313,7 +313,7 @@ describe('Tenant CRUD', function (): void {
 
         $response = $this->postJson('/api/v1/tenants', [
             'name' => 'Full Corp',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
             'domain' => 'full.localhost',
             'logo' => 'https://example.com/logo.png',
             'country_id' => 1,
@@ -333,7 +333,7 @@ describe('Tenant CRUD', function (): void {
         // Create tenant first
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Show Test Corp',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
         ]);
         $tenantId = $createResponse->json('data.id');
 
@@ -356,7 +356,7 @@ describe('Tenant CRUD', function (): void {
 
         $createResponse = $this->postJson('/api/v1/tenants', [
             'name' => 'Delete Test Corp',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
         ]);
         $tenantId = $createResponse->json('data.id');
 
@@ -391,7 +391,7 @@ describe('Tenant creation validation', function (): void {
         $owner = createTenantOwner();
 
         $this->postJson('/api/v1/tenants', [
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
         ])
             ->assertUnprocessable()
             ->assertJsonPath('error.code', 'VALIDATION_FAILED')
@@ -414,7 +414,7 @@ describe('Tenant creation validation', function (): void {
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Bad Owner Corp',
-            'owner_id' => 99999,
+            'owner_id' => '00000000-0000-0000-0000-000000000000',
         ])
             ->assertUnprocessable()
             ->assertJsonPath('error.code', 'VALIDATION_FAILED')
@@ -428,13 +428,13 @@ describe('Tenant creation validation', function (): void {
         // Create first tenant
         $this->postJson('/api/v1/tenants', [
             'name' => 'Unique Corp',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
         ])->assertCreated();
 
         // Try duplicate
         $this->postJson('/api/v1/tenants', [
             'name' => 'Unique Corp',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
         ])
             ->assertUnprocessable()
             ->assertJsonPath('error.code', 'VALIDATION_FAILED')
@@ -448,14 +448,14 @@ describe('Tenant creation validation', function (): void {
         // Create first tenant with explicit domain
         $this->postJson('/api/v1/tenants', [
             'name' => 'Domain Test A',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
             'domain' => 'same-domain.localhost',
         ])->assertCreated();
 
         // Try duplicate domain
         $this->postJson('/api/v1/tenants', [
             'name' => 'Domain Test B',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
             'domain' => 'same-domain.localhost',
         ])
             ->assertUnprocessable()
@@ -469,7 +469,7 @@ describe('Tenant creation validation', function (): void {
 
         $this->postJson('/api/v1/tenants', [
             'name' => 'Bad Status Corp',
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->identifier,
             'status' => 'invalid_status',
         ])
             ->assertUnprocessable()
