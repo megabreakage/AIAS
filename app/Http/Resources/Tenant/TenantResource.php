@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Tenant;
 
+use App\Http\Resources\BaseResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-final class TenantResource extends JsonResource
+class TenantResource extends BaseResource
 {
-    public function toArray(Request $request): array
+    public function resourceData(Request $request): array
     {
         return [
             'id' => $this->id,
