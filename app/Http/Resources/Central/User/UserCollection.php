@@ -2,19 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\User;
+namespace App\Http\Resources\Tenant\User;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 final class UserCollection extends ResourceCollection
 {
-    public string $collects = UserResource::class;
-
-    public function toArray(Request $request): array
-    {
-        return [
-            'data' => $this->collection,
-        ];
-    }
+    /**
+     * The resource that this resource collects.
+     */
+    public $collects = UserResource::class;
 }
