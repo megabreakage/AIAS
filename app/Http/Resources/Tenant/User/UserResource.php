@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Tenant\User;
 
+use App\Http\Resources\BaseResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-final class UserResource extends JsonResource
+final class UserResource extends BaseResource
 {
     public function toArray(Request $request): array
     {
@@ -30,9 +30,13 @@ final class UserResource extends JsonResource
             'is_active' => $this->is_active,
             'last_login_at' => $this->last_login_at?->toISOString(),
             'roles' => $this->whenLoaded('roles', fn () => $this->roles->map(fn ($role) => [
+                'id' => $role->id,
                 'name' => $role->name,
-                'display_name' => $role->display_name,
-            ])->values()),
+            ])),
+            'permissions' => $this->whenLoaded('permissions', fn () => $this->permissions->map(fn ($permission) => [
+                'id' => $permission->id,
+                'name' => $permission->name,
+            ])),
             'created_by' => $this->whenLoaded('createdBy', fn () => [
                 'identifier' => $this->createdBy?->identifier,
                 'name' => trim(($this->createdBy?->first_name ?? '').' '.($this->createdBy?->last_name ?? '')),
