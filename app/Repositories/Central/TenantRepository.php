@@ -104,4 +104,13 @@ final class TenantRepository extends BaseRepository
 
         return $tenant->fresh(['domains', 'owner']);
     }
+
+    /**
+     * Find a tenant by its primary key (stancl tenant ID).
+     */
+    public function findById(string $id): ?Tenant
+    {
+        /** @var Tenant|null */
+        return Tenant::on('central')->find($id);
+    }
 }

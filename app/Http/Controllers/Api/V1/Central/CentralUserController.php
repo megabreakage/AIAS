@@ -7,12 +7,13 @@ namespace App\Http\Controllers\Api\V1\Central;
 use App\Http\Controllers\Api\V1\BaseApiController;
 use App\Http\Requests\Central\User\RegisterCentralUserRequest;
 use App\Http\Resources\Central\User\UserResource;
+use App\Models\User;
 use App\Repositories\Central\CentralUserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CentralUserController extends BaseApiController
@@ -28,6 +29,8 @@ final class CentralUserController extends BaseApiController
      */
     public function store(RegisterCentralUserRequest $request): JsonResponse
     {
+        Gate::authorize('create', User::class);
+
         $data = $request->validated();
 
         Log::info('Registering central user (tenant owner)', [
@@ -38,12 +41,9 @@ final class CentralUserController extends BaseApiController
         $data['password'] = Hash::make($data['password']);
         $data['is_active'] = $data['is_active'] ?? true;
 
-        $tenantRole = Role::on('central')
-            ->where('name', 'tenant')
-            ->where('guard_name', 'api')
-            ->first();
+        $tenantRole = $this->repository->findCentralRoleByName('tenant');
 
-        if (! $tenantRole) {
+        if (!$tenantRole) {
             return $this->error(
                 'ROLE_NOT_FOUND',
                 "Role 'tenant' is not configured on the central database. Run RolePermissionsSeeder first.",
@@ -60,7 +60,7 @@ final class CentralUserController extends BaseApiController
 
         Log::info('Central user registered', [
             'identifier' => $user->identifier,
-            'email'      => $user->email,
+            'email' => $user->email,
         ]);
 
         return $this->success(

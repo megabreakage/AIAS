@@ -57,7 +57,7 @@ final class UserController extends BaseApiController
         Log::info('User created', ['identifier' => $user->identifier]);
 
         return $this->success(
-            UserResource::make($user->load(['createdBy', 'updatedBy']))->resolve(),
+            UserResource::make($user->load(['createdBy', 'updatedBy', 'roles']))->resolve(),
             Response::HTTP_CREATED,
         );
     }

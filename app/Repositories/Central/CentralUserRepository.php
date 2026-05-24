@@ -6,6 +6,7 @@ namespace App\Repositories\Central;
 
 use App\Models\User;
 use App\Repositories\BaseRepository;
+use Spatie\Permission\Models\Role;
 
 final class CentralUserRepository extends BaseRepository
 {
@@ -38,5 +39,14 @@ final class CentralUserRepository extends BaseRepository
     public function usernameExists(string $username): bool
     {
         return $this->query()->where('username', $username)->exists();
+    }
+
+    public function findCentralRoleByName(string $name, string $guard = 'api'): ?Role
+    {
+        /** @var Role|null */
+        return Role::on('central')
+            ->where('name', $name)
+            ->where('guard_name', $guard)
+            ->first();
     }
 }

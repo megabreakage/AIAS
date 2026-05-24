@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Repositories\BaseRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Spatie\Permission\Models\Role;
 
 class UserRepository extends BaseRepository
 {
@@ -115,5 +116,21 @@ class UserRepository extends BaseRepository
         $user->restore();
 
         return $user->fresh(['createdBy', 'updatedBy', 'roles']);
+    }
+
+    public function emailExists(string $email): bool
+    {
+        return $this->newQuery()->where('email', $email)->exists();
+    }
+
+    public function usernameExists(string $username): bool
+    {
+        return $this->newQuery()->where('username', $username)->exists();
+    }
+
+    public function findRoleByName(string $name): ?Role
+    {
+        /** @var Role|null */
+        return Role::where('name', $name)->where('guard_name', 'api')->first();
     }
 }

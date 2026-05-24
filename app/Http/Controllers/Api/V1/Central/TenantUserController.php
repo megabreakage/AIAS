@@ -7,28 +7,33 @@ namespace App\Http\Controllers\Api\V1\Central;
 use App\Http\Controllers\Api\V1\BaseApiController;
 use App\Http\Requests\Central\User\CreateTenantUserRequest;
 use App\Http\Resources\Tenant\User\UserResource;
-use App\Models\Central\Tenant;
 use App\Models\User;
+use App\Repositories\Central\TenantRepository;
 use App\Repositories\Tenant\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 
 final class TenantUserController extends BaseApiController
 {
-    public function __construct(protected UserRepository $repository) {}
+    public function __construct(
+        protected UserRepository $repository,
+        protected TenantRepository $tenantRepository,
+    ) {}
 
-    public function store(CreateTenantUserRequest $request, string $tenantId): JsonResponse
+    public function store(CreateTenantUserRequest $request, string $id): JsonResponse
     {
-        $tenant = Tenant::on('central')->find($tenantId);
+        Gate::authorize('create', User::class);
+
+        $tenant = $this->tenantRepository->findById($id);
 
         if (!$tenant) {
             return $this->error(
                 'TENANT_NOT_FOUND',
-                "Tenant '{$tenantId}' not found.",
+                "Tenant '{$id}' not found.",
                 Response::HTTP_NOT_FOUND,
             );
         }
@@ -41,70 +46,68 @@ final class TenantUserController extends BaseApiController
         $data['is_active'] = $data['is_active'] ?? true;
 
         Log::info('Creating tenant user', [
-            'tenant' => $tenantId,
+            'tenant' => $id,
             'email' => $data['email'],
             'role' => $role,
         ]);
 
         try {
-            tenancy()->initialize($tenant);
+            /** @var array{user?: User, error?: string, message?: string, status?: int} $result */
+            $result = $tenant->run(function () use ($data, $role): array {
+                if ($this->repository->emailExists($data['email'])) {
+                    return [
+                        'error' => 'EMAIL_TAKEN',
+                        'message' => 'A user with this email already exists in this tenant.',
+                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    ];
+                }
 
-            // Validate uniqueness within tenant DB
-            if (User::where('email', $data['email'])->exists()) {
-                tenancy()->end();
+                if ($this->repository->usernameExists($data['username'])) {
+                    return [
+                        'error' => 'USERNAME_TAKEN',
+                        'message' => 'This username is already taken in this tenant.',
+                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    ];
+                }
 
-                return $this->error(
-                    'EMAIL_TAKEN',
-                    'A user with this email already exists in this tenant.',
-                    Response::HTTP_UNPROCESSABLE_ENTITY,
-                );
-            }
+                $tenantRole = $this->repository->findRoleByName($role);
 
-            if (User::where('username', $data['username'])->exists()) {
-                tenancy()->end();
+                if (!$tenantRole) {
+                    return [
+                        'error' => 'ROLE_NOT_FOUND',
+                        'message' => "Role '{$role}' is not configured for this tenant.",
+                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    ];
+                }
 
-                return $this->error(
-                    'USERNAME_TAKEN',
-                    'This username is already taken in this tenant.',
-                    Response::HTTP_UNPROCESSABLE_ENTITY,
-                );
-            }
+                $user = DB::transaction(function () use ($data, $tenantRole): User {
+                    $user = $this->repository->createUser($data);
+                    $user->assignRole($tenantRole);
 
-            $tenantRole = Role::where('name', $role)->where('guard_name', 'api')->first();
+                    return $user;
+                });
 
-            if (!$tenantRole) {
-                tenancy()->end();
-
-                return $this->error(
-                    'ROLE_NOT_FOUND',
-                    "Role '{$role}' is not configured for this tenant.",
-                    Response::HTTP_UNPROCESSABLE_ENTITY,
-                );
-            }
-
-            $user = DB::transaction(function () use ($data, $tenantRole): User {
-                $user = $this->repository->createUser($data);
-                $user->assignRole($tenantRole);
-
-                return $user;
+                return ['user' => $user->load(['roles'])];
             });
+
+            if (isset($result['error'])) {
+                return $this->error($result['error'], $result['message'], $result['status']);
+            }
+
+            /** @var User $user */
+            $user = $result['user'];
 
             Log::info('Tenant user created', [
                 'identifier' => $user->identifier,
-                'tenant' => $tenantId,
+                'tenant' => $id,
                 'role' => $role,
             ]);
 
-            $userData = UserResource::make($user->load(['roles']))->resolve();
+            return $this->success(UserResource::make($user)->resolve(), Response::HTTP_CREATED);
 
-            tenancy()->end();
-
-            return $this->success($userData, Response::HTTP_CREATED);
         } catch (\Throwable $e) {
-            tenancy()->end();
-
             Log::error('Failed to create tenant user', [
-                'tenant' => $tenantId,
+                'tenant' => $id,
                 'email' => $data['email'],
                 'error' => $e->getMessage(),
             ]);
