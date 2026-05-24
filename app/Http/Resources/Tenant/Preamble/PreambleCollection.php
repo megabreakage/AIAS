@@ -4,17 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Tenant\Preamble;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Http\Resources\BaseResourceCollection;
 
-final class PreambleCollection extends ResourceCollection
+class PreambleCollection extends BaseResourceCollection
 {
-    public string $collects = PreambleResource::class;
-
-    public function toArray(Request $request): array
-    {
-        return [
-            'data' => $this->collection,
-        ];
-    }
+    public $collects = PreambleResource::class;
 }
