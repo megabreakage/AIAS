@@ -46,6 +46,10 @@ class SuperAdminSeeder extends Seeder
 
         if ($superAdminRole !== null && !$superAdmin->hasRole('super-admin', 'api')) {
             $superAdmin->assignRole($superAdminRole);
+            $centralPermissions = $this->resolvePermissions(
+                config('permissions_map.central', []),
+                'api',
+            );
             $this->command->info("Assigned super-admin role to: {$email}");
         }
 
