@@ -46,12 +46,13 @@ class SuperAdminSeeder extends Seeder
 
         if ($superAdminRole !== null && !$superAdmin->hasRole('super-admin', 'api')) {
             $superAdmin->assignRole($superAdminRole);
-            $centralPermissions = $this->resolvePermissions(
-                config('permissions_map.central', []),
-                'api',
-            );
             $this->command->info("Assigned super-admin role to: {$email}");
         }
+
+        $centralPermissions = $this->resolvePermissions(
+            config('permissions_map.central', []),
+            'api',
+        );
 
         $centralPermissions = [];
         foreach (config('permissions_map.central', []) as $module => $actions) {
@@ -75,6 +76,40 @@ class SuperAdminSeeder extends Seeder
             $this->command->info("Created super admin: {$email}");
         } else {
             $this->command->line("Super admin already exists: {$email}");
+        }
+    }
+
+    private function resolvePermissions(array $map, string $guardName = 'api'): array
+    {
+        $names = [];
+
+        foreach ($map as $module => $actions) {
+            foreach ($actions as $action) {
+                $names[] = "{$module}.{$action}";
+            }
+        }
+
+        foreach ($names as $name) {
+            Permission::on('central')->firstOrCreate(
+                ['name' => $name, 'guard_name' => $guardName],
+            );
+        }
+
+        return $names;
+    }
+
+    /**
+     * Assigns Central DB Users Permissions
+     */
+    private function syncCentralPermissions(Role $role, string $guardName = 'api'): void
+    {
+        $centralPermissions = $this->resolvePermissions(
+            config('permissions_map.central', []),
+            $guardName,
+        );
+
+        if (!empty($centralPermissions)) {
+            $role->syncPermissions($centralPermissions);
         }
     }
 }
