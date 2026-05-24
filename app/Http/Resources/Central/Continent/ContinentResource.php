@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Central\Continent;
 
+use App\Http\Resources\BaseResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-final class ContinentResource extends JsonResource
+class ContinentResource extends BaseResource
 {
-    public function toArray(Request $request): array
+    public function resourceData(Request $request): array
     {
         return [
             'identifier' => $this->identifier,

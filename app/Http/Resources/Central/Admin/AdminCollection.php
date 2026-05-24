@@ -4,17 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Central\Admin;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Http\Resources\BaseResourceCollection;
 
-final class AdminCollection extends ResourceCollection
+class AdminCollection extends BaseResourceCollection
 {
-    public string $collects = AdminResource::class;
-
-    public function toArray(Request $request): array
-    {
-        return [
-            'data' => $this->collection,
-        ];
-    }
+    public $collects = AdminResource::class;
 }

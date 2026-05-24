@@ -8,8 +8,5 @@ use App\Http\Resources\BaseResourceCollection;
 
 final class UserCollection extends BaseResourceCollection
 {
-    /**
-     * The resource that this resource collects.
-     */
     public $collects = UserResource::class;
 }
