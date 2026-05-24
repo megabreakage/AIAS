@@ -30,9 +30,13 @@ final class UserResource extends JsonResource
             'is_active' => $this->is_active,
             'last_login_at' => $this->last_login_at?->toISOString(),
             'roles' => $this->whenLoaded('roles', fn () => $this->roles->map(fn ($role) => [
+                'id' => $role->id,
                 'name' => $role->name,
-                'display_name' => $role->display_name,
-            ])->values()),
+            ])),
+            'permissions' => $this->whenLoaded('permissions', fn () => $this->permissions->map(fn ($permission) => [
+                'id' => $permission->id,
+                'name' => $permission->name,
+            ])),
             'created_by' => $this->whenLoaded('creator', fn () => [
                 'identifier' => $this->creator?->identifier,
                 'name' => trim(($this->creator?->first_name ?? '').' '.($this->creator?->last_name ?? '')),

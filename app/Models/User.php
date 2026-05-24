@@ -8,6 +8,7 @@ use App\Models\Central\Tenant;
 use App\Models\Concerns\CentralConnection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -75,7 +76,7 @@ final class User extends Authenticatable implements AuditableContract
 
     protected static function booted(): void
     {
-        static::creating(function (self $model): void {
+        self::creating(function (self $model): void {
             if (empty($model->identifier)) {
                 $model->identifier = (string) Str::uuid();
             }
@@ -85,7 +86,7 @@ final class User extends Authenticatable implements AuditableContract
             }
         });
 
-        static::updating(function (self $model): void {
+        self::updating(function (self $model): void {
             if (Auth::check()) {
                 $model->updated_by = Auth::id();
             }
@@ -110,6 +111,18 @@ final class User extends Authenticatable implements AuditableContract
     public function ownedTenant(): HasOne
     {
         return $this->hasOne(Tenant::class, 'owner_id');
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->morphToMany(
+            config('permission.models.role'),
+            'model',
+            config('permission.table_names.model_has_roles'),
+            config('permission.column_names.model_morph_key'),
+            'role_id'
+        )->withPivot(config('permission.column_names.team_foreign_key'))
+            ->wherePivot(config('permission.column_names.team_foreign_key'), getPermissionsTeamId());
     }
 
     public function creator(): BelongsTo
