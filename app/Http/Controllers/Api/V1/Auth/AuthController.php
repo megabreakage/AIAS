@@ -40,7 +40,7 @@ final class AuthController extends BaseApiController
         return $this->success([
             'token' => $token,
             'token_type' => 'Bearer',
-            'user' => UserResource::make($user)->resolve(),
+            'user' => UserResource::make($user->load(['roles', 'permissions']))->resolve(),
         ], Response::HTTP_CREATED);
     }
 
@@ -65,7 +65,7 @@ final class AuthController extends BaseApiController
         $token = $user->createToken('api-token')->accessToken;
 
         return $this->success([
-            'user' => UserResource::make($user)->resolve(),
+            'user' => UserResource::make($user->load(['roles', 'permissions']))->resolve(),
             'token' => $token,
             'token_type' => 'Bearer',
         ]);
@@ -81,7 +81,7 @@ final class AuthController extends BaseApiController
     public function me(Request $request): JsonResponse
     {
         $user = $request->user();
-        $user->load(['roles', 'tenant']);
+        $user->load(['roles', 'permissions', 'tenant']);
 
         return $this->success(UserResource::make($user)->resolve());
     }
