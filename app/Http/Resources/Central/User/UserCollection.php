@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Tenant\User;
 
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Http\Resources\BaseResourceCollection;
 
-final class UserCollection extends ResourceCollection
+final class UserCollection extends BaseResourceCollection
 {
     /**
      * The resource that this resource collects.

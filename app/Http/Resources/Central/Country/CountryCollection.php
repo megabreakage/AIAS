@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Central\Country;
 
+use App\Http\Resources\BaseResourceCollection;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 
-final class CountryCollection extends ResourceCollection
+final class CountryCollection extends BaseResourceCollection
 {
     public string $collects = CountryResource::class;
 
