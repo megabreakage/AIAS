@@ -1,17 +1,13 @@
 $kind: collection
-name: AIAS API
 description: |-
   Adaptive Intelligent Auditing System — Multi-tenant Laravel 13 API.
 
   Two routing contexts:
-    Central domain (localhost:8020) — prefix /api/v1 — unified auth + tenant management
+    Central domain (localhost:8020) — prefix /api/v1 — super-admin auth + tenant management
     Tenant domain ({tenant_id}.localhost:8020) — prefix /v1 — tenant user auth + operations
 
-  Authentication is unified — all users (including super-admins) authenticate via the same
-  endpoint. Super-admin is a role, not a separate entity or guard.
-
   Quick start:
-    1. Central Auth / Login  →  central_token auto-saved
+    1. Super Admin Auth / Login  →  central_token auto-saved
     2. Tenant Management / Create Tenant  →  tenant_id auto-saved
     3. Tenant Auth / Register or Login  →  tenant_token auto-saved
 
@@ -31,9 +27,8 @@ variables:
   tenant_token: ""
   tenant_user_identifier: ""
   user_identifier: ""
-  tenant_owner_id: ""
 auth:
-  - id: 9939e173-de38-43f8-91d0-c54c2845bcfb
+  - id: d6aece44-0110-48ac-9068-89239f109280
     type: bearer
     name: bearer auth
     credentials:

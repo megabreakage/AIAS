@@ -1,17 +1,17 @@
 workspace:
   id: 5631e230-7b84-4940-bbf5-d75dd983b780
+
 localResources:
   collections:
     - ../docs/postman/AIAS-API.postman_collection.json
-    - ../postman/collections/AIAS API
     - ../postman/collections/AIAS_APIS.postman_collection.json
   environments:
     - ../docs/postman/AIAS-API.local.postman_environment.json
     - ../docs/postman/AIAS-API.staging.postman_environment.json
-    - ../postman/environments/AIAS API — Staging.environment.yaml
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
 cloudResources:
   collections:
-    ../postman/collections/AIAS API: 51316521-19a6dfb7-a417-401c-9866-9bb67842e80f
-    ../postman/collections/AIAS_APIS.postman_collection.json: 51316521-aias-a1b2c3d4-e5f6-7890-abcd-ef1234567890
-  environments:
-    ../postman/environments/AIAS API — Staging.environment.yaml: 51316521-63dc98ed-8621-493e-a5e7-05ec677996ea
+    ../postman/collections/AIAS API: 7ce6bd1a-c590-4867-86f5-24288d1186fb
+  environments: {}

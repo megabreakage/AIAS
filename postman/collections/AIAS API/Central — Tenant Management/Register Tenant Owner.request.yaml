@@ -5,23 +5,7 @@ description: |-
   Step 1 of 2 — Registers a new user on the central database with the `tenant` role.
   The returned `id` (integer) is used as `owner_id` in Step 2 (Create Tenant).
 
-  After-response script auto-saves the user's `id` as `tenant_owner_id` collection variable.
-
-  Field rules:
-    title              — nullable, string, max 50
-    first_name         — required, string, max 100
-    middle_name        — nullable, string, max 100
-    last_name          — required, string, max 100
-    username           — required, string, max 100, unique in central users
-    email              — required, valid email, max 255, unique in central users
-    country_code       — nullable, string, max 10
-    phone              — nullable, string, max 30
-    password           — required, min 8, must contain letters and numbers
-    preferred_timezone — nullable, string, max 100
-    office_location    — nullable, string, max 255
-    avatar             — nullable, string (URL), max 500
-    notes              — nullable, string
-    is_active          — nullable, boolean
+  After-response script auto-saves the user`s `id` as `tenant_owner_id` collection variable.
 
   Error responses:
     401 — Unauthenticated
@@ -35,9 +19,7 @@ body:
   type: json
   content: |-
     {
-      "title": "Ms.",
       "first_name": "Jane",
-      "middle_name": null,
       "last_name": "Owner",
       "username": "jane.owner",
       "email": "jane.owner@airtraffic.com",
@@ -46,8 +28,6 @@ body:
       "country_code": "+254",
       "preferred_timezone": "Africa/Nairobi",
       "office_location": "Nairobi HQ",
-      "avatar": null,
-      "notes": null,
       "is_active": true
     }
 scripts:
@@ -60,6 +40,7 @@ scripts:
           pm.expect(b.data).to.have.property("identifier");
           pm.expect(b.data).to.have.property("email");
           pm.expect(b.data.roles).to.be.an("array").that.includes("tenant");
+          pm.environment.set("tenant_owner_id", b.data.id);
           pm.environment.set("tenant_owner_id", b.data.id);
           console.log("tenant_owner_id auto-saved: " + b.data.id);
       });

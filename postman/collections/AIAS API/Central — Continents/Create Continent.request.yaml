@@ -24,7 +24,6 @@ body:
   content: |-
     {
       "name": "Africa",
-      "slug": null,
       "short_code": "AF",
       "iso_code": "AF",
       "status": true

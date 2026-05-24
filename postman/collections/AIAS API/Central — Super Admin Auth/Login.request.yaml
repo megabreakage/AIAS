@@ -3,7 +3,6 @@ description: |-
   Public endpoint. Throttled: 10 requests/minute.
 
   Returns Bearer token + user object. Token is auto-saved to central_token collection variable.
-  Works for any user (super-admin or regular). Authorization is role-based, not guard-based.
 
   Error responses:
     401 — Invalid credentials
@@ -27,7 +26,7 @@ scripts:
   - type: afterResponse
     code: |-
       pm.test('Status 200', () => pm.response.to.have.status(200));
-      pm.test('Returns auth token', () => {
+      pm.test('Returns SA token', () => {
           const b = pm.response.json();
           pm.expect(b).to.have.property('data');
           pm.expect(b.data).to.have.property('token');
