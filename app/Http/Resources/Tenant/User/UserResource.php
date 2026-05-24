@@ -7,9 +7,9 @@ namespace App\Http\Resources\Tenant\User;
 use App\Http\Resources\BaseResource;
 use Illuminate\Http\Request;
 
-final class UserResource extends BaseResource
+class UserResource extends BaseResource
 {
-    public function toArray(Request $request): array
+    public function resourceData(Request $request): array
     {
         return [
             'id' => $this->identifier,
