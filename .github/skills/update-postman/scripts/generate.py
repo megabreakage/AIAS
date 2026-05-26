@@ -6,9 +6,9 @@ Generates a Postman Collection v2.1 JSON and four environment files for the
 AIAS (Adaptive Intelligent Audit System) — a Laravel 13 multi-tenant API for
 audit engagements, compliance tracking, risk assessments, and audit workflows.
 
-Auth:     Laravel Passport — password grant at /oauth/token
+Auth:     Laravel Passport — personal access tokens via /api/v1/auth/login
 Guard:    api  (Bearer token)
-Tenancy:  Stancl/Tenancy v3 — InitializeTenancyByPath / InitializeTenancyFromUser
+Tenancy:  Stancl/Tenancy v3 — InitializeTenancyByBodyParam (tenant_id in request body/query)
 
 Usage:
     # From MatterMiner repo root (scaffold context):
@@ -44,9 +44,12 @@ COLLECTION_NAME = "AIAS API"
 COLLECTION_DESCRIPTION = (
     "REST API collection for AIAS — Adaptive Intelligent Audit System. "
     "A multi-tenant Laravel 13 platform for audit engagements, compliance tracking, "
-    "risk assessments, and audit workflows. Built with Passport OAuth2 and Stancl Tenancy v3."
+    "risk assessments, and audit workflows. Built with Passport OAuth2 and Stancl Tenancy v3. "
+    "Tenant identification: pass `tenant_id` (UUID) in request body (POST/PUT/PATCH) "
+    "or as a query parameter (GET/DELETE). Tenant routes use {{tenant_base_url}} (no /api prefix)."
 )
-DEFAULT_BASE_URL = "http://localhost:8000/api"
+DEFAULT_BASE_URL = "http://localhost:8020/api"
+DEFAULT_TENANT_BASE_URL = "http://localhost:8020"
 
 # Paths are relative to AIAS project root.
 # When run from MatterMiner repo, --output can override.
@@ -627,37 +630,37 @@ ENVIRONMENTS = [
         "name": "AIAS Local",
         "file": "postman/environments/AIAS_Local.postman_environment.json",
         "id": "aias-local-env-0000-0000-0000-000000000001",
-        "base_url": "http://localhost:8000/api",
+        "base_url": "http://localhost:8020/api",
+        "tenant_base_url": "http://localhost:8020",
         "user_email": "superadmin@aias.test",
         "user_password": "password",
-        "oauth_url": "http://localhost:8000/oauth/token",
     },
     {
         "name": "AIAS Development",
         "file": "postman/environments/AIAS_Development.postman_environment.json",
         "id": "aias-dev-env-00000-0000-0000-000000000002",
         "base_url": "https://dev.aias.app/api",
+        "tenant_base_url": "https://dev.aias.app",
         "user_email": "dev@aias.app",
         "user_password": "",
-        "oauth_url": "https://dev.aias.app/oauth/token",
     },
     {
         "name": "AIAS Staging",
         "file": "postman/environments/AIAS_Staging.postman_environment.json",
         "id": "aias-staging-env-000-0000-0000-000000000003",
         "base_url": "https://staging.aias.app/api",
+        "tenant_base_url": "https://staging.aias.app",
         "user_email": "staging@aias.app",
         "user_password": "",
-        "oauth_url": "https://staging.aias.app/oauth/token",
     },
     {
         "name": "AIAS Production",
         "file": "postman/environments/AIAS_Production.postman_environment.json",
         "id": "aias-prod-env-00000-0000-0000-000000000004",
         "base_url": "https://app.aias.app/api",
+        "tenant_base_url": "https://app.aias.app",
         "user_email": "",
         "user_password": "",
-        "oauth_url": "https://app.aias.app/oauth/token",
     },
 ]
 
@@ -725,16 +728,23 @@ INDEX_QUERY_PARAMS = [
 ]
 
 LOGIN_TEST_SCRIPT = [
-    "if (pm.response.code === 200) {",
-    "    const json = pm.response.json();",
-    "    pm.environment.set('access_token', json.access_token);",
-    "    pm.environment.set('refresh_token', json.refresh_token);",
-    "    console.log('Token saved:', json.access_token.substring(0, 20) + '...');",
-    "}",
     "pm.test('Login successful', () => {",
     "    pm.response.to.have.status(200);",
-    "    pm.expect(pm.response.json()).to.have.property('access_token');",
+    "    const j = pm.response.json();",
+    "    pm.expect(j).to.have.property('data');",
+    "    pm.expect(j.data).to.have.property('token');",
     "});",
+    "if (pm.response.code === 200) {",
+    "    const j = pm.response.json();",
+    "    if (j.data && j.data.token) {",
+    "        pm.environment.set('access_token', j.data.token);",
+    "        console.log('Token saved:', j.data.token.substring(0, 20) + '...');",
+    "    }",
+    "    if (j.data && j.data.user) {",
+    "        pm.environment.set('user_id', j.data.user.id);",
+    "        console.log('User ID saved:', j.data.user.id);",
+    "    }",
+    "}",
 ]
 
 ME_TEST_SCRIPT = [
