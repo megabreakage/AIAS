@@ -74,8 +74,6 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
     protected static function booted(): void
     {
         self::creating(function (Tenant $tenant): void {
-            $tenant->identifier ??= 'AT-'.$tenant->id.'-'.time();
-
             if (auth()->check()) {
                 $tenant->created_by ??= auth()->id();
                 $tenant->updated_by ??= auth()->id();
@@ -83,8 +81,19 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
         });
 
         self::created(function (Tenant $tenant): void {
+            $needsSave = false;
+
+            if (empty($tenant->identifier)) {
+                $tenant->identifier = 'AT.'.$tenant->id.'.'.time();
+                $needsSave = true;
+            }
+
             if (empty($tenant->reference_number)) {
-                $tenant->reference_number = 'AT-'.$tenant->id.'-'.time();
+                $tenant->reference_number = $tenant->identifier;
+                $needsSave = true;
+            }
+
+            if ($needsSave) {
                 $tenant->saveQuietly();
             }
         });

@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::connection('central')->create('tenants', function (Blueprint $table): void {
             $table->id();
-            $table->uuid('identifier')->unique()->index();
+            $table->string('identifier')->unique()->index()->nullable();
             $table->unsignedBigInteger('owner_id');
             $table->string('name')->unique()->index();
             $table->string('domain')->nullable()->unique();
