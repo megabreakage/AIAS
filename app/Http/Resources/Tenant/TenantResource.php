@@ -22,6 +22,7 @@ class TenantResource extends BaseResource
             'owner' => $this->whenLoaded('owner', fn () => [
                 'id' => $this->owner?->identifier,
                 'name' => trim(($this->owner?->first_name ?? '').' '.($this->owner?->last_name ?? '')),
+                'email' => $this->owner->email_address,
             ]),
             'country_id' => $this->country_id,
             'country' => $this->whenLoaded('country', fn () => [
