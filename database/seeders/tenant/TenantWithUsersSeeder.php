@@ -7,8 +7,7 @@ namespace Database\Seeders\Tenant;
 use App\Models\Central\Tenant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Stancl\Tenancy\Jobs\CreateDatabase;
-use Stancl\Tenancy\Jobs\MigrateDatabase;
+use Spatie\Permission\Models\Role;
 
 class TenantWithUsersSeeder extends Seeder
 {
@@ -25,19 +24,19 @@ class TenantWithUsersSeeder extends Seeder
 
         $this->command->info('Creating 2 tenants with users...');
 
-        Tenant::factory(2)->create()->each(function (Tenant $tenant): void {
-            $tenant->refresh();
+        $tenantRole = Role::where('name', 'tenant')->where('guard_name', 'api')->firstOrFail();
+        $adminRole = Role::where('name', 'admin')->where('guard_name', 'api')->firstOrFail();
 
-            dispatch_sync(new CreateDatabase($tenant));
-            dispatch_sync(new MigrateDatabase($tenant));
+        Tenant::factory(2)->create()->each(function (Tenant $tenant) use ($tenantRole, $adminRole): void {
+            $tenant->refresh();
 
             $users = User::factory(2)->create();
 
             $owner = $users->first();
-            $owner->assignRole('tenant');
+            $owner->assignRole($tenantRole);
             $tenant->update(['owner_id' => $owner->id]);
 
-            $users->last()->assignRole('admin');
+            $users->last()->assignRole($adminRole);
 
             $this->command->info("Created tenant {$tenant->getTenantKey()} with 2 users.");
         });

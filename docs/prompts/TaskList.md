@@ -1,4 +1,4 @@
-1. **[Done]** /laravel-best-practices Create a completly featured central database **Preamble** module. Refer to `docs/prompts/models/Preamble.md` for Model specifications. Us
+1. **[Done]** /laravel-best-practices Create a completly featured central database **Preamble** module. Refer to `docs/prompts/models/Preamble.md` for Model specifications.
 2. **[Done]** /laravel-best-practices Create a completly featured central database **Continent** module. Refer to `docs/prompts/models/Continent.md` for Model specifications.
 3. **[Done]** /laravel-best-practices Create a completly featured central database **Country** module. Refer to `docs/prompts/models/Country.md` for Model specifications.
 4. /laravel-best-practices Create a listener to when a **Tenant** is created, and triggers an event that executes a scheduled job to create the Tenant's database, Migrates & Seeds the database with tenant-based migrations.
@@ -16,4 +16,4 @@
    - A comprehensive performance optimization strategy to ensure that the application is fast and responsive. Use Laravel's performance optimization features, such as query optimization and eager loading, to improve performance.
    - A comprehensive scalability strategy to ensure that the application can handle increased traffic and load as it grows. Use Laravel's scalability features, such as horizontal scaling and load balancing, to ensure that the application can scale effectively.
    - A comprehensive backup and disaster recovery strategy to ensure that data is protected and can be recovered in case of a disaster. Use Laravel's backup features to create regular backups and ensure that they are stored securely.
-7.
+7. /laravel-best-practices Create a completly featured central database **ChecklistTypes** module. Refer to `docs/prompts/models/ChecklistTypes.md` for Model specifications.
