@@ -1,0 +1,53 @@
+$kind: http-request
+description: |-
+  Requires central_token.
+
+  Returns paginated list of countries. Supports filters: search, status, continent_identifier, sort_by, sort_order.
+
+  Sets country_identifier to the first result.
+url: "{{central_base_url}}/countries?page=1&per_page=15"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  - key: page
+    value: "1"
+  - key: per_page
+    value: "15"
+  - key: search
+    value: ""
+    disabled: true
+  - key: status
+    value: ""
+    disabled: true
+  - key: continent_identifier
+    value: ""
+    disabled: true
+  - key: sort_by
+    value: name
+    disabled: true
+  - key: sort_order
+    value: asc
+    disabled: true
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Country array', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.be.an('array');
+          pm.expect(b).to.have.property('meta');
+          if (b.data.length > 0) {
+              const c = b.data[0];
+              pm.expect(c).to.have.property('identifier');
+              pm.expect(c).to.have.property('name');
+              pm.expect(c).to.have.property('slug');
+              pm.expect(c).to.have.property('short_code');
+              pm.expect(c).to.have.property('iso_code');
+              pm.expect(c).to.have.property('status');
+              pm.environment.set('country_identifier', c.identifier);
+              console.log('country_identifier set to first result: ' + c.identifier);
+          }
+      });
+    language: text/javascript
+order: 1000

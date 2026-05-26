@@ -1,0 +1,28 @@
+$kind: http-request
+description: |-
+  Requires central_token.
+
+  Fetches a single tenant by ID including its domains array.
+
+  Error responses:
+    401 — Unauthenticated
+    404 — Tenant not found
+url: "{{central_base_url}}/tenants/{{tenant_id}}"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Tenant object', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('id');
+          pm.expect(b.data).to.have.property('name');
+          pm.expect(b.data).to.have.property('plan');
+          pm.expect(b.data).to.have.property('status');
+          pm.expect(b.data).to.have.property('domains');
+          pm.expect(b.data.domains).to.be.an('array');
+      });
+    language: text/javascript
+order: 4000

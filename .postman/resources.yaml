@@ -12,5 +12,6 @@ localResources:
 # Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
 
 cloudResources:
-  collections: {}
+  collections:
+    ../postman/collections/AIAS API: 9c005d8d-af99-481f-8da0-c92381b2643c
   environments: {}

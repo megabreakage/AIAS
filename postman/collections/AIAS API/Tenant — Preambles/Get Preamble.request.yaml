@@ -1,0 +1,32 @@
+$kind: http-request
+description: |-
+  Requires tenant_token.
+
+  Fetches a single preamble by identifier.
+
+  Error responses:
+    401 — Unauthenticated
+    403 — Token belongs to a different tenant
+    404 — Preamble not found
+url: "{{tenant_base_url}}/preambles/{{preamble_identifier}}"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Preamble object', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('reference_number');
+          pm.expect(b.data).to.have.property('name');
+          pm.expect(b.data).to.have.property('description');
+          pm.expect(b.data).to.have.property('status');
+          pm.expect(b.data).to.have.property('effective_date');
+          pm.expect(b.data).to.have.property('is_featured');
+          pm.expect(b.data).to.have.property('created_at');
+          pm.expect(b.data).to.have.property('updated_at');
+      });
+    language: text/javascript
+order: 3000

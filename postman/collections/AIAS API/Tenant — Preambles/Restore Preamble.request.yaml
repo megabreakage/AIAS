@@ -1,0 +1,26 @@
+$kind: http-request
+description: |-
+  Requires tenant_token.
+
+  Restores a previously soft-deleted preamble.
+
+  Error responses:
+    401 — Unauthenticated
+    403 — Token belongs to a different tenant
+    404 — Preamble not found in trash
+url: "{{tenant_base_url}}/preambles/{{preamble_identifier}}/restore"
+method: POST
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Preamble restored', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('name');
+          pm.expect(b.data.deleted_at).to.be.null;
+      });
+    language: text/javascript
+order: 6000

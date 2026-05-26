@@ -1,0 +1,43 @@
+$kind: http-request
+description: |-
+  Public endpoint. Throttled: 10 requests/minute.
+
+  Returns Bearer token + user object. Token is auto-saved to central_token collection variable.
+
+  Error responses:
+    401 — Invalid credentials
+    403 — Account disabled
+    422 — Validation failed
+url: "{{central_base_url}}/auth/login"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "sa@aias.system",
+      "password": "password"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Returns SA token', () => {
+          const b = pm.response.json();
+          pm.expect(b).to.have.property('data');
+          pm.expect(b.data).to.have.property('token');
+          pm.expect(b.data).to.have.property('token_type', 'Bearer');
+          pm.expect(b.data).to.have.property('user');
+          pm.expect(b.data.user).to.have.property('id');
+          pm.expect(b.data.user).to.have.property('email');
+          pm.expect(b.data.user).to.have.property('first_name');
+          pm.expect(b.data.user).to.have.property('last_name');
+          pm.environment.set('central_token', b.data.token);
+          console.log('central_token saved for: ' + b.data.user.email);
+      });
+    language: text/javascript
+order: 1000
