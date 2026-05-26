@@ -16,7 +16,3 @@
 - `created_at`: timestamp,
 - `updated_at`: timestamp,
 - `deleted_at`: timestamp, nullable (for soft deletes)
-
-## 2. ChecklistType Module
-
-/caveman Create a completly featured tenant-scoped **ChecklistType** module. Refer to `docs/prompts/models/ChecklistType.md` for the table structure and functionalities.
