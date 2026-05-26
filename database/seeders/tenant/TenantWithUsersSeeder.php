@@ -26,10 +26,10 @@ class TenantWithUsersSeeder extends Seeder
         $this->command->info('Creating 2 tenants with users...');
 
         Tenant::factory(2)->create()->each(function (Tenant $tenant): void {
+            $tenant->refresh();
+
             dispatch_sync(new CreateDatabase($tenant));
             dispatch_sync(new MigrateDatabase($tenant));
-
-            $tenant->refresh();
 
             $users = User::factory(2)->create();
 
