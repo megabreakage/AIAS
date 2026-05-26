@@ -9,7 +9,6 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
@@ -75,7 +74,7 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
     protected static function booted(): void
     {
         self::creating(function (Tenant $tenant): void {
-            $tenant->identifier ??= (string) Str::uuid();
+            $tenant->identifier ??= 'AT-'.$tenant->id.'-'.time();
 
             if (auth()->check()) {
                 $tenant->created_by ??= auth()->id();
