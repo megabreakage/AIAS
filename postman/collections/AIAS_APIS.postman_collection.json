@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "aias-a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "name": "AIAS API",
-    "description": "REST API collection for AIAS \u2014 Adaptive Intelligent Audit System. A multi-tenant Laravel 13 platform for audit engagements, compliance tracking, risk assessments, and audit workflows. Built with Passport OAuth2 and Stancl Tenancy v3. Tenant identification: pass `tenant_id` (UUID) in request body (POST/PUT/PATCH) or as a query parameter (GET/DELETE). Tenant routes use {{tenant_base_url}} (no /api prefix).",
+    "description": "REST API collection for AIAS \u2014 Adaptive Intelligent Audit System. A multi-tenant Laravel 13 platform for audit engagements, compliance tracking, risk assessments, and audit workflows. Built with Passport OAuth2 and Stancl Tenancy v3. Tenant identification: pass `tenant_id` (identifier string, e.g. AT.1.1748000000) in request body (POST/PUT/PATCH) or as a query parameter (GET/DELETE). Tenant routes use {{tenant_base_url}} (no /api prefix).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -449,9 +449,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('id_id', j.data.id);",
-                      "        console.log('Saved id_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('id_id', String(resourceId));",
+                      "        console.log('Saved id_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -780,9 +782,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('continent_id', j.data.id);",
-                      "        console.log('Saved continent_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('continent_id', String(resourceId));",
+                      "        console.log('Saved continent_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -1058,9 +1062,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('country_id', j.data.id);",
-                      "        console.log('Saved country_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('country_id', String(resourceId));",
+                      "        console.log('Saved country_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -1379,9 +1385,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('user_id', j.data.id);",
-                      "        console.log('Saved user_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('user_id', String(resourceId));",
+                      "        console.log('Saved user_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -1816,9 +1824,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('role_id', j.data.id);",
-                      "        console.log('Saved role_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('role_id', String(resourceId));",
+                      "        console.log('Saved role_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -2137,9 +2147,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('id_id', j.data.id);",
-                      "        console.log('Saved id_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('id_id', String(resourceId));",
+                      "        console.log('Saved id_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -2618,9 +2630,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('id_id', j.data.id);",
-                      "        console.log('Saved id_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('id_id', String(resourceId));",
+                      "        console.log('Saved id_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -3417,9 +3431,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('audit_standard_id', j.data.id);",
-                      "        console.log('Saved audit_standard_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('audit_standard_id', String(resourceId));",
+                      "        console.log('Saved audit_standard_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -3748,9 +3764,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('regulation_framework_id', j.data.id);",
-                      "        console.log('Saved regulation_framework_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('regulation_framework_id', String(resourceId));",
+                      "        console.log('Saved regulation_framework_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -4079,9 +4097,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('risk_category_id', j.data.id);",
-                      "        console.log('Saved risk_category_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('risk_category_id', String(resourceId));",
+                      "        console.log('Saved risk_category_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -4319,7 +4339,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -4421,9 +4441,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('department_id', j.data.id);",
-                      "        console.log('Saved department_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('department_id', String(resourceId));",
+                      "        console.log('Saved department_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -4459,7 +4481,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -4561,7 +4583,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -4669,7 +4691,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -4771,9 +4793,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('group_id', j.data.id);",
-                      "        console.log('Saved group_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('group_id', String(resourceId));",
+                      "        console.log('Saved group_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -4809,7 +4833,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -4911,7 +4935,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -4990,6 +5014,358 @@
           ]
         },
         {
+          "name": "Preambles",
+          "description": "Manage quality management preamble documents (scope, objectives, authority declarations).",
+          "item": [
+            {
+              "name": "List Preambles",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{tenant_base_url}}/preambles",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "preambles"
+                  ],
+                  "query": [
+                    {
+                      "key": "tenant_id",
+                      "value": "{{tenant_id}}",
+                      "description": "Tenant identifier string (required)"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Page number (min: 1)"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": "Items per page (max: 100)"
+                    },
+                    {
+                      "key": "search",
+                      "value": "",
+                      "description": "Full-text search term"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "created_at",
+                      "description": "Sort column"
+                    },
+                    {
+                      "key": "sort_order",
+                      "value": "desc",
+                      "description": "asc | desc"
+                    },
+                    {
+                      "key": "show_deleted",
+                      "value": "0",
+                      "description": "Include soft-deleted: 0|1",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Retrieve paginated list of preambles."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Create Preamble",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"name\": \"Quality Management Framework Preamble\",\n  \"description\": \"Establishes the scope and objectives of the quality management framework.\",\n  \"status\": \"draft\",\n  \"effective_date\": \"2026-01-01\",\n  \"is_featured\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{tenant_base_url}}/preambles",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "preambles"
+                  ]
+                },
+                "description": "Create a new preamble."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 201', () => { pm.response.to.have.status(201); });",
+                      "pm.test('Response envelope valid', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status');",
+                      "    pm.expect(j).to.have.property('data');",
+                      "});",
+                      "if (pm.response.code === 201) {",
+                      "    const j = pm.response.json();",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('preamble_id', String(resourceId));",
+                      "        console.log('Saved preamble_id:', resourceId);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Get Preamble",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{tenant_base_url}}/preambles/{{preamble_id}}",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "preambles",
+                    "{{preamble_id}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "tenant_id",
+                      "value": "{{tenant_id}}",
+                      "description": "Tenant identifier string (required)"
+                    }
+                  ]
+                },
+                "description": "Retrieve a single preamble by ID."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Update Preamble",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"name\": \"Quality Management Framework Preamble\",\n  \"description\": \"Establishes the scope and objectives of the quality management framework.\",\n  \"status\": \"draft\",\n  \"effective_date\": \"2026-01-01\",\n  \"is_featured\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{tenant_base_url}}/preambles/{{preamble_id}}",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "preambles",
+                    "{{preamble_id}}"
+                  ]
+                },
+                "description": "Update an existing preamble."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Delete Preamble",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{tenant_base_url}}/preambles/{{preamble_id}}",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "preambles",
+                    "{{preamble_id}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "tenant_id",
+                      "value": "{{tenant_id}}",
+                      "description": "Tenant identifier string (required)"
+                    }
+                  ]
+                },
+                "description": "Soft-delete a preamble."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Restore Preamble",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{tenant_base_url}}/preambles/{{preamble_id}}/restore",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "preambles",
+                    "{{preamble_id}}",
+                    "restore"
+                  ]
+                },
+                "description": "Restore Preamble",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            }
+          ]
+        },
+        {
           "name": "Clients",
           "description": "Manage audit client entities (organisations being audited).",
           "item": [
@@ -5019,7 +5395,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -5121,9 +5497,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('client_id', j.data.id);",
-                      "        console.log('Saved client_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('client_id', String(resourceId));",
+                      "        console.log('Saved client_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -5159,7 +5537,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -5261,7 +5639,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -5364,7 +5742,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -5419,7 +5797,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -5521,9 +5899,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('audit_template_id', j.data.id);",
-                      "        console.log('Saved audit_template_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('audit_template_id', String(resourceId));",
+                      "        console.log('Saved audit_template_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -5559,7 +5939,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -5661,7 +6041,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -5822,7 +6202,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -5924,9 +6304,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('audit_engagement_id', j.data.id);",
-                      "        console.log('Saved audit_engagement_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('audit_engagement_id', String(resourceId));",
+                      "        console.log('Saved audit_engagement_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -5962,7 +6344,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -6064,7 +6446,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -6326,7 +6708,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -6376,7 +6758,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -6431,7 +6813,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -6533,9 +6915,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('audit_plan_id', j.data.id);",
-                      "        console.log('Saved audit_plan_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('audit_plan_id', String(resourceId));",
+                      "        console.log('Saved audit_plan_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -6571,7 +6955,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -6673,7 +7057,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -6834,7 +7218,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -6936,9 +7320,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('audit_procedure_id', j.data.id);",
-                      "        console.log('Saved audit_procedure_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('audit_procedure_id', String(resourceId));",
+                      "        console.log('Saved audit_procedure_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -6974,7 +7360,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -7076,7 +7462,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -7290,7 +7676,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -7392,9 +7778,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('workpaper_id', j.data.id);",
-                      "        console.log('Saved workpaper_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('workpaper_id', String(resourceId));",
+                      "        console.log('Saved workpaper_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -7430,7 +7818,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -7532,7 +7920,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -7799,7 +8187,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -7901,9 +8289,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('finding_id', j.data.id);",
-                      "        console.log('Saved finding_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('finding_id', String(resourceId));",
+                      "        console.log('Saved finding_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -7939,7 +8329,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -8041,7 +8431,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -8250,7 +8640,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -8300,7 +8690,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -8355,7 +8745,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -8457,9 +8847,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('finding_response_id', j.data.id);",
-                      "        console.log('Saved finding_response_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('finding_response_id', String(resourceId));",
+                      "        console.log('Saved finding_response_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -8495,7 +8887,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -8597,7 +8989,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -8811,7 +9203,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -8913,9 +9305,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('risk_assessment_id', j.data.id);",
-                      "        console.log('Saved risk_assessment_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('risk_assessment_id', String(resourceId));",
+                      "        console.log('Saved risk_assessment_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -8951,7 +9345,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -9053,7 +9447,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -9209,7 +9603,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -9264,7 +9658,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -9366,9 +9760,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('risk_matrix_id', j.data.id);",
-                      "        console.log('Saved risk_matrix_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('risk_matrix_id', String(resourceId));",
+                      "        console.log('Saved risk_matrix_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -9404,7 +9800,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -9506,7 +9902,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -9614,7 +10010,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -9716,9 +10112,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('compliance_requirement_id', j.data.id);",
-                      "        console.log('Saved compliance_requirement_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('compliance_requirement_id', String(resourceId));",
+                      "        console.log('Saved compliance_requirement_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -9754,7 +10152,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -9856,7 +10254,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -10012,7 +10410,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -10067,7 +10465,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -10169,9 +10567,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('compliance_evidence_id', j.data.id);",
-                      "        console.log('Saved compliance_evidence_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('compliance_evidence_id', String(resourceId));",
+                      "        console.log('Saved compliance_evidence_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -10207,7 +10607,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -10309,7 +10709,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -10470,7 +10870,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -10572,9 +10972,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('control_objective_id', j.data.id);",
-                      "        console.log('Saved control_objective_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('control_objective_id', String(resourceId));",
+                      "        console.log('Saved control_objective_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -10610,7 +11012,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -10712,7 +11114,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -10820,7 +11222,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -10922,9 +11324,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('control_test_id', j.data.id);",
-                      "        console.log('Saved control_test_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('control_test_id', String(resourceId));",
+                      "        console.log('Saved control_test_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -10960,7 +11364,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -11062,7 +11466,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -11276,7 +11680,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -11378,9 +11782,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('report_id', j.data.id);",
-                      "        console.log('Saved report_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('report_id', String(resourceId));",
+                      "        console.log('Saved report_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -11416,7 +11822,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -11518,7 +11924,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -11781,7 +12187,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -11836,7 +12242,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     },
                     {
                       "key": "page",
@@ -11938,9 +12344,11 @@
                       "});",
                       "if (pm.response.code === 201) {",
                       "    const j = pm.response.json();",
-                      "    if (j.data && j.data.id) {",
-                      "        pm.environment.set('firm_settings_id', j.data.id);",
-                      "        console.log('Saved firm_settings_id:', j.data.id);",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('firm_settings_id', String(resourceId));",
+                      "        console.log('Saved firm_settings_id:', resourceId);",
                       "    }",
                       "}"
                     ]
@@ -11976,7 +12384,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },
@@ -12078,7 +12486,7 @@
                     {
                       "key": "tenant_id",
                       "value": "{{tenant_id}}",
-                      "description": "Tenant UUID (required)"
+                      "description": "Tenant identifier string (required)"
                     }
                   ]
                 },

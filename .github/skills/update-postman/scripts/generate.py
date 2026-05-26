@@ -45,7 +45,7 @@ COLLECTION_DESCRIPTION = (
     "REST API collection for AIAS — Adaptive Intelligent Audit System. "
     "A multi-tenant Laravel 13 platform for audit engagements, compliance tracking, "
     "risk assessments, and audit workflows. Built with Passport OAuth2 and Stancl Tenancy v3. "
-    "Tenant identification: pass `tenant_id` (UUID) in request body (POST/PUT/PATCH) "
+    "Tenant identification: pass `tenant_id` (identifier string, e.g. AT.1.1748000000) in request body (POST/PUT/PATCH) "
     "or as a query parameter (GET/DELETE). Tenant routes use {{tenant_base_url}} (no /api prefix)."
 )
 DEFAULT_BASE_URL = "http://localhost:8020/api"
@@ -286,6 +286,23 @@ MODULES: list[dict[str, Any]] = [
         "sample_body": {"name": "Senior Audit Team", "status": True},
         "extra_actions": [
             {"method": "POST", "path": "restore", "name": "Restore Group"},
+        ],
+    },
+    {
+        "name": "Preambles",
+        "route": "preambles",
+        "param": "preamble",
+        "scope": "tenant",
+        "description": "Manage quality management preamble documents (scope, objectives, authority declarations).",
+        "sample_body": {
+            "name": "Quality Management Framework Preamble",
+            "description": "Establishes the scope and objectives of the quality management framework.",
+            "status": "draft",
+            "effective_date": "2026-01-01",
+            "is_featured": False,
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore Preamble"},
         ],
     },
     {
@@ -671,42 +688,43 @@ ENVIRONMENTS = [
 
 RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
     # --- Auto-populated ---
-    ("tenant_id",                   "", "Current tenant ID (auto-populated after login)"),
+    ("tenant_id",                   "", "Current tenant identifier string (auto-populated after login)"),
     ("user_id",                     "", "Authenticated user ID (auto-populated after login)"),
     # --- Global Reference ---
-    ("continent_id",                "", "Continent UUID"),
-    ("country_id",                  "", "Country UUID"),
-    ("audit_standard_id",           "", "Audit Standard UUID"),
-    ("regulation_framework_id",     "", "Regulation Framework UUID"),
-    ("risk_category_id",            "", "Risk Category UUID"),
+    ("continent_id",                "", "Continent identifier string"),
+    ("country_id",                  "", "Country identifier string"),
+    ("audit_standard_id",           "", "Audit Standard identifier string"),
+    ("regulation_framework_id",     "", "Regulation Framework identifier string"),
+    ("risk_category_id",            "", "Risk Category identifier string"),
     # --- IAM ---
-    ("role_id",                     "", "Role UUID"),
-    ("service_user_id",             "", "Service User UUID"),
-    ("api_key_id",                  "", "API Key UUID"),
+    ("role_id",                     "", "Role identifier string"),
+    ("service_user_id",             "", "Service User identifier string"),
+    ("api_key_id",                  "", "API Key identifier string"),
     # --- Tenant Reference ---
-    ("department_id",               "", "Department UUID"),
-    ("group_id",                    "", "Group UUID"),
-    ("client_id",                   "", "Client UUID"),
+    ("department_id",               "", "Department identifier string"),
+    ("group_id",                    "", "Group identifier string"),
+    ("preamble_id",                 "", "Preamble identifier string"),
+    ("client_id",                   "", "Client identifier string"),
     # --- Audit Templates ---
-    ("audit_template_id",           "", "Audit Template UUID"),
+    ("audit_template_id",           "", "Audit Template identifier string"),
     # --- Core Audit ---
-    ("audit_engagement_id",         "", "Audit Engagement UUID"),
-    ("audit_plan_id",               "", "Audit Plan UUID"),
-    ("audit_procedure_id",          "", "Audit Procedure UUID"),
-    ("workpaper_id",                "", "Workpaper UUID"),
-    ("finding_id",                  "", "Finding UUID"),
-    ("finding_response_id",         "", "Finding Response UUID"),
+    ("audit_engagement_id",         "", "Audit Engagement identifier string"),
+    ("audit_plan_id",               "", "Audit Plan identifier string"),
+    ("audit_procedure_id",          "", "Audit Procedure identifier string"),
+    ("workpaper_id",                "", "Workpaper identifier string"),
+    ("finding_id",                  "", "Finding identifier string"),
+    ("finding_response_id",         "", "Finding Response identifier string"),
     # --- Risk ---
-    ("risk_assessment_id",          "", "Risk Assessment UUID"),
-    ("risk_matrix_id",              "", "Risk Matrix UUID"),
+    ("risk_assessment_id",          "", "Risk Assessment identifier string"),
+    ("risk_matrix_id",              "", "Risk Matrix identifier string"),
     # --- Compliance ---
-    ("compliance_requirement_id",   "", "Compliance Requirement UUID"),
-    ("compliance_evidence_id",      "", "Compliance Evidence UUID"),
+    ("compliance_requirement_id",   "", "Compliance Requirement identifier string"),
+    ("compliance_evidence_id",      "", "Compliance Evidence identifier string"),
     # --- Controls ---
-    ("control_objective_id",        "", "Control Objective UUID"),
-    ("control_test_id",             "", "Control Test UUID"),
+    ("control_objective_id",        "", "Control Objective identifier string"),
+    ("control_test_id",             "", "Control Test identifier string"),
     # --- Reports ---
-    ("report_id",                   "", "Report UUID"),
+    ("report_id",                   "", "Report identifier string"),
 ]
 
 # ---------------------------------------------------------------------------
@@ -773,9 +791,11 @@ pm.test('Response envelope valid', () => {{
 }});
 if (pm.response.code === 201) {{
     const j = pm.response.json();
-    if (j.data && j.data.id) {{
-        pm.environment.set('{var_name}', j.data.id);
-        console.log('Saved {var_name}:', j.data.id);
+    // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+    const resourceId = j.data && (j.data.identifier || j.data.id);
+    if (resourceId) {{
+        pm.environment.set('{var_name}', String(resourceId));
+        console.log('Saved {var_name}:', resourceId);
     }}
 }}"""
 
@@ -848,7 +868,7 @@ def build_index_request(mod: dict) -> dict:
     raw_url = f"{{{{{host_var}}}}}/{route}"
     query_params = list(INDEX_QUERY_PARAMS)
     if mod["scope"] == "tenant":
-        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID (required)"}] + query_params
+        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string (required)"}] + query_params
     return {
         "name": f"List {mod['name']}",
         "request": {
@@ -893,7 +913,7 @@ def build_show_request(mod: dict) -> dict:
     raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}"
     query_params = None
     if mod["scope"] == "tenant":
-        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID (required)"}]
+        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string (required)"}]
     return {
         "name": f"Get {singular(mod['name'])}",
         "request": {
@@ -938,7 +958,7 @@ def build_destroy_request(mod: dict) -> dict:
     raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}"
     query_params = None
     if mod["scope"] == "tenant":
-        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID (required)"}]
+        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string (required)"}]
     return {
         "name": f"Delete {singular(mod['name'])}",
         "request": {
@@ -969,7 +989,7 @@ def build_extra_action_request(mod: dict, action: dict) -> dict:
         path_parts = [route, f"{{{{{var_name}}}}}", action_path]
 
     tenant_query: Optional[list[dict]] = (
-        [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID (required)"}]
+        [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string (required)"}]
         if mod["scope"] == "tenant"
         else None
     )
