@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Database\Seeders\Tenant\TenantDatabaseSeeder;
+use Database\Seeders\Tenant\TenantWithUsersSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ContinentSeeder::class,
             CountrySeeder::class,
             TenantDatabaseSeeder::class,
+            TenantWithUsersSeeder::class,
         ]);
     }
 }
