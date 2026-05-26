@@ -1,0 +1,34 @@
+$kind: http-request
+description: |-
+  Requires central_token.
+
+  Updates an existing country. All fields are optional (partial update).
+
+  Error responses:
+    401 — Unauthenticated
+    404 — Country not found
+    422 — Validation failed (duplicate name, invalid continent_id)
+url: "{{central_base_url}}/countries/{{country_identifier}}"
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Kenya (Updated)",
+      "currency_sign": "Ksh"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Country updated', () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property('identifier');
+          pm.expect(b.data).to.have.property('name');
+          pm.expect(b.data).to.have.property('status');
+      });
+    language: text/javascript
+order: 4000

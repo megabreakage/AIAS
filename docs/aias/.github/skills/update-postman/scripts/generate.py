@@ -763,9 +763,11 @@ pm.test('Response envelope valid', () => {{
 }});
 if (pm.response.code === 201) {{
     const j = pm.response.json();
-    if (j.data && j.data.id) {{
-        pm.environment.set('{var_name}', j.data.id);
-        console.log('Saved {var_name}:', j.data.id);
+    // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+    const resourceId = j.data && (j.data.identifier || j.data.id);
+    if (resourceId) {{
+        pm.environment.set('{var_name}', String(resourceId));
+        console.log('Saved {var_name}:', resourceId);
     }}
 }}"""
 

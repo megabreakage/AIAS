@@ -1,0 +1,14 @@
+$kind: collection
+description: |-
+  Tenant-scoped preamble management endpoints.
+
+  Requires tenant_token (Bearer auth) and valid tenant resolution via {{tenant_base_url}}.
+
+  Create Preamble auto-saves preamble_identifier for subsequent requests.
+auth:
+  - id: 2e90b0ea-0b00-4b78-a9e6-f1970598de65
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{tenant_token}}"
+order: 8000

@@ -1,0 +1,48 @@
+$kind: http-request
+description: |-
+  Requires central_token.
+
+  Step 1 of 2 — Registers a new user on the central database with the `tenant` role.
+  The returned `id` (integer) is used as `owner_id` in Step 2 (Create Tenant).
+
+  After-response script auto-saves the user`s `id` as `tenant_owner_id` collection variable.
+
+  Error responses:
+    401 — Unauthenticated
+    422 — Validation failed / ROLE_NOT_FOUND
+url: "{{central_base_url}}/users"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "first_name": "Jane",
+      "last_name": "Owner",
+      "username": "jane.owner",
+      "email": "jane.owner@airtraffic.com",
+      "password": "Secure123",
+      "phone": "0712345678",
+      "country_code": "+254",
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": "Nairobi HQ",
+      "is_active": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status 201", () => pm.response.to.have.status(201));
+      pm.test("Tenant owner registered", () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property("id");
+          pm.expect(b.data).to.have.property("identifier");
+          pm.expect(b.data).to.have.property("email");
+          pm.expect(b.data.roles).to.be.an("array").that.includes("tenant");
+          pm.environment.set("tenant_owner_id", b.data.id);
+          pm.environment.set("tenant_owner_id", b.data.id);
+          console.log("tenant_owner_id auto-saved: " + b.data.id);
+      });
+    language: text/javascript
+order: 1000
