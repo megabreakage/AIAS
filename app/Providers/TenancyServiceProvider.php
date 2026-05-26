@@ -107,7 +107,7 @@ class TenancyServiceProvider extends ServiceProvider
         if (file_exists(base_path('routes/tenant.php'))) {
             Route::middleware([
                 'api',
-                Middleware\InitializeTenancyByPath::class,
+                \App\Http\Middleware\InitializeTenancyByBodyParam::class,
             ])->group(base_path('routes/tenant.php'));
         }
     }

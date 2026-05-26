@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'tenant.token' => EnsureTokenMatchesTenant::class,
+            'tenant.body'  => \App\Http\Middleware\InitializeTenancyByBodyParam::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

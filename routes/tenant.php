@@ -11,12 +11,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Tenant API Routes
 |--------------------------------------------------------------------------
-| These routes are scoped to a specific tenant context and are accessible
-| via path-based tenancy (e.g., localhost/acme/v1/...).
+| These routes are scoped to a specific tenant context. Tenant is identified
+| via the `tenant_id` body/query parameter (the tenant's UUID identifier).
 |
 */
 
-Route::prefix('{tenant}/v1')->group(function () {
+Route::prefix('v1')->group(function () {
     // Health check (per-tenant)
     Route::get('/health', function () {
         return response()->json([
