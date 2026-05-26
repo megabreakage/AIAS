@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Tenant\ChecklistTypeController;
 use App\Http\Controllers\Api\V1\Tenant\PreambleController;
 use App\Http\Controllers\Api\V1\Tenant\UserController;
 use Illuminate\Support\Facades\Route;
@@ -57,5 +58,13 @@ Route::prefix('v1')->group(function () {
         Route::put('/users/{identifier}', [UserController::class, 'update']);
         Route::delete('/users/{identifier}', [UserController::class, 'destroy']);
         Route::post('/users/{identifier}/restore', [UserController::class, 'restore']);
+
+        // Checklist type routes
+        Route::get('/checklist-types', [ChecklistTypeController::class, 'index']);
+        Route::post('/checklist-types', [ChecklistTypeController::class, 'store']);
+        Route::get('/checklist-types/{identifier}', [ChecklistTypeController::class, 'show']);
+        Route::put('/checklist-types/{identifier}', [ChecklistTypeController::class, 'update']);
+        Route::delete('/checklist-types/{identifier}', [ChecklistTypeController::class, 'destroy']);
+        Route::post('/checklist-types/{identifier}/restore', [ChecklistTypeController::class, 'restore']);
     });
 });

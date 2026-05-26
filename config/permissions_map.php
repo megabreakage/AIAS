@@ -161,6 +161,8 @@ return [
 
         'mfa' => ['view-status', 'setup', 'enable', 'disable', 'regenerate-backup-codes', 'update-method'],
 
+        'checklist-types' => ['view', 'create', 'update', 'delete', 'restore'],
+
     ],
 
 ];
