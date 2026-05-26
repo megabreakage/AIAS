@@ -597,4 +597,3 @@ class MyTest extends TestCase
 - `app/Http/Resources/BaseResource.php` - Response wrapper
 - `app/Http/Requests/` - Validation classes
 - `app/Http/Controllers/` - Controller pattern
-
