@@ -788,10 +788,10 @@ GENERIC_TEST_SCRIPT = [
 ]
 
 
-def make_url(raw: str, path_parts: list[str], query: Optional[list[dict]] = None) -> dict:
+def make_url(raw: str, path_parts: list[str], query: Optional[list[dict]] = None, host_var: str = "base_url") -> dict:
     url: dict[str, Any] = {
         "raw": raw,
-        "host": ["{{base_url}}"],
+        "host": [f"{{{{{host_var}}}}}"],
         "path": path_parts,
     }
     if query:
@@ -832,6 +832,11 @@ def singular(name: str) -> str:
     return name
 
 
+def get_host_var(mod: dict) -> str:
+    """Return the Postman env variable name for the base URL based on module scope."""
+    return "tenant_base_url" if mod["scope"] == "tenant" else "base_url"
+
+
 # ---------------------------------------------------------------------------
 # REQUEST BUILDERS
 # ---------------------------------------------------------------------------
@@ -839,13 +844,17 @@ def singular(name: str) -> str:
 
 def build_index_request(mod: dict) -> dict:
     route = mod["route"]
-    raw_url = f"{{{{base_url}}}}/{route}"
+    host_var = get_host_var(mod)
+    raw_url = f"{{{{{host_var}}}}}/{route}"
+    query_params = list(INDEX_QUERY_PARAMS)
+    if mod["scope"] == "tenant":
+        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID (required)"}] + query_params
     return {
         "name": f"List {mod['name']}",
         "request": {
             "method": "GET",
             "header": STD_HEADERS,
-            "url": make_url(raw_url, [route], INDEX_QUERY_PARAMS),
+            "url": make_url(raw_url, [route], query_params, host_var),
             "description": f"Retrieve paginated list of {mod['name'].lower()}.",
         },
         "event": [make_event("test", GENERIC_TEST_SCRIPT)],
@@ -855,16 +864,20 @@ def build_index_request(mod: dict) -> dict:
 
 def build_store_request(mod: dict) -> dict:
     route = mod["route"]
-    raw_url = f"{{{{base_url}}}}/{route}"
+    host_var = get_host_var(mod)
+    raw_url = f"{{{{{host_var}}}}}/{route}"
     var_name = param_to_var_name(mod["param"]) + "_id"
     create_script = CREATE_TEST_SCRIPT_TEMPLATE.format(var_name=var_name).splitlines()
+    body = {**mod.get("sample_body", {})}
+    if mod["scope"] == "tenant":
+        body = {"tenant_id": "{{tenant_id}}", **body}
     return {
         "name": f"Create {singular(mod['name'])}",
         "request": {
             "method": "POST",
             "header": STD_HEADERS,
-            "body": make_body(mod.get("sample_body", {})),
-            "url": make_url(raw_url, [route]),
+            "body": make_body(body),
+            "url": make_url(raw_url, [route], host_var=host_var),
             "description": f"Create a new {singular(mod['name']).lower()}.",
         },
         "event": [make_event("test", create_script)],
@@ -930,27 +943,42 @@ def build_destroy_request(mod: dict) -> dict:
 def build_extra_action_request(mod: dict, action: dict) -> dict:
     route = mod["route"]
     param = mod["param"]
+    host_var = get_host_var(mod)
     var_name = param_to_var_name(param) + "_id"
     action_path = action["path"]
     no_id = action.get("no_id", False)
     method = action.get("method", "POST")
 
     if no_id:
-        raw_url = f"{{{{base_url}}}}/{route}/{action_path}"
+        raw_url = f"{{{{{host_var}}}}}/{route}/{action_path}"
         path_parts = [route, action_path]
     else:
-        raw_url = f"{{{{base_url}}}}/{route}/{{{{{var_name}}}}}/{action_path}"
+        raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}/{action_path}"
         path_parts = [route, f"{{{{{var_name}}}}}", action_path]
+
+    tenant_query: Optional[list[dict]] = (
+        [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID (required)"}]
+        if mod["scope"] == "tenant"
+        else None
+    )
 
     request_obj: dict[str, Any] = {
         "method": method,
         "header": STD_HEADERS,
-        "url": make_url(raw_url, path_parts),
+        "url": make_url(
+            raw_url,
+            path_parts,
+            tenant_query if method in ("GET", "DELETE") else None,
+            host_var,
+        ),
         "description": action["name"],
     }
 
     if method in ("POST", "PUT", "PATCH"):
-        request_obj["body"] = make_body({})
+        body: dict[str, Any] = {}
+        if mod["scope"] == "tenant":
+            body["tenant_id"] = "{{tenant_id}}"
+        request_obj["body"] = make_body(body)
 
     return {
         "name": action["name"],
