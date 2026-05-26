@@ -36,6 +36,11 @@ final class Preamble extends BaseModel
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'identifier';
+    }
+
     public function generateReferenceNumber(): string
     {
         return 'PR-'.$this->id.'-'.now()->timestamp;
@@ -45,7 +50,7 @@ final class Preamble extends BaseModel
     {
         parent::booted();
 
-        static::created(function (self $preamble): void {
+        self::created(function (self $preamble): void {
             $preamble->updateQuietly([
                 'reference_number' => $preamble->generateReferenceNumber(),
             ]);

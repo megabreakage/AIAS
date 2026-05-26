@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Tenant\Preambles;
 
-use App\Models\Tenant\Preamble;
+use App\Enums\PreambleStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -20,7 +20,7 @@ final class UpdatePreambleRequest extends FormRequest
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'status' => ['nullable', 'string', Rule::in(Preamble::STATUSES)],
+            'status' => ['nullable', 'string', Rule::enum(PreambleStatus::class)],
             'effective_date' => ['nullable', 'date'],
             'is_featured' => ['nullable', 'boolean'],
         ];
@@ -30,7 +30,7 @@ final class UpdatePreambleRequest extends FormRequest
     {
         return [
             'name.required' => 'Preamble name is required.',
-            'status.in' => 'Status must be one of: '.implode(', ', Preamble::STATUSES).'.',
+            'status.enum' => 'Status must be one of: '.implode(', ', array_column(PreambleStatus::cases(), 'value')).'.', ,
         ];
     }
 }

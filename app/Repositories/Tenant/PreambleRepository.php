@@ -31,7 +31,7 @@ class PreambleRepository extends BaseRepository
         $query = $this->newQuery()->with(['creator', 'updater']);
 
         if (!auth()->user()?->hasRole('super-admin')) {
-            $query->where('tenant_id', tenant()?->id);
+            $query->where('tenant_id', tenant()?->getTenantKey());
         }
 
         $filters->apply($query);
@@ -60,7 +60,7 @@ class PreambleRepository extends BaseRepository
             ->with(['creator', 'updater']);
 
         if (!auth()->user()?->hasRole('super-admin')) {
-            $query->where('tenant_id', tenant()?->id);
+            $query->where('tenant_id', tenant()?->getTenantKey());
         }
 
         /** @var Preamble */
@@ -80,7 +80,7 @@ class PreambleRepository extends BaseRepository
             ->with(['creator', 'updater']);
 
         if (!auth()->user()?->hasRole('super-admin')) {
-            $query->where('tenant_id', tenant()?->id);
+            $query->where('tenant_id', tenant()?->getTenantKey());
         }
 
         /** @var Preamble */
