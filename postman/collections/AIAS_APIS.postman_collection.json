@@ -5366,6 +5366,358 @@
           ]
         },
         {
+          "name": "Checklist Types",
+          "description": "Manage checklist type definitions used across audit engagements.",
+          "item": [
+            {
+              "name": "List Checklist Types",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{tenant_base_url}}/checklist-types",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "checklist-types"
+                  ],
+                  "query": [
+                    {
+                      "key": "tenant_id",
+                      "value": "{{tenant_id}}",
+                      "description": "Tenant identifier string (required)"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Page number (min: 1)"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": "Items per page (max: 100)"
+                    },
+                    {
+                      "key": "search",
+                      "value": "",
+                      "description": "Full-text search term"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "created_at",
+                      "description": "Sort column"
+                    },
+                    {
+                      "key": "sort_order",
+                      "value": "desc",
+                      "description": "asc | desc"
+                    },
+                    {
+                      "key": "show_deleted",
+                      "value": "0",
+                      "description": "Include soft-deleted: 0|1",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Retrieve paginated list of checklist types."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Create Checklist Type",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"name\": \"Pre-Engagement Checklist\",\n  \"description\": \"Checklist items to complete before commencing an audit engagement.\",\n  \"is_active\": true,\n  \"is_featured\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{tenant_base_url}}/checklist-types",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "checklist-types"
+                  ]
+                },
+                "description": "Create a new checklist type."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 201', () => { pm.response.to.have.status(201); });",
+                      "pm.test('Response envelope valid', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status');",
+                      "    pm.expect(j).to.have.property('data');",
+                      "});",
+                      "if (pm.response.code === 201) {",
+                      "    const j = pm.response.json();",
+                      "    // Save the identifier string (e.g. AT.1.1234567890) \u2014 NOT the numeric id",
+                      "    const resourceId = j.data && (j.data.identifier || j.data.id);",
+                      "    if (resourceId) {",
+                      "        pm.environment.set('checklist_type_id', String(resourceId));",
+                      "        console.log('Saved checklist_type_id:', resourceId);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Get Checklist Type",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{tenant_base_url}}/checklist-types/{{checklist_type_id}}",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "checklist-types",
+                    "{{checklist_type_id}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "tenant_id",
+                      "value": "{{tenant_id}}",
+                      "description": "Tenant identifier string (required)"
+                    }
+                  ]
+                },
+                "description": "Retrieve a single checklist type by ID."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Update Checklist Type",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"name\": \"Pre-Engagement Checklist\",\n  \"description\": \"Checklist items to complete before commencing an audit engagement.\",\n  \"is_active\": true,\n  \"is_featured\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{tenant_base_url}}/checklist-types/{{checklist_type_id}}",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "checklist-types",
+                    "{{checklist_type_id}}"
+                  ]
+                },
+                "description": "Update an existing checklist type."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Delete Checklist Type",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{tenant_base_url}}/checklist-types/{{checklist_type_id}}",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "checklist-types",
+                    "{{checklist_type_id}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "tenant_id",
+                      "value": "{{tenant_id}}",
+                      "description": "Tenant identifier string (required)"
+                    }
+                  ]
+                },
+                "description": "Soft-delete a checklist type."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Restore Checklist Type",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{tenant_base_url}}/checklist-types/{{checklist_type_id}}/restore",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "checklist-types",
+                    "{{checklist_type_id}}",
+                    "restore"
+                  ]
+                },
+                "description": "Restore Checklist Type",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            }
+          ]
+        },
+        {
           "name": "Clients",
           "description": "Manage audit client entities (organisations being audited).",
           "item": [

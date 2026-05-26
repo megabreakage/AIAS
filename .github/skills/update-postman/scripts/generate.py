@@ -306,6 +306,22 @@ MODULES: list[dict[str, Any]] = [
         ],
     },
     {
+        "name": "Checklist Types",
+        "route": "checklist-types",
+        "param": "checklistType",
+        "scope": "tenant",
+        "description": "Manage checklist type definitions used across audit engagements.",
+        "sample_body": {
+            "name": "Pre-Engagement Checklist",
+            "description": "Checklist items to complete before commencing an audit engagement.",
+            "is_active": True,
+            "is_featured": False,
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore Checklist Type"},
+        ],
+    },
+    {
         "name": "Clients",
         "route": "clients",
         "param": "client",
@@ -705,6 +721,7 @@ RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
     ("group_id",                    "", "Group identifier string"),
     ("preamble_id",                 "", "Preamble identifier string"),
     ("client_id",                   "", "Client identifier string"),
+    ("checklist_type_id",            "", "Checklist Type identifier string"),
     # --- Audit Templates ---
     ("audit_template_id",           "", "Audit Template identifier string"),
     # --- Core Audit ---
