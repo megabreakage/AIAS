@@ -347,7 +347,7 @@ describe('ChecklistType store validation', function (): void {
         $this->actingAs($user, 'api')
             ->postJson('/v1/checklist-types', [])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['name']);
+            ->assertJsonStructure(['error' => ['details' => ['name']]]);
     });
 
     it('rejects name exceeding 255 chars', function (): void {
@@ -357,7 +357,7 @@ describe('ChecklistType store validation', function (): void {
         $this->actingAs($user, 'api')
             ->postJson('/v1/checklist-types', ['name' => str_repeat('a', 256)])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['name']);
+            ->assertJsonStructure(['error' => ['details' => ['name']]]);
     });
 
     it('accepts is_active boolean', function (): void {
