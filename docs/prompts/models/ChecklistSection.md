@@ -12,7 +12,6 @@
 - `checklist_id`: foreign key referencing `id` on `checklists` table, indexed, not null,
 - `section_style_id`: foreign key referencing `id` on `section_styles` table, indexed, not null,
 - `description`: text, nullable,
-- `starts_on_new_page`: boolean, default false,
 - `is_active`: boolean, default true,
 - `is_featured`: boolean, default false,
 - `created_by`: unsignedBigInteger, (user id of the creator, nullable),
