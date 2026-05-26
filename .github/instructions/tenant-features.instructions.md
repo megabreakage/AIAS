@@ -29,22 +29,21 @@ applyTo: ["app/Models/Tenant/**", "app/Repositories/Tenant/**", "app/Http/Contro
 - **NEVER** add `Auditable` trait to tenant models — central only (User, Tenant)
 - **ALWAYS** extend `BaseModel` — **NEVER** `Model` directly
 - `created_by`/`updated_by` = `unsignedBigInteger()->nullable()` — **no FK constraint**
-- `tenant_id` = plain string field, indexed, no FK
+- `tenant_id` = plain `string` field matching `tenants.identifier` (format: `AT.{n}.{time}`) — indexed, **no FK**
 - Tenant-unique constraints: `unique(['tenant_id', 'field'])` — never global unique
 - Tenant filtering: `where('tenant_id', auth()->user()->tenant_id)` for non-super-admin
 - Super-admin bypasses via `before()` in Policy — return `true` unconditionally
-- Use `identifier` (UUID) for route model binding, not `id`
+- Use `identifier` for route model binding, not `id` — `identifier` is a unique string (not UUID)
 
 ## Migration Required Fields
 ```php
 $table->id();
-$table->uuid('identifier')->unique();
-$table->string('tenant_id');                            // plain field — NO FK
+$table->string('identifier')->unique();                // unique string, NOT uuid
+$table->string('tenant_id')->index();                  // references tenants.identifier (AT.{n}.{time}) — NO FK
 $table->unsignedBigInteger('created_by')->nullable();  // NO FK constraint
 $table->unsignedBigInteger('updated_by')->nullable();  // NO FK constraint
 $table->timestamps();
 $table->softDeletes();
-$table->index('tenant_id');
 $table->unique(['tenant_id', 'name']);                 // tenant-scoped unique
 ```
 
@@ -68,11 +67,11 @@ class MyModel extends BaseModel  // ✅ BaseModel — NEVER Model
 
     public function getRouteKeyName(): string
     {
-        return 'identifier';  // ✅ UUID — NOT id
+        return 'identifier';  // ✅ unique string — NOT id
     }
 }
 ```
-- `boot()` auto-populates via `BaseModel`: UUID `identifier`, `tenant_id`, `created_by`, `updated_by`
+- `boot()` auto-populates via `BaseModel`: string `identifier`, `tenant_id` (set to `tenant()->getTenantKey()` = `tenants.identifier`), `created_by`, `updated_by`
 
 ## Repository Requirements
 ```php

@@ -534,7 +534,7 @@ class MyTest extends TestCase
 
 ### Adding New Tenant-Scoped Resource
 
-1. Create migration in `/database/migrations/tenant/` — required fields: `id`, `uuid identifier`, `tenant_id`, `created_by`/`updated_by` (`unsignedBigInteger()->nullable()`, no FK), `timestamps`, `softDeletes`
+1. Create migration in `/database/migrations/tenant/` — required fields: `id`, `string identifier` (unique), `string tenant_id` (references `tenants.identifier` — format `AT.{n}.{time}`, indexed, no FK), `created_by`/`updated_by` (`unsignedBigInteger()->nullable()`, no FK), `timestamps`, `softDeletes`
 2. Create model in `app/Models/Tenant/` — extends `BaseModel`, traits: `HasFactory`, `SoftDeletes`, `TenantConnection`, NO `Auditable`; casts in `casts()` method; route binding via `identifier`
 3. Create repository extending `BaseRepository` with tenant filtering; load `['creator', 'updater']`
 4. Create form requests with unique rules scoped to tenant

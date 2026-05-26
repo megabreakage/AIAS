@@ -48,8 +48,8 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 
 - **ALWAYS** extend `BaseModel` — **NEVER** `Model` directly
 - Traits in order: `HasFactory`, `SoftDeletes`, `TenantConnection`
-- `boot()` auto-populates: UUID `identifier`, `tenant_id`, `created_by`, `updated_by`
-- Route binding uses `identifier` (UUID), not `id`
+- `boot()` auto-populates: string `identifier`, `tenant_id` (set to `tenant()->getTenantKey()` = `tenants.identifier`), `created_by`, `updated_by`
+- Route binding uses `identifier` (unique string, format `AT.{n}.{time}` for tenants), not `id`
 - Casts defined in `casts()` **method**, not `$casts` property
 - **DO NOT** add `Auditable` trait to tenant models — central only (User, Tenant)
 
@@ -119,7 +119,7 @@ class MyTest extends TestCase
 
 ## Adding a Tenant-Scoped Feature (Checklist)
 
-1. Migration in `database/migrations/tenant/` — required fields: `id`, `uuid identifier`, `tenant_id`, `created_by`/`updated_by` (`unsignedBigInteger()->nullable()`, no FK), `timestamps`, `softDeletes`
+1. Migration in `database/migrations/tenant/` — required fields: `id`, `string identifier` (unique), `string tenant_id` (references `tenants.identifier`, indexed, no FK), `created_by`/`updated_by` (`unsignedBigInteger()->nullable()`, no FK), `timestamps`, `softDeletes`
 2. Create Form Request in `app/Http/Requests/{Domain}/` with rules + messages (unique rules scoped to tenant)
 3. Model in `app/Models/Tenant/` — extends `BaseModel`, traits: `HasFactory`, `SoftDeletes`, `TenantConnection`, NO `Auditable`
 4. Add repository in `app/Repositories/Tenant/`; enforce tenant filtering for non–`super-admin`; load relationships
