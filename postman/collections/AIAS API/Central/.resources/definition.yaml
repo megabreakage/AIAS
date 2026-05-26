@@ -1,0 +1,8 @@
+$kind: collection
+description: |-
+  Central-domain endpoints. All requests target {{central_base_url}} (http://localhost:8020/api/v1).
+
+  Requires super-admin Bearer token (central_token) unless otherwise noted.
+
+  Covers: Auth, Tenant Management, Continents, Countries.
+order: 1000
