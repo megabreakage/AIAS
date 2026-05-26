@@ -10,9 +10,12 @@
 - `reference_number`: string, unique, indexed, formatted as "PR-{model->id}-{timestamp}",}" (Create a function in the Model to generate this format),
 - `name`: string, not null,
 - `description`: text, nullable,
+- `starts_on_new_page`: boolean, default false,
 - `status`: enum('draft', 'active', 'archived'), default 'draft',(define ENUMS as constants in the Model)
 - `effective_date`: date, nullable,
 - `is_featured`: boolean, default false,
+- `published_at`: timestamp, nullable,
+- `quality_controller_id`: unsignedBigInteger, (user id of the assigned quality controller, nullable, No FK constraint),
 - `created_by`: unsignedBigInteger, (user id of the creator, nullable),
 - `updated_by`: unsignedBigInteger, (user id of the last updater, nullable),
 - `created_at`: timestamp,
