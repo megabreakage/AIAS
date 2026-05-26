@@ -8,7 +8,10 @@ values:
     description: Tenant domain. Resolved from tenant_id variable. Requires /etc/hosts or local DNS for subdomain routing.
   - key: tenant_id
     value: acme-corp
-    description: Active tenant slug. Must match a tenant in the database.
+    description: Active tenant slug (Stancl ID). Used for subdomain routing. Auto-set by Create Tenant.
+  - key: tenant_identifier
+    value: ''
+    description: Tenant AT.{n}.{time()} identifier string. Auto-set by Create Tenant. Stored as tenant_id in tenant tables.
   - key: continent_identifier
     value: ''
     description: Continent identifier. Auto-set by Create/List Continents.
@@ -35,7 +38,7 @@ values:
     description: Tenant user identifier. Auto-set by Create Tenant User.
   - key: user_identifier
     value: ''
-    description: Tenant user identifier (UUID). Auto-set by List/Create User.
+    description: Tenant user identifier (string). Auto-set by List/Create User.
   - key: tenant_owner_id
     value: ''
     description: Central user ID (integer). Auto-set by Register Tenant Owner (Step 1). Used as owner_id in Create Tenant (Step 2).

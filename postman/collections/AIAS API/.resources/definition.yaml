@@ -8,8 +8,12 @@ description: |-
 
   Quick start:
     1. Super Admin Auth / Login  →  central_token auto-saved
-    2. Tenant Management / Create Tenant  →  tenant_id auto-saved
+    2. Tenant Management / Create Tenant  →  tenant_id + tenant_identifier auto-saved
     3. Tenant Auth / Register or Login  →  tenant_token auto-saved
+
+  Tenant identifiers:
+    tenant_id         — Stancl slug (e.g. airtraffic) used for subdomain routing
+    tenant_identifier — AT.{n}.{time()} string stored as tenant_id in tenant tables
 
   Response envelope (success):
     { "data": {...}, "meta": { "request_id": "...", "version": "v1", "tenant": null } }
@@ -20,6 +24,7 @@ variables:
   central_base_url: http://localhost:8020/api/v1
   tenant_base_url: http://{{tenant_id}}.localhost:8020/v1
   tenant_id: acme-corp
+  tenant_identifier: ""
   continent_identifier: ""
   country_identifier: ""
   preamble_identifier: ""

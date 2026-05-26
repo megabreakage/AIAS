@@ -14,6 +14,10 @@ description: |-
 
   Triggers TenantCreated event → DB create → migrations → seeder in background.
 
+  After-response script auto-saves:
+    tenant_id         — Stancl slug (b.data.id) for subdomain routing
+    tenant_identifier — AT.{n}.{time()} identifier string (b.data.identifier) stored as tenant_id in tenant tables
+
   Error responses:
     401 — Unauthenticated
     422 — Validation failed (invalid owner_id, duplicate id/domain, invalid format)
@@ -45,7 +49,9 @@ scripts:
           pm.expect(b.data).to.have.property("owner");
           pm.expect(b.data).to.have.property("domains");
           pm.environment.set("tenant_id", b.data.id);
+          pm.environment.set("tenant_identifier", b.data.identifier);
           console.log("tenant_id auto-saved: " + b.data.id);
+          console.log("tenant_identifier auto-saved: " + b.data.identifier);
           console.log("Tenant DB provisioning triggered in background.");
       });
     language: text/javascript
