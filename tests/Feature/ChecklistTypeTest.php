@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Tenant\ChecklistTypeController;
 use App\Http\Middleware\EnsureTokenMatchesTenant;
+use App\Http\Middleware\InitializeTenancyByBodyParam;
 use App\Models\Tenant\ChecklistType;
 use App\Models\User;
 use App\Repositories\Tenant\ChecklistTypeRepository;
@@ -145,6 +146,7 @@ describe('ChecklistType routes permission enforcement', function (): void {
         $this->withoutMiddleware([
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,
+            InitializeTenancyByBodyParam::class,
             EnsureTokenMatchesTenant::class,
         ]);
 
@@ -179,6 +181,7 @@ describe('ChecklistType routes with permission granted', function (): void {
         $this->withoutMiddleware([
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,
+            InitializeTenancyByBodyParam::class,
             EnsureTokenMatchesTenant::class,
         ]);
 
@@ -330,6 +333,7 @@ describe('ChecklistType store validation', function (): void {
         $this->withoutMiddleware([
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,
+            InitializeTenancyByBodyParam::class,
             EnsureTokenMatchesTenant::class,
         ]);
 
