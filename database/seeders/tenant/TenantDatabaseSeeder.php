@@ -12,7 +12,7 @@ class TenantDatabaseSeeder extends Seeder
     {
         $this->call([
             TenantRolePermissionsSeeder::class,
-            TenantAdminSeeder::class,
+            TenantWithUsersSeeder::class,
         ]);
     }
 }

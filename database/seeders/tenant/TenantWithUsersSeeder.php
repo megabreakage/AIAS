@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
-class TenantAdminSeeder extends Seeder
+class TenantWithUsersSeeder extends Seeder
 {
     public function run(): void
     {
