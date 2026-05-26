@@ -1169,17 +1169,19 @@ def build_collection(base_url: str, tenant_base_url: str, collection_id: str) ->
         "name": "Central",
         "description": (
             "Cross-tenant (central database) resources: "
-            "IAM, reference data, audit standards, and regulation frameworks. "
+            "Authentication, IAM, reference data, audit standards, and regulation frameworks. "
             "Accessible without tenant context — requires Bearer token only."
         ),
-        "item": central_folders,
+        # Auth folder is the first item under Central
+        "item": [build_auth_folder(base_url, tenant_base_url)] + central_folders,
     }
 
     tenant_group = {
         "name": "Tenant",
         "description": (
             "Tenant-scoped resources isolated per organisation database. "
-            "Pass tenant_id (UUID) in request body (POST/PUT/PATCH) or query string (GET/DELETE). "
+            "Pass tenant_id (identifier string, e.g. AT.1.1748000000) in request body (POST/PUT/PATCH) "
+            "or query string (GET/DELETE). "
             "Covers audit engagements, findings, risk, compliance, controls, and reports."
         ),
         "item": tenant_folders,
@@ -1196,7 +1198,7 @@ def build_collection(base_url: str, tenant_base_url: str, collection_id: str) ->
             "type": "bearer",
             "bearer": [{"key": "token", "value": "{{access_token}}", "type": "string"}],
         },
-        "item": [build_auth_folder(base_url, tenant_base_url), central_group, tenant_group],
+        "item": [central_group, tenant_group],
         "variable": [
             {"key": "base_url",        "value": base_url,        "type": "string"},
             {"key": "tenant_base_url", "value": tenant_base_url, "type": "string"},
@@ -1245,8 +1247,8 @@ def jq_summary(collection_path: Path) -> None:
 
     data = json.loads(collection_path.read_text())
 
-    # Count total sub-folders and total requests across two-level hierarchy.
-    # Structure: Auth (flat), Central (sub-folders), Tenant (sub-folders).
+    # Count total sub-folders and total requests.
+    # Structure: Central (sub-folders including Auth), Tenant (sub-folders).
     total_subfolders = 0
     total_requests = 0
     display_rows: list[tuple[str, int]] = []
@@ -1255,20 +1257,18 @@ def jq_summary(collection_path: Path) -> None:
         group_name: str = group.get("name", "")
         group_items: list[dict] = group.get("item", [])
 
-        # Determine if items are sub-folders (have their own "item") or direct requests
-        if group_items and "item" in group_items[0]:
-            # Central / Tenant groups — items are sub-folders
-            display_rows.append((f"── {group_name} ──", -1))
-            for subfolder in group_items:
-                req_count = len(subfolder.get("item", []))
-                total_subfolders += 1
-                total_requests += req_count
-                display_rows.append((f"  {subfolder['name']}", req_count))
-        else:
-            # Auth folder — items are direct requests
-            req_count = len(group_items)
+        display_rows.append((f"── {group_name} ──", -1))
+        for subfolder in group_items:
+            subfolder_items: list[dict] = subfolder.get("item", [])
+            # Sub-folder may contain direct requests (Auth) or nested sub-folders
+            if subfolder_items and "item" in subfolder_items[0]:
+                # Nested group (shouldn't happen in this schema but handle gracefully)
+                req_count = sum(len(s.get("item", [])) for s in subfolder_items)
+            else:
+                req_count = len(subfolder_items)
+            total_subfolders += 1
             total_requests += req_count
-            display_rows.append((group_name, req_count))
+            display_rows.append((f"  {subfolder['name']}", req_count))
 
     line = "\u2500" * 60
     print(f"\n{line}")

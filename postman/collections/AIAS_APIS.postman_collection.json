@@ -17,311 +17,311 @@
   },
   "item": [
     {
-      "name": "Auth",
-      "description": "Authentication endpoints. Central login ({{base_url}}/v1/auth/login) for super-admin users. Tenant login ({{tenant_base_url}}/v1/auth/login) requires tenant_id in the request body.",
-      "item": [
-        {
-          "name": "Login (Central / Super-Admin)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/v1/auth/login",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "v1",
-                "auth",
-                "login"
-              ]
-            },
-            "description": "Authenticate as a central super-admin user. Returns a Bearer access token."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Login successful', () => {",
-                  "    pm.response.to.have.status(200);",
-                  "    const j = pm.response.json();",
-                  "    pm.expect(j).to.have.property('data');",
-                  "    pm.expect(j.data).to.have.property('token');",
-                  "});",
-                  "if (pm.response.code === 200) {",
-                  "    const j = pm.response.json();",
-                  "    if (j.data && j.data.token) {",
-                  "        pm.environment.set('access_token', j.data.token);",
-                  "        console.log('Token saved:', j.data.token.substring(0, 20) + '...');",
-                  "    }",
-                  "    if (j.data && j.data.user) {",
-                  "        pm.environment.set('user_id', j.data.user.id);",
-                  "        console.log('User ID saved:', j.data.user.id);",
-                  "    }",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "response": []
-        },
-        {
-          "name": "Login (Tenant User)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{tenant_base_url}}/v1/auth/login",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "v1",
-                "auth",
-                "login"
-              ]
-            },
-            "description": "Authenticate as a tenant user. tenant_id is the tenant UUID identifier."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Login successful', () => {",
-                  "    pm.response.to.have.status(200);",
-                  "    const j = pm.response.json();",
-                  "    pm.expect(j).to.have.property('data');",
-                  "    pm.expect(j.data).to.have.property('token');",
-                  "});",
-                  "if (pm.response.code === 200) {",
-                  "    const j = pm.response.json();",
-                  "    if (j.data && j.data.token) {",
-                  "        pm.environment.set('access_token', j.data.token);",
-                  "        console.log('Token saved:', j.data.token.substring(0, 20) + '...');",
-                  "    }",
-                  "    if (j.data && j.data.user) {",
-                  "        pm.environment.set('user_id', j.data.user.id);",
-                  "        console.log('User ID saved:', j.data.user.id);",
-                  "    }",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "response": []
-        },
-        {
-          "name": "Register (Tenant User)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Auditor\",\n  \"email\": \"jane.auditor@example.test\",\n  \"password\": \"Password123!\",\n  \"password_confirmation\": \"Password123!\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{tenant_base_url}}/v1/auth/register",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "v1",
-                "auth",
-                "register"
-              ]
-            },
-            "description": "Register a new user within a tenant context."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
-                  "pm.test('Status is success', () => {",
-                  "    const j = pm.response.json();",
-                  "    pm.expect(j).to.have.property('status', 'success');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "response": []
-        },
-        {
-          "name": "Get Authenticated User",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{tenant_base_url}}/v1/auth/me",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "v1",
-                "auth",
-                "me"
-              ],
-              "query": [
-                {
-                  "key": "tenant_id",
-                  "value": "{{tenant_id}}",
-                  "description": "Tenant UUID"
-                }
-              ]
-            },
-            "description": "Retrieve the currently authenticated user with roles and tenant context."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const json = pm.response.json();",
-                  "    if (json.data) {",
-                  "        pm.environment.set('user_id', json.data.id);",
-                  "        pm.environment.set('user_name', (json.data.first_name + ' ' + json.data.last_name).trim());",
-                  "        if (json.data.tenant_id) {",
-                  "            pm.environment.set('tenant_id', json.data.tenant_id);",
-                  "        }",
-                  "        console.log('User context saved:', json.data.email);",
-                  "    }",
-                  "}",
-                  "pm.test('Me endpoint successful', () => {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "response": []
-        },
-        {
-          "name": "Logout",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{tenant_base_url}}/v1/auth/logout",
-              "host": [
-                "{{tenant_base_url}}"
-              ],
-              "path": [
-                "v1",
-                "auth",
-                "logout"
-              ]
-            },
-            "description": "Revoke the current Bearer access token."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
-                  "pm.test('Status is success', () => {",
-                  "    const j = pm.response.json();",
-                  "    pm.expect(j).to.have.property('status', 'success');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "response": []
-        }
-      ]
-    },
-    {
       "name": "Central",
-      "description": "Cross-tenant (central database) resources: IAM, reference data, audit standards, and regulation frameworks. Accessible without tenant context \u2014 requires Bearer token only.",
+      "description": "Cross-tenant (central database) resources: Authentication, IAM, reference data, audit standards, and regulation frameworks. Accessible without tenant context \u2014 requires Bearer token only.",
       "item": [
+        {
+          "name": "Auth",
+          "description": "Authentication endpoints. Central login ({{base_url}}/v1/auth/login) for super-admin users. Tenant login ({{tenant_base_url}}/v1/auth/login) requires tenant_id in the request body.",
+          "item": [
+            {
+              "name": "Login (Central / Super-Admin)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "Authenticate as a central super-admin user. Returns a Bearer access token."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Login successful', () => {",
+                      "    pm.response.to.have.status(200);",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('data');",
+                      "    pm.expect(j.data).to.have.property('token');",
+                      "});",
+                      "if (pm.response.code === 200) {",
+                      "    const j = pm.response.json();",
+                      "    if (j.data && j.data.token) {",
+                      "        pm.environment.set('access_token', j.data.token);",
+                      "        console.log('Token saved:', j.data.token.substring(0, 20) + '...');",
+                      "    }",
+                      "    if (j.data && j.data.user) {",
+                      "        pm.environment.set('user_id', j.data.user.id);",
+                      "        console.log('User ID saved:', j.data.user.id);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Login (Tenant User)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{tenant_base_url}}/v1/auth/login",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "Authenticate as a tenant user. tenant_id is the tenant UUID identifier."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Login successful', () => {",
+                      "    pm.response.to.have.status(200);",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('data');",
+                      "    pm.expect(j.data).to.have.property('token');",
+                      "});",
+                      "if (pm.response.code === 200) {",
+                      "    const j = pm.response.json();",
+                      "    if (j.data && j.data.token) {",
+                      "        pm.environment.set('access_token', j.data.token);",
+                      "        console.log('Token saved:', j.data.token.substring(0, 20) + '...');",
+                      "    }",
+                      "    if (j.data && j.data.user) {",
+                      "        pm.environment.set('user_id', j.data.user.id);",
+                      "        console.log('User ID saved:', j.data.user.id);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Register (Tenant User)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Auditor\",\n  \"email\": \"jane.auditor@example.test\",\n  \"password\": \"Password123!\",\n  \"password_confirmation\": \"Password123!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{tenant_base_url}}/v1/auth/register",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "register"
+                  ]
+                },
+                "description": "Register a new user within a tenant context."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Get Authenticated User",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{tenant_base_url}}/v1/auth/me",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "me"
+                  ],
+                  "query": [
+                    {
+                      "key": "tenant_id",
+                      "value": "{{tenant_id}}",
+                      "description": "Tenant UUID"
+                    }
+                  ]
+                },
+                "description": "Retrieve the currently authenticated user with roles and tenant context."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const json = pm.response.json();",
+                      "    if (json.data) {",
+                      "        pm.environment.set('user_id', json.data.id);",
+                      "        pm.environment.set('user_name', (json.data.first_name + ' ' + json.data.last_name).trim());",
+                      "        if (json.data.tenant_id) {",
+                      "            pm.environment.set('tenant_id', json.data.tenant_id);",
+                      "        }",
+                      "        console.log('User context saved:', json.data.email);",
+                      "    }",
+                      "}",
+                      "pm.test('Me endpoint successful', () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Logout",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{tenant_base_url}}/v1/auth/logout",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "logout"
+                  ]
+                },
+                "description": "Revoke the current Bearer access token."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Response is JSON', () => { pm.response.to.be.json; });",
+                      "pm.test('Status is success', () => {",
+                      "    const j = pm.response.json();",
+                      "    pm.expect(j).to.have.property('status', 'success');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            }
+          ]
+        },
         {
           "name": "Tenants",
           "description": "Manage tenants (organisations / audit firms). Super-admin only for create/delete.",
@@ -4307,7 +4307,7 @@
     },
     {
       "name": "Tenant",
-      "description": "Tenant-scoped resources isolated per organisation database. Pass tenant_id (UUID) in request body (POST/PUT/PATCH) or query string (GET/DELETE). Covers audit engagements, findings, risk, compliance, controls, and reports.",
+      "description": "Tenant-scoped resources isolated per organisation database. Pass tenant_id (identifier string, e.g. AT.1.1748000000) in request body (POST/PUT/PATCH) or query string (GET/DELETE). Covers audit engagements, findings, risk, compliance, controls, and reports.",
       "item": [
         {
           "name": "Departments",
