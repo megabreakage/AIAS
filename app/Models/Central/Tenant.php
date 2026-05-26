@@ -84,7 +84,7 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
             $needsSave = false;
 
             if (empty($tenant->identifier)) {
-                $tenant->identifier = 'AT.'.$tenant->id.'.'.time();
+                $tenant->identifier = 'AT_'.$tenant->id.'_'.time();
                 $needsSave = true;
             }
 

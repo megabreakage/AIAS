@@ -1,3 +1,0 @@
-$kind: collection
-description: Health check on the central domain. No authentication required.
-order: 1000
