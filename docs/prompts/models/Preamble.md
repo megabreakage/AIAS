@@ -18,7 +18,3 @@
 - `created_at`: timestamp,
 - `updated_at`: timestamp,
 - `deleted_at`: timestamp, nullable (for soft deletes)
-
-## 2. Continent Module
-
-/caveman Create a completly featured tenant-scoped **Continent** module. Refer to `docs/prompts/models/Continent.md` for the table structure and functionalities.

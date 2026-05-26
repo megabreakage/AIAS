@@ -9,8 +9,8 @@ Create a completly featured central database **Continent** module. The migration
 - `short_code`- nullable string, max length 10, indexed
 - `iso_code`- nullable string, max length 10,
 - `status`- boolean, default true, indexed
-- `created_by`- foreign key to users table, nullable, null on delete,
-- `updated_by`- foreign key to users table, nullable, null on delete,
+- `created_by`- unsignedBigInteger, (user id of the creator, nullable, No FK constraint),
+- `updated_by`- unsignedBigInteger, (user id of the last updater, nullable, No FK constraint),
 - `created_at`- timestamp,
 - `updated_at`- timestamp,
 - `deleted_at`- timestamp, nullable,
