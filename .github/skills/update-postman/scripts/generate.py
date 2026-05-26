@@ -888,14 +888,18 @@ def build_store_request(mod: dict) -> dict:
 def build_show_request(mod: dict) -> dict:
     route = mod["route"]
     param = mod["param"]
+    host_var = get_host_var(mod)
     var_name = param_to_var_name(param) + "_id"
-    raw_url = f"{{{{base_url}}}}/{route}/{{{{{var_name}}}}}"
+    raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}"
+    query_params = None
+    if mod["scope"] == "tenant":
+        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID (required)"}]
     return {
         "name": f"Get {singular(mod['name'])}",
         "request": {
             "method": "GET",
             "header": STD_HEADERS,
-            "url": make_url(raw_url, [route, f"{{{{{var_name}}}}}"]),
+            "url": make_url(raw_url, [route, f"{{{{{var_name}}}}}"], query_params, host_var),
             "description": f"Retrieve a single {singular(mod['name']).lower()} by ID.",
         },
         "event": [make_event("test", GENERIC_TEST_SCRIPT)],
@@ -906,15 +910,19 @@ def build_show_request(mod: dict) -> dict:
 def build_update_request(mod: dict) -> dict:
     route = mod["route"]
     param = mod["param"]
+    host_var = get_host_var(mod)
     var_name = param_to_var_name(param) + "_id"
-    raw_url = f"{{{{base_url}}}}/{route}/{{{{{var_name}}}}}"
+    raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}"
+    body = {**mod.get("sample_body", {})}
+    if mod["scope"] == "tenant":
+        body = {"tenant_id": "{{tenant_id}}", **body}
     return {
         "name": f"Update {singular(mod['name'])}",
         "request": {
             "method": "PUT",
             "header": STD_HEADERS,
-            "body": make_body(mod.get("sample_body", {})),
-            "url": make_url(raw_url, [route, f"{{{{{var_name}}}}}"]),
+            "body": make_body(body),
+            "url": make_url(raw_url, [route, f"{{{{{var_name}}}}}"], host_var=host_var),
             "description": f"Update an existing {singular(mod['name']).lower()}.",
         },
         "event": [make_event("test", GENERIC_TEST_SCRIPT)],
@@ -925,14 +933,18 @@ def build_update_request(mod: dict) -> dict:
 def build_destroy_request(mod: dict) -> dict:
     route = mod["route"]
     param = mod["param"]
+    host_var = get_host_var(mod)
     var_name = param_to_var_name(param) + "_id"
-    raw_url = f"{{{{base_url}}}}/{route}/{{{{{var_name}}}}}"
+    raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}"
+    query_params = None
+    if mod["scope"] == "tenant":
+        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID (required)"}]
     return {
         "name": f"Delete {singular(mod['name'])}",
         "request": {
             "method": "DELETE",
             "header": STD_HEADERS,
-            "url": make_url(raw_url, [route, f"{{{{{var_name}}}}}"]),
+            "url": make_url(raw_url, [route, f"{{{{{var_name}}}}}"], query_params, host_var),
             "description": f"Soft-delete a {singular(mod['name']).lower()}.",
         },
         "event": [make_event("test", GENERIC_TEST_SCRIPT)],
@@ -993,53 +1005,74 @@ def build_extra_action_request(mod: dict, action: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def build_auth_folder(base_url: str) -> dict:
-    oauth_url = base_url.replace("/api", "") + "/oauth/token"
+def build_auth_folder(base_url: str, tenant_base_url: str) -> dict:
     return {
         "name": "Auth",
-        "description": "Authentication endpoints — obtain / refresh / revoke Passport tokens.",
+        "description": (
+            "Authentication endpoints. "
+            "Central login ({{base_url}}/v1/auth/login) for super-admin users. "
+            "Tenant login ({{tenant_base_url}}/v1/auth/login) requires tenant_id in the request body."
+        ),
         "item": [
             {
-                "name": "Login",
+                "name": "Login (Central / Super-Admin)",
                 "request": {
                     "method": "POST",
                     "header": STD_HEADERS,
                     "body": make_body({
-                        "grant_type": "password",
-                        "client_id": "{{passport_client_id}}",
-                        "client_secret": "{{passport_client_secret}}",
-                        "username": "{{user_email}}",
+                        "email": "{{user_email}}",
                         "password": "{{user_password}}",
-                        "scope": "",
                     }),
-                    "url": {
-                        "raw": oauth_url,
-                        "host": [oauth_url],
-                    },
-                    "description": "Obtain a Bearer access token (password grant).",
+                    "url": make_url(
+                        "{{base_url}}/v1/auth/login",
+                        ["v1", "auth", "login"],
+                    ),
+                    "description": "Authenticate as a central super-admin user. Returns a Bearer access token.",
                 },
                 "event": [make_event("test", LOGIN_TEST_SCRIPT)],
                 "response": [],
             },
             {
-                "name": "Refresh Token",
+                "name": "Login (Tenant User)",
                 "request": {
                     "method": "POST",
                     "header": STD_HEADERS,
                     "body": make_body({
-                        "grant_type": "refresh_token",
-                        "client_id": "{{passport_client_id}}",
-                        "client_secret": "{{passport_client_secret}}",
-                        "refresh_token": "{{refresh_token}}",
-                        "scope": "",
+                        "tenant_id": "{{tenant_id}}",
+                        "email": "{{user_email}}",
+                        "password": "{{user_password}}",
                     }),
-                    "url": {
-                        "raw": oauth_url,
-                        "host": [oauth_url],
-                    },
-                    "description": "Exchange a refresh token for a new access token.",
+                    "url": make_url(
+                        "{{tenant_base_url}}/v1/auth/login",
+                        ["v1", "auth", "login"],
+                        host_var="tenant_base_url",
+                    ),
+                    "description": "Authenticate as a tenant user. tenant_id is the tenant UUID identifier.",
                 },
                 "event": [make_event("test", LOGIN_TEST_SCRIPT)],
+                "response": [],
+            },
+            {
+                "name": "Register (Tenant User)",
+                "request": {
+                    "method": "POST",
+                    "header": STD_HEADERS,
+                    "body": make_body({
+                        "tenant_id": "{{tenant_id}}",
+                        "first_name": "Jane",
+                        "last_name": "Auditor",
+                        "email": "jane.auditor@example.test",
+                        "password": "Password123!",
+                        "password_confirmation": "Password123!",
+                    }),
+                    "url": make_url(
+                        "{{tenant_base_url}}/v1/auth/register",
+                        ["v1", "auth", "register"],
+                        host_var="tenant_base_url",
+                    ),
+                    "description": "Register a new user within a tenant context.",
+                },
+                "event": [make_event("test", GENERIC_TEST_SCRIPT)],
                 "response": [],
             },
             {
@@ -1047,8 +1080,13 @@ def build_auth_folder(base_url: str) -> dict:
                 "request": {
                     "method": "GET",
                     "header": STD_HEADERS,
-                    "url": make_url(f"{base_url}/me", ["me"]),
-                    "description": "Retrieve the currently authenticated user with roles and tenant.",
+                    "url": make_url(
+                        "{{tenant_base_url}}/v1/auth/me",
+                        ["v1", "auth", "me"],
+                        [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID"}],
+                        "tenant_base_url",
+                    ),
+                    "description": "Retrieve the currently authenticated user with roles and tenant context.",
                 },
                 "event": [make_event("test", ME_TEST_SCRIPT)],
                 "response": [],
@@ -1058,16 +1096,19 @@ def build_auth_folder(base_url: str) -> dict:
                 "request": {
                     "method": "POST",
                     "header": STD_HEADERS,
-                    "url": make_url(f"{base_url}/logout", ["logout"]),
-                    "description": "Revoke the current access token.",
+                    "body": make_body({"tenant_id": "{{tenant_id}}"}),
+                    "url": make_url(
+                        "{{tenant_base_url}}/v1/auth/logout",
+                        ["v1", "auth", "logout"],
+                        host_var="tenant_base_url",
+                    ),
+                    "description": "Revoke the current Bearer access token.",
                 },
                 "event": [make_event("test", GENERIC_TEST_SCRIPT)],
                 "response": [],
             },
         ],
     }
-
-
 def build_module_folder(mod: dict) -> dict:
     items: list[dict] = []
 
@@ -1093,7 +1134,7 @@ def build_module_folder(mod: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def build_collection(base_url: str, collection_id: str) -> dict:
+def build_collection(base_url: str, tenant_base_url: str, collection_id: str) -> dict:
     central_folders: list[dict] = []
     tenant_folders: list[dict] = []
 
@@ -1118,7 +1159,7 @@ def build_collection(base_url: str, collection_id: str) -> dict:
         "name": "Tenant",
         "description": (
             "Tenant-scoped resources isolated per organisation database. "
-            "Requires Bearer token with InitializeTenancyFromUser middleware. "
+            "Pass tenant_id (UUID) in request body (POST/PUT/PATCH) or query string (GET/DELETE). "
             "Covers audit engagements, findings, risk, compliance, controls, and reports."
         ),
         "item": tenant_folders,
@@ -1135,9 +1176,10 @@ def build_collection(base_url: str, collection_id: str) -> dict:
             "type": "bearer",
             "bearer": [{"key": "token", "value": "{{access_token}}", "type": "string"}],
         },
-        "item": [build_auth_folder(base_url), central_group, tenant_group],
+        "item": [build_auth_folder(base_url, tenant_base_url), central_group, tenant_group],
         "variable": [
-            {"key": "base_url", "value": base_url, "type": "string"},
+            {"key": "base_url",        "value": base_url,        "type": "string"},
+            {"key": "tenant_base_url", "value": tenant_base_url, "type": "string"},
         ],
     }
 
@@ -1149,14 +1191,11 @@ def build_collection(base_url: str, collection_id: str) -> dict:
 
 def build_env_file(env: dict) -> dict:
     base_vars = [
-        {"key": "base_url",                "value": env["base_url"],       "enabled": True, "type": "default"},
-        {"key": "oauth_url",               "value": env["oauth_url"],      "enabled": True, "type": "default"},
-        {"key": "user_email",              "value": env["user_email"],     "enabled": True, "type": "default"},
-        {"key": "user_password",           "value": env["user_password"],  "enabled": True, "type": "secret"},
-        {"key": "access_token",            "value": "",                    "enabled": True, "type": "secret"},
-        {"key": "refresh_token",           "value": "",                    "enabled": True, "type": "secret"},
-        {"key": "passport_client_id",      "value": "2",                   "enabled": True, "type": "default"},
-        {"key": "passport_client_secret",  "value": "",                    "enabled": True, "type": "secret"},
+        {"key": "base_url",        "value": env["base_url"],        "enabled": True, "type": "default"},
+        {"key": "tenant_base_url", "value": env["tenant_base_url"], "enabled": True, "type": "default"},
+        {"key": "user_email",      "value": env["user_email"],      "enabled": True, "type": "default"},
+        {"key": "user_password",   "value": env["user_password"],   "enabled": True, "type": "secret"},
+        {"key": "access_token",    "value": "",                     "enabled": True, "type": "secret"},
     ]
 
     resource_vars = [
@@ -1285,6 +1324,11 @@ def main() -> None:
         help=f"API base URL (default: {DEFAULT_BASE_URL})",
     )
     parser.add_argument(
+        "--tenant-base-url",
+        default=DEFAULT_TENANT_BASE_URL,
+        help=f"Tenant API base URL without /api prefix (default: {DEFAULT_TENANT_BASE_URL})",
+    )
+    parser.add_argument(
         "--output",
         default=DEFAULT_OUTPUT,
         help=f"Collection output path (default: {DEFAULT_OUTPUT})",
@@ -1312,7 +1356,7 @@ def main() -> None:
     if not args.env_only:
         # Generate collection
         collection_out.parent.mkdir(parents=True, exist_ok=True)
-        collection = build_collection(args.base_url, args.collection_id)
+        collection = build_collection(args.base_url, args.tenant_base_url, args.collection_id)
         collection_out.write_text(json.dumps(collection, indent=2))
         print(f"Collection written \u2192 {collection_out}")
 
