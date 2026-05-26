@@ -102,6 +102,11 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
         return 'identifier';
     }
 
+    public function getTenantKeyName(): string
+    {
+        return 'identifier';
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
