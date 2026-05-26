@@ -2,7 +2,9 @@ $kind: http-request
 description: |-
   Requires tenant_token.
 
-  Returns paginated list of users in the resolved tenant. Supports filters: search, is_active, sort_by, sort_order.
+  Returns paginated list of users in the resolved tenant. Supports filters: search, is_active, roles, sort_by, sort_order.
+
+  Filter by role(s) using `roles[]=admin&roles[]=manager` (multiple) or `roles=admin` (single, comma-separated also supported: `roles=admin,manager`).
 
   Sets user_identifier to the first result.
 url: "{{tenant_base_url}}/users?page=1&per_page=15"
@@ -19,6 +21,12 @@ queryParams:
     disabled: true
   - key: is_active
     value: "true"
+    disabled: true
+  - key: roles[]
+    value: admin
+    disabled: true
+  - key: roles[]
+    value: manager
     disabled: true
   - key: sort_by
     value: created_at
