@@ -13,5 +13,5 @@ localResources:
 
 cloudResources:
   collections:
-    ../postman/collections/AIAS API: d37561a0-deb9-4268-abab-4a0b5cfa54dd
+    ../postman/collections/AIAS API: 1f2d24a9-fb3c-4bcd-8f10-eaa93ea35872
   environments: {}

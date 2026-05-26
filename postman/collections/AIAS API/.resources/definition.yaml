@@ -28,7 +28,7 @@ variables:
   tenant_user_identifier: ""
   user_identifier: ""
 auth:
-  - id: 696a9ad0-8614-436f-a06d-85fe07624907
+  - id: 9883fef3-5b28-45bc-818e-ae9a58ca6c7b
     type: bearer
     name: bearer auth
     credentials:
