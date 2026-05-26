@@ -6,10 +6,12 @@
 
 # Generate unique database name for this test run to avoid conflicts
 TEST_DB_NAME="aias_test_$(date +%s)_$$"
+CENTRAL_TEST_DB="aias_central_testing"
 
 # Function to create test database
 create_test_database() {
     mysql -u root -h 127.0.0.1 -e "CREATE DATABASE IF NOT EXISTS \`${TEST_DB_NAME}\`;"
+    mysql -u root -h 127.0.0.1 -e "CREATE DATABASE IF NOT EXISTS \`${CENTRAL_TEST_DB}\`;"
 }
 
 # Function to drop test database
