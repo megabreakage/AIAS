@@ -9,11 +9,13 @@ use App\Models\Central\Country;
 use App\Models\Central\Tenant;
 use App\Models\Tenant\Checklist;
 use App\Models\Tenant\ChecklistType;
+use App\Models\Tenant\Company;
 use App\Models\Tenant\Preamble;
 use App\Models\Tenant\SectionStyle;
 use App\Models\User;
 use App\Policies\ChecklistPolicy;
 use App\Policies\ChecklistTypePolicy;
+use App\Policies\CompanyPolicy;
 use App\Policies\ContinentPolicy;
 use App\Policies\CountryPolicy;
 use App\Policies\PreamblePolicy;
@@ -35,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Checklist::class, ChecklistPolicy::class);
         Gate::policy(ChecklistType::class, ChecklistTypePolicy::class);
+        Gate::policy(Company::class, CompanyPolicy::class);
         Gate::policy(Continent::class, ContinentPolicy::class);
         Gate::policy(Country::class, CountryPolicy::class);
         Gate::policy(Preamble::class, PreamblePolicy::class);

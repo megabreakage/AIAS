@@ -167,6 +167,8 @@ return [
 
         'checklists' => ['view', 'create', 'update', 'delete', 'restore'],
 
+        'companies' => ['view', 'create', 'update', 'delete', 'restore'],
+
     ],
 
 ];

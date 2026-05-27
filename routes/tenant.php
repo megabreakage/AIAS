@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Tenant\ChecklistController;
 use App\Http\Controllers\Api\V1\Tenant\ChecklistTypeController;
+use App\Http\Controllers\Api\V1\Tenant\CompanyController;
 use App\Http\Controllers\Api\V1\Tenant\PreambleController;
 use App\Http\Controllers\Api\V1\Tenant\SectionStyleController;
 use App\Http\Controllers\Api\V1\Tenant\UserController;
@@ -84,5 +85,13 @@ Route::prefix('v1')->group(function () {
         Route::put('/checklists/{identifier}', [ChecklistController::class, 'update']);
         Route::delete('/checklists/{identifier}', [ChecklistController::class, 'destroy']);
         Route::post('/checklists/{identifier}/restore', [ChecklistController::class, 'restore']);
+
+        // Company routes
+        Route::get('/companies', [CompanyController::class, 'index']);
+        Route::post('/companies', [CompanyController::class, 'store']);
+        Route::get('/companies/{identifier}', [CompanyController::class, 'show']);
+        Route::put('/companies/{identifier}', [CompanyController::class, 'update']);
+        Route::delete('/companies/{identifier}', [CompanyController::class, 'destroy']);
+        Route::post('/companies/{identifier}/restore', [CompanyController::class, 'restore']);
     });
 });
