@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Tenant\ChecklistController;
 use App\Http\Controllers\Api\V1\Tenant\ChecklistTypeController;
 use App\Http\Controllers\Api\V1\Tenant\CompanyController;
+use App\Http\Controllers\Api\V1\Tenant\DepartmentController;
 use App\Http\Controllers\Api\V1\Tenant\PreambleController;
 use App\Http\Controllers\Api\V1\Tenant\SectionStyleController;
 use App\Http\Controllers\Api\V1\Tenant\UserController;
@@ -93,5 +94,13 @@ Route::prefix('v1')->group(function () {
         Route::put('/companies/{identifier}', [CompanyController::class, 'update']);
         Route::delete('/companies/{identifier}', [CompanyController::class, 'destroy']);
         Route::post('/companies/{identifier}/restore', [CompanyController::class, 'restore']);
+
+        // Department routes
+        Route::get('/departments', [DepartmentController::class, 'index']);
+        Route::post('/departments', [DepartmentController::class, 'store']);
+        Route::get('/departments/{identifier}', [DepartmentController::class, 'show']);
+        Route::put('/departments/{identifier}', [DepartmentController::class, 'update']);
+        Route::delete('/departments/{identifier}', [DepartmentController::class, 'destroy']);
+        Route::post('/departments/{identifier}/restore', [DepartmentController::class, 'restore']);
     });
 });

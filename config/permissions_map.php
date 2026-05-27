@@ -169,6 +169,8 @@ return [
 
         'companies' => ['view', 'create', 'update', 'delete', 'restore'],
 
+        'departments' => ['view', 'create', 'update', 'delete', 'restore'],
+
     ],
 
 ];
