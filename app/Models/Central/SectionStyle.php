@@ -24,6 +24,7 @@ final class SectionStyle extends BaseModel implements AuditableContract
 
     /** @var list<string> */
     protected $fillable = [
+        'identifier',
         'name',
         'description',
         'columns',

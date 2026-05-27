@@ -115,6 +115,7 @@ describe('SectionStyle model', function (): void {
         $sectionStyle = new SectionStyle;
 
         expect($sectionStyle->getFillable())->toBe([
+            'identifier',
             'name',
             'description',
             'columns',
@@ -707,13 +708,8 @@ describe('SectionStyle update validation', function (): void {
     it('rejects columns below 1 on update', function (): void {
         $identifier = 'test-id';
 
-        $sectionStyle = new SectionStyle;
-        $sectionStyle->identifier = $identifier;
-        $sectionStyle->name = 'Test';
-        $sectionStyle->columns = 1;
-
         $repo = Mockery::mock(SectionStyleRepository::class);
-        $repo->shouldReceive('readSectionStyle')->with($identifier)->once()->andReturn($sectionStyle);
+        $repo->shouldReceive('readSectionStyle')->never();
         $this->app->instance(SectionStyleRepository::class, $repo);
 
         $user = new User;
