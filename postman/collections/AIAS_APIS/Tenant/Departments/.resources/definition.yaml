@@ -1,3 +1,3 @@
 $kind: collection
-description: Manage internal organisational departments within the audit firm.
-order: 1000
+description: Manage tenant departments with geocoding support and department members.
+order: 8000

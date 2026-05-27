@@ -395,6 +395,30 @@ MODULES: list[dict[str, Any]] = [
         ],
     },
     {
+        "name": "Departments",
+        "route": "departments",
+        "param": "department",
+        "scope": "tenant",
+        "description": "Manage tenant departments with geocoding support and department members.",
+        "sample_body": {
+            "name": "Finance & Accounts",
+            "address": "2nd Floor, HQ Tower",
+            "office_location": "Nairobi, Kenya",
+            "postal_code": "00100",
+            "country_id": None,
+            "department_head": None,
+            "description": "Manages all financial operations and reporting.",
+            "is_active": True,
+            "is_featured": False,
+            "department_members": [
+                {"user_id": None},
+            ],
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore Department"},
+        ],
+    },
+    {
         "name": "Clients",
         "route": "clients",
         "param": "client",
@@ -798,6 +822,7 @@ RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
     ("section_style_id",             "", "Section Style identifier string"),
     ("checklist_id",                 "", "Checklist identifier string"),
     ("company_id",                   "", "Company identifier string"),
+    ("department_id",               "", "Department identifier string"),
     # --- Audit Templates ---
     ("audit_template_id",           "", "Audit Template identifier string"),
     # --- Core Audit ---

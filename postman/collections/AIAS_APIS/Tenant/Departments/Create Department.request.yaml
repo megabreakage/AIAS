@@ -11,9 +11,20 @@ body:
   content: |-
     {
       "tenant_id": "{{tenant_id}}",
-      "name": "Financial Audit",
-      "code": "FIN-AUDIT",
-      "status": true
+      "name": "Finance & Accounts",
+      "address": "2nd Floor, HQ Tower",
+      "office_location": "Nairobi, Kenya",
+      "postal_code": "00100",
+      "country_id": null,
+      "department_head": null,
+      "description": "Manages all financial operations and reporting.",
+      "is_active": true,
+      "is_featured": false,
+      "department_members": [
+        {
+          "user_id": null
+        }
+      ]
     }
 scripts:
 - type: afterResponse
