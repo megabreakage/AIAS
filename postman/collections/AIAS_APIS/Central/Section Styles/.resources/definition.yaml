@@ -1,0 +1,3 @@
+$kind: collection
+description: Central section style configuration — shared across all tenants.
+order: 4000

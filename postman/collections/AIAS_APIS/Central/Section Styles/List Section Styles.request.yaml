@@ -1,0 +1,41 @@
+$kind: http-request
+description: Retrieve paginated list of section styles with optional filters.
+url: "{{base_url}}/section-styles"
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+queryParams:
+  - key: page
+    value: "1"
+    description: "Page number (min: 1)"
+  - key: per_page
+    value: "15"
+    description: "Items per page (max: 100)"
+  - key: search
+    value: ""
+    description: "Search by name or description"
+  - key: is_active
+    value: ""
+    description: "Filter by active status: true|false"
+  - key: is_featured
+    value: ""
+    description: "Filter by featured status: true|false"
+  - key: sort_by
+    value: name
+    description: "Sort column: name|columns|is_active|is_featured|created_at"
+  - key: sort_order
+    value: asc
+    description: asc | desc
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Response is JSON', () => { pm.response.to.be.json; });
+      pm.test('Status is 200', () => { pm.response.to.have.status(200); });
+      pm.test('Has data array', () => {
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('data');
+          pm.expect(j.data).to.be.an('array');
+      });
+    language: text/javascript
+order: 1000

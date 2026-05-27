@@ -1,0 +1,28 @@
+$kind: http-request
+description: Update an existing section style by identifier.
+url: "{{base_url}}/section-styles/{{section_style_id}}"
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Two Column Layout (Updated)",
+      "description": "Updated description for the two-column layout.",
+      "columns": 2,
+      "is_active": true,
+      "is_featured": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Response is JSON', () => { pm.response.to.be.json; });
+      pm.test('Status is 200', () => { pm.response.to.have.status(200); });
+      pm.test('Data has identifier', () => {
+          const j = pm.response.json();
+          pm.expect(j.data).to.have.property('identifier');
+      });
+    language: text/javascript
+order: 4000

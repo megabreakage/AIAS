@@ -1,0 +1,42 @@
+$kind: http-request
+description: Create a new section style.
+url: "{{base_url}}/section-styles"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Two Column Layout",
+      "description": "A two-column equal-width layout for side-by-side content.",
+      "columns": 2,
+      "is_active": true,
+      "is_featured": false
+    }
+scripts:
+  - type: afterResponse
+    code: >-
+      pm.test('Status code is 201', () => { pm.response.to.have.status(201); });
+
+      pm.test('Response has data', () => {
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('data');
+          pm.expect(j.data).to.have.property('identifier');
+          pm.expect(j.data).to.have.property('name');
+          pm.expect(j.data).to.have.property('columns');
+          pm.expect(j.data).to.have.property('is_active');
+          pm.expect(j.data).to.have.property('is_featured');
+      });
+
+      if (pm.response.code === 201) {
+          const j = pm.response.json();
+          const resourceId = j.data && (j.data.identifier || j.data.id);
+          if (resourceId) {
+              pm.environment.set('section_style_id', String(resourceId));
+              console.log('Saved section_style_id:', resourceId);
+          }
+      }
+    language: text/javascript
+order: 2000
