@@ -66,7 +66,7 @@ final class AuthController extends BaseApiController
 
         return $this->success([
             'user' => UserResource::make($user->load(['roles']))->resolve(),
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'Bearer',
         ]);
     }
