@@ -165,6 +165,8 @@ return [
 
         'checklist-types' => ['view', 'create', 'update', 'delete', 'restore'],
 
+        'section-styles' => ['view', 'create', 'update', 'delete', 'restore'],
+
     ],
 
 ];
