@@ -1,40 +1,51 @@
 #!/usr/bin/env python3
 """
-AIAS Postman Collection Generator
-==================================
-Generates a Postman Collection v2.1 JSON and four environment files for the
-AIAS (Adaptive Intelligent Audit System) — a Laravel 13 multi-tenant API for
-audit engagements, compliance tracking, risk assessments, and audit workflows.
+AIAS Postman Collection Generator — v3
+========================================
+Generates a Postman Collection v3 YAML directory and four environment JSON files
+for the AIAS (Adaptive Intelligent Audit System) — a Laravel 13 multi-tenant API
+for audit engagements, compliance tracking, risk assessments, and audit workflows.
+
+Output format:  Postman Collection Schema v3.0.0 (multi-file YAML directory)
+Runtime:        Postman CLI  (postman collection run …)
+Note:           Newman cannot run v3 collections; use the Postman CLI instead.
 
 Auth:     Laravel Passport — personal access tokens via /api/v1/auth/login
 Guard:    api  (Bearer token)
-Tenancy:  Stancl/Tenancy v3 — InitializeTenancyByBodyParam (tenant_id in request body/query)
+Tenancy:  Stancl/Tenancy v3 — InitializeTenancyByBodyParam (tenant_id in body/query)
 
 Usage:
-    # From MatterMiner repo root (scaffold context):
-    python3 docs/prompts/aias/.github/skills/update-postman/scripts/generate.py
+    # From AIAS project root (default output: postman/collections/AIAS_APIS/):
+    python3 .github/skills/update-postman/scripts/generate.py
 
-    # From AIAS project root:
-    python3 docs/prompts/aias/.github/skills/update-postman/scripts/generate.py \\
-        --base-url http://localhost:8000/api \\
-        --output postman/collections/AIAS_APIS.postman_collection.json
+    # Custom output directory:
+    python3 .github/skills/update-postman/scripts/generate.py \\
+        --output postman/collections/AIAS_APIS
 
-    # Inspect a single folder:
-    python3 docs/prompts/aias/.github/skills/update-postman/scripts/generate.py \\
+    # Inspect a single folder after generation:
+    python3 .github/skills/update-postman/scripts/generate.py \\
         --extract-folder "Audit Engagements"
 
 Dependencies:
-    pip3 install jq  (optional — for post-generation summary only)
-    Standard library only required for generation.
+    pip3 install PyYAML          (required for YAML output)
+    pip3 install jq              (optional — for post-generation summary only)
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import re
+import shutil
 import sys
 from pathlib import Path
 from typing import Any, Optional
+
+try:
+    import yaml
+except ModuleNotFoundError as _e:
+    print("ERROR: PyYAML is required.  Install with: pip3 install PyYAML", file=sys.stderr)
+    raise SystemExit(1) from _e
 
 # ---------------------------------------------------------------------------
 # CONFIG
@@ -51,9 +62,8 @@ COLLECTION_DESCRIPTION = (
 DEFAULT_BASE_URL = "http://localhost:8020/api"
 DEFAULT_TENANT_BASE_URL = "http://localhost:8020"
 
-# Paths are relative to AIAS project root.
-# When run from MatterMiner repo, --output can override.
-DEFAULT_OUTPUT = "postman/collections/AIAS_APIS.postman_collection.json"
+# Output directory (relative to AIAS project root) for the v3 YAML collection.
+DEFAULT_OUTPUT = "postman/collections/AIAS_APIS"
 
 # Keep stable so Postman recognises re-imports as updates, not new collections.
 STABLE_COLLECTION_ID = "aias-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
