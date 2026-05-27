@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+use Tests\Traits\RefreshDatabaseWithTenancy;
+
+uses(RefreshDatabaseWithTenancy::class);
 
 // ---------------------------------------------------------------------------
 // Route registration
