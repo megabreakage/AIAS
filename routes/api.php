@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\V1\Auth\SuperAdminAuthController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\TenantController;
+use App\Http\Controllers\PriorityLevelController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,5 +38,13 @@ Route::prefix('v1')->group(function () {
         Route::post('/tenants', [TenantController::class, 'store']);
         Route::get('/tenants/{id}', [TenantController::class, 'show']);
         Route::delete('/tenants/{id}', [TenantController::class, 'destroy']);
+    });
+
+    // Tenant-scoped routes (accessible by authenticated tenant users)
+    Route::middleware(['auth:api', 'tenant.token'])->group(function () {
+        // Priority Levels
+        Route::apiResource('priority-levels', PriorityLevelController::class);
+        Route::post('priority-levels/{id}/restore', [PriorityLevelController::class, 'restore'])
+            ->name('priority_levels.restore');
     });
 });

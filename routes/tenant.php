@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\PriorityLevelController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +41,9 @@ Route::prefix('v1')->group(function () {
 
     // Protected tenant routes
     Route::middleware(['auth:api', 'tenant.token'])->group(function () {
-        // Additional tenant-scoped routes will be added here as features are built
+        // Priority Levels
+        Route::apiResource('priority-levels', PriorityLevelController::class);
+        Route::post('priority-levels/{id}/restore', [PriorityLevelController::class, 'restore'])
+            ->name('priority_levels.restore');
     });
 });

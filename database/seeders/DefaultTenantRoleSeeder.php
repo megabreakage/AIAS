@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class DefaultTenantRoleSeeder extends Seeder
@@ -42,6 +43,27 @@ class DefaultTenantRoleSeeder extends Seeder
                 $this->command->info("Created tenant role: {$roleData['name']}");
             } else {
                 $this->command->line("Tenant role already exists: {$roleData['name']}");
+            }
+        }
+
+        // Seed permissions from the role-permission map and assign to roles
+        $map = config('role-permission-map', []);
+
+        foreach ($map as $module) {
+            foreach ($module['permissions'] as $permName) {
+                Permission::firstOrCreate(
+                    ['name' => $permName, 'guard_name' => 'api'],
+                );
+            }
+
+            foreach ($module['roles'] as $roleName => $permissions) {
+                $role = Role::where('name', $roleName)->where('guard_name', 'api')->first();
+
+                if ($role) {
+                    $role->syncPermissions(
+                        array_merge($role->permissions->pluck('name')->toArray(), $permissions)
+                    );
+                }
             }
         }
     }
