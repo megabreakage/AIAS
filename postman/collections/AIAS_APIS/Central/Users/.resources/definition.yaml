@@ -1,3 +1,0 @@
-$kind: collection
-description: Manage platform users. Supports RBAC roles via Spatie Permission.
-order: 5000

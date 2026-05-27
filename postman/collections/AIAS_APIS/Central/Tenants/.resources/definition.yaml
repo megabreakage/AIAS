@@ -1,4 +1,0 @@
-$kind: collection
-description: Manage tenants (organisations / audit firms). Super-admin only for
-  create/delete.
-order: 2000

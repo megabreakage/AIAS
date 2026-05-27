@@ -92,6 +92,8 @@ return [
 
         'countries' => ['view', 'create', 'edit', 'delete'],
 
+        'section_styles' => ['view', 'create', 'edit', 'delete', 'restore'],
+
         'contacts' => ['view', 'create', 'edit', 'delete'],
 
         'billing_types' => ['view', 'create', 'edit', 'delete'],
