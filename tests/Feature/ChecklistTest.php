@@ -741,13 +741,8 @@ describe('Checklist update validation', function (): void {
     it('rejects name exceeding 255 chars on update', function (): void {
         $identifier = 'test-checklist-abc';
 
-        $checklist = new Checklist;
-        $checklist->identifier = $identifier;
-        $checklist->tenant_id = 'test-tenant';
-        $checklist->name = 'Original Name';
-
         $repo = Mockery::mock(ChecklistRepository::class);
-        $repo->shouldReceive('readChecklist')->with($identifier)->once()->andReturn($checklist);
+        $repo->shouldReceive('readChecklist')->never();
 
         $this->app->instance(ChecklistRepository::class, $repo);
 
