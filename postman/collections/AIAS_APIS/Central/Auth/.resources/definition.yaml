@@ -1,0 +1,5 @@
+$kind: collection
+description: Authentication endpoints. Central login
+  ({{base_url}}/v1/auth/login) for super-admin users. Tenant login
+  ({{tenant_base_url}}/v1/auth/login) requires tenant_id in the request body.
+order: 1000

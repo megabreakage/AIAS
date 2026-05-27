@@ -1,0 +1,30 @@
+$kind: http-request
+description: Update an existing finding.
+url: "{{tenant_base_url}}/findings/{{finding_id}}"
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: >-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "workpaper_id": "{{workpaper_id}}",
+      "title": "Revenue recognition policy not consistently applied",
+      "description": "Management has not consistently applied IFRS 15 revenue recognition criteria",
+      "severity": "high",
+      "risk_category_id": "{{risk_category_id}}",
+      "recommendation": "Implement documented revenue recognition policy and staff training"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Response is JSON', () => { pm.response.to.be.json; });
+      pm.test('Status is success', () => {
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('status', 'success');
+      });
+    language: text/javascript
+order: 4000

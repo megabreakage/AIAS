@@ -32,7 +32,7 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 - Multi-tenancy (stancl/tenancy v3): each tenant has its own MySQL database; created and migrated on tenant creation
 - Auth: Laravel Passport (password grant) under the `api` guard
 - RBAC: Spatie Permission with teams; team key is `tenant_id`
-- Responses: custom Resource envelope with `status`, `message`, `data`, optional `metadata`/pagination
+- Responses: custom Resource envelope — **STRICTLY DEFAULT**: `status`, `message`, `data`, optional `metadata`/pagination. Never deviate from this envelope.
 - **Testing**: MySQL with unique test databases per run for production-accurate, isolated tests
 
 ## Key Architecture
@@ -42,7 +42,23 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 - Team scoping: `app/Http/Middleware/SetSpatieTeamFromTenant.php` sets Spatie team from the `{tenant}` path or current user
 - Repositories + Filters: `app/Repositories` provide `browse/read/insert/update/delete`; filters live under `app/Filters` and compose small single-responsibility classes
 - Resources: `app/Http/Resources` enforce the response envelope in controllers
-- Permissions map: `config/role-permission-map.php` defines module permissions and role assignments
+- Permissions map: `config/permissions_map.php` defines module permissions and role assignments
+
+## Model Conventions (Tenant-Scoped)
+
+- **ALWAYS** extend `BaseModel` — **NEVER** `Model` directly
+- Traits in order: `HasFactory`, `SoftDeletes`, `TenantConnection`
+- `boot()` auto-populates: string `identifier`, `tenant_id` (set to `tenant()->getTenantKey()` = `tenants.identifier`), `created_by`, `updated_by`
+- Route binding uses `identifier` (unique string, format `AT.{n}.{time}` for tenants), not `id`
+- Casts defined in `casts()` **method**, not `$casts` property
+- **DO NOT** add `Auditable` trait to tenant models — central only (User, Tenant)
+
+## Layer Boundaries (Enforced)
+
+- Production layers (`app/Http/Controllers`, `app/Jobs`, `app/Services`) MUST use repositories for all record access and mutations
+- Direct model queries in production layers are **FORBIDDEN**: `Model::query()`, `Model::find()`, `Model::where()`, `Model::create()`, `Model::update()`, `Model::delete()`
+- `tests/`, `database/factories/`, `database/seeders/` may use Eloquent directly
+- Run `composer analyse` to enforce boundaries before committing
 
 ## Developer Workflows
 
@@ -50,12 +66,12 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 - Migrate/seed (central): `php artisan migrate --seed`
 - Tenants migrate: `php artisan tenants:migrate`
 - Passport keys/clients: `php artisan passport:install`
-- **Tests**: `./test.sh` (ALWAYS use this script to avoid MySQL locks)
+- **Tests**: `docs/scripts/test.sh` (ALWAYS use this script to avoid MySQL locks)
 - Dev script: `composer dev` runs app, vite, schedule, queue, logs
 
 ## Testing Configuration
 
-- **ALWAYS use `./test.sh`** to run tests - this ensures proper database isolation
+- **ALWAYS use `docs/scripts/test.sh`** to run tests - this ensures proper database isolation
 - **Script**: Creates unique MySQL database per test run (e.g., `aias_test_<timestamp>_<pid>`)
 - **Database**: MySQL (matching production) for accurate testing with automatic cleanup
 - **Benefits**: Production-like environment, proper isolation, supports parallel execution
@@ -65,16 +81,16 @@ $this->engagementRepository->createEngagement(['title' => $data['title'], ...]);
 
 ```bash
 # Run all tests
-./test.sh
+docs/scripts/test.sh
 
 # Run specific test
-./test.sh --filter=test_can_create_audit_engagement
+docs/scripts/test.sh --filter=test_can_create_audit_engagement
 
 # Run specific test file
-./test.sh tests/Feature/AuditEngagementTest.php
+docs/scripts/test.sh tests/Feature/AuditEngagementTest.php
 
 # Run tests in parallel (requires paratest)
-./test.sh --parallel
+docs/scripts/test.sh --parallel
 ```
 
 ### Test Class Requirements
@@ -96,17 +112,23 @@ class MyTest extends TestCase
 - Controllers defer to repositories; do not query models directly in controllers
 - List endpoints: call `browse(...)` with a dedicated `{Domain}Filters` composing filter classes (e.g., `search`, `status`)
 - Authorization: use Policies/Gates; non–`super-admin` users are always tenant-scoped in repositories
-- Responses: return `{Domain}Resource`/`{Domain}Collection`, set messages with `->setMessage()` and metadata via `->addMetadata()`
+- Responses: **STRICTLY DEFAULT** envelope — `->setMessage()` and `->addMetadata()` on every resource before return
+- Load relationships on every read/create/update: `->load(['creator', 'updater'])`
+- Unique validation scoped to tenant: `Rule::unique('table')->where('tenant_id', auth()->user()->tenant_id)`
+- Routes named: `api.{resource}.{action}`
 
 ## Adding a Tenant-Scoped Feature (Checklist)
 
-1. Routes in `routes/api.php` (use `auth:api` and `{tenant}` when relevant)
-2. Create Form Request in `app/Http/Requests` with rules + messages
-3. Add repository in `app/Repositories`; enforce tenant filtering for non–`super-admin`
-4. Compose filters in `app/Filters/{Domain}` and apply in `browse(...)`
-5. Create Resource/Collection in `app/Http/Resources` for response envelope
-6. Add Policy in `app/Policies` and register if needed
-7. Update `config/role-permission-map.php` if new permissions are required
+1. Migration in `database/migrations/tenant/` — required fields: `id`, `string identifier` (unique), `string tenant_id` (references `tenants.identifier`, indexed, no FK), `created_by`/`updated_by` (`unsignedBigInteger()->nullable()`, no FK), `timestamps`, `softDeletes`
+2. Create Form Request in `app/Http/Requests/{Domain}/` with rules + messages (unique rules scoped to tenant)
+3. Model in `app/Models/Tenant/` — extends `BaseModel`, traits: `HasFactory`, `SoftDeletes`, `TenantConnection`, NO `Auditable`
+4. Add repository in `app/Repositories/Tenant/`; enforce tenant filtering for non–`super-admin`; load relationships
+5. Compose filters in `app/Filters/Tenant/{Domain}` and apply in `browse(...)`
+6. Create Resource/Collection in `app/Http/Resources/Tenant/{Domain}/` extending `BaseResource`
+7. Add Policy in `app/Policies` with `before()` super-admin bypass + `tenant_id` boundary check
+8. Register policy in `AppServiceProvider`
+9. Add routes to `routes/api.php` named `api.{resource}.{action}`
+10. Update `config/permissions_map.php` with new permissions + role assignments
 
 ## Feature Development Workflow
 
@@ -118,7 +140,7 @@ When adding new features or updating existing ones, follow this comprehensive wo
 2. **Create OpenAPI Documentation** - `storage/api-docs/{feature-name}.openapi.yaml` with comprehensive API specs
 3. **Create Feature Documentation** - `docs/features/{feature-name}.md` with overview, API, permissions
 4. **Update Features Index** - Add to `docs/features/README.md` with proper categorization
-5. **Update Permissions** - Add to `config/role-permission-map.php` if applicable
+5. **Update Permissions** - Add to `config/permissions_map.php` if applicable
 6. **Write Comprehensive Tests** - Unit, feature, edge cases, integration tests
 7. **Update Postman Collection** - Add endpoints to `postman/collections/`
 8. **Document Breaking Changes** - API changes, permissions, database, config
@@ -130,14 +152,17 @@ When adding new features or updating existing ones, follow this comprehensive wo
 - [ ] Feature documentation created/updated
 - [ ] Features README.md updated
 - [ ] Permissions added/updated in config
-- [ ] Tests written and passing (using MySQL via `./test.sh`)
+- [ ] Tests written and passing (using MySQL via `docs/scripts/test.sh`)
 - [ ] Tests use `RefreshDatabaseWithTenancy` trait (not `RefreshDatabase`)
+- [ ] Tenant resources created inside `$this->tenant->run(fn)` in test setup
+- [ ] Tests cover: happy paths, failure paths, tenant isolation (cross-tenant leakage)
 - [ ] **Postman collection updated** with new endpoints, test scripts, and examples
 - [ ] **Postman documentation updated**: `COLLECTION_GUIDE.md` and `QUICK_REFERENCE.md`
 - [ ] **Environment variables added** for any new variables required
 - [ ] Breaking changes documented
 - [ ] Code formatted: `vendor/bin/pint --dirty`
-- [ ] All tests passing: `./test.sh`
+- [ ] Layer boundaries verified: `composer analyse`
+- [ ] All tests passing: `docs/scripts/test.sh`
 
 **See `CLAUDE.md` for detailed workflow and examples.**
 

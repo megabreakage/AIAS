@@ -1,10 +1,10 @@
-# Use this workspace to collaborate
 workspace:
   id: 5631e230-7b84-4940-bbf5-d75dd983b780
 
 localResources:
   collections:
     - ../docs/postman/AIAS-API.postman_collection.json
+    - ../postman/collections/AIAS_APIS.postman_collection.json
   environments:
     - ../docs/postman/AIAS-API.local.postman_environment.json
     - ../docs/postman/AIAS-API.staging.postman_environment.json
@@ -13,4 +13,5 @@ localResources:
 
 cloudResources:
   collections:
-    ../postman/collections/AIAS API: 043818e9-41a4-43f0-8d96-1736914d4c00
+    ../postman/collections/AIAS API: 1f2d24a9-fb3c-4bcd-8f10-eaa93ea35872
+  environments: {}

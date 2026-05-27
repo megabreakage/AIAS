@@ -1,0 +1,8 @@
+$kind: collection
+description: |-
+  Tenant-domain endpoints. All requests target {{tenant_base_url}} (http://{{tenant_id}}.localhost:8020/v1).
+
+  Requires tenant Bearer token (tenant_token) unless otherwise noted.
+
+  Covers: Auth, Users, Preambles, Health.
+order: 2000

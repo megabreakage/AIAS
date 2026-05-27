@@ -1,23 +1,44 @@
 name: AIAS API — Staging
 values:
   - key: central_base_url
-    value: 'https://api.yourdomain.com/api/v1'
+    value: "https://api.yourdomain.com/api/v1"
     description: Central domain for staging. Replace yourdomain.com with actual staging hostname.
   - key: tenant_base_url
-    value: 'https://{{tenant_id}}.yourdomain.com/v1'
+    value: "https://{{tenant_id}}.yourdomain.com/v1"
     description: Tenant domain for staging. Resolved from tenant_id variable.
   - key: tenant_id
-    value: ''
-    description: Active tenant slug on staging. Set after creating a tenant.
-  - key: sa_token
-    value: ''
+    value: ""
+    description: Active tenant slug (Stancl ID). Used for subdomain routing. Auto-set by Create Tenant.
+  - key: tenant_identifier
+    value: ""
+    description: Tenant AT.{n}.{time()} identifier string. Auto-set by Create Tenant. Stored as tenant_id in tenant tables.
+  - key: continent_identifier
+    value: ""
+    description: Continent identifier. Auto-set by Create/List Continents.
+  - key: country_identifier
+    value: ""
+    description: Country identifier. Auto-set by Create/List Countries.
+  - key: preamble_identifier
+    value: ""
+    description: Preamble identifier. Auto-set by Create/List Preambles.
+  - key: central_token
+    value: ""
     description: Super-admin Bearer token. Auto-set by SA Login.
   - key: tenant_token
-    value: ''
+    value: ""
     description: Tenant user Bearer token. Auto-set by Tenant Login/Register.
   - key: sa_email
-    value: ''
+    value: ""
     description: Staging super-admin email.
   - key: sa_password
-    value: ''
+    value: ""
     description: Staging super-admin password.
+  - key: tenant_user_identifier
+    value: ""
+    description: Tenant user identifier. Auto-set by Create Tenant User.
+  - key: user_identifier
+    value: ""
+    description: Tenant user identifier (string). Auto-set by List/Create User.
+  - key: tenant_owner_id
+    value: ""
+    description: Central user ID (integer). Auto-set by Register Tenant Owner (Step 1). Used as owner_id in Create Tenant (Step 2).

@@ -1,0 +1,32 @@
+$kind: http-request
+description: Update an existing audit engagement.
+url: "{{tenant_base_url}}/audit-engagements/{{audit_engagement_id}}"
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "title": "FY2025 Financial Statement Audit \u2014 Apex Manufacturing",
+      "client_id": "{{client_id}}",
+      "audit_standard_id": "{{audit_standard_id}}",
+      "regulation_framework_id": "{{regulation_framework_id}}",
+      "audit_type": "financial",
+      "start_date": "2026-01-15",
+      "end_date": "2026-03-31",
+      "lead_auditor_id": "{{user_id}}",
+      "status": "planning"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Response is JSON', () => { pm.response.to.be.json; });
+      pm.test('Status is success', () => {
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('status', 'success');
+      });
+    language: text/javascript
+order: 4000

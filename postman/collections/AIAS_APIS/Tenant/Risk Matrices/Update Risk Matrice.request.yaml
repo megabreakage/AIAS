@@ -1,0 +1,27 @@
+$kind: http-request
+description: Update an existing risk matrice.
+url: "{{tenant_base_url}}/risk-matrices/{{risk_matrix_id}}"
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "name": "FY2025 Risk Matrix",
+      "likelihood_scale": 5,
+      "impact_scale": 5
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Response is JSON', () => { pm.response.to.be.json; });
+      pm.test('Status is success', () => {
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('status', 'success');
+      });
+    language: text/javascript
+order: 4000

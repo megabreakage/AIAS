@@ -1,0 +1,26 @@
+$kind: http-request
+description: Update an existing tenant.
+url: "{{base_url}}/tenants/{{id_id}}"
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Pinnacle Audit Partners",
+      "email": "admin@pinnacleaudit.test",
+      "password": "Password123!",
+      "password_confirmation": "Password123!"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Response is JSON', () => { pm.response.to.be.json; });
+      pm.test('Status is success', () => {
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('status', 'success');
+      });
+    language: text/javascript
+order: 4000

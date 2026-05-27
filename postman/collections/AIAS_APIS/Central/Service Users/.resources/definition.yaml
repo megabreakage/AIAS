@@ -1,0 +1,3 @@
+$kind: collection
+description: System-level service accounts for machine-to-machine auth.
+order: 7000

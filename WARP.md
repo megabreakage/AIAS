@@ -130,12 +130,13 @@ php artisan passport:install              # Generate encryption keys & OAuth cli
 
 ### Testing
 
-**ALWAYS use `./test.sh`** to run tests — this prevents MySQL lock issues by creating unique test databases.
+**ALWAYS use `./test.sh`** — never raw `php artisan test` or `composer test`. Creates unique MySQL databases per run, ensuring isolation.
 
 ```bash
-./test.sh                                          # Run all tests (recommended)
+./test.sh                                          # Run all tests (REQUIRED)
 ./test.sh tests/Feature/AuditEngagementTest.php   # Run specific test file
 ./test.sh --filter=testName                       # Run specific test by name
+./test.sh --parallel                              # Parallel execution
 ```
 
 **Why use `./test.sh`?**
@@ -148,8 +149,8 @@ php artisan passport:install              # Generate encryption keys & OAuth cli
 ### Code Quality
 
 ```bash
-vendor/bin/pint                           # Format all files (Laravel Pint)
-vendor/bin/pint --dirty                   # Format only changed files
+vendor/bin/pint --dirty                   # Format only changed files (run before finalizing)
+composer analyse                          # Enforce repository-only layer boundaries
 ```
 
 ## Multi-Tenancy Architecture
@@ -221,7 +222,14 @@ Model changes tracked via `audits` table — **central models only** (User, Tena
 - **Middleware registration**: In `bootstrap/app.php`
 - **Service providers**: Listed in `bootstrap/providers.php`
 - **No `app/Console/Kernel.php`**: Commands auto-register from `app/Console/Commands/`
-- **Model casts**: Use `casts()` method instead of `$casts` property
+- **Model casts**: Use `casts()` **method** — **NEVER** `$casts` property
+
+## Layer Boundaries (Enforced)
+
+- Production layers (`app/Http/Controllers`, `app/Jobs`, `app/Services`) **MUST** use repositories for all DB access
+- Direct model queries in production layers are **FORBIDDEN**: `Model::query()`, `Model::find()`, `Model::where()`, `Model::create()`, `Model::update()`, `Model::delete()`
+- `tests/`, `database/factories/`, `database/seeders/` may use Eloquent directly
+- Run `composer analyse` to verify layer boundaries before committing
 
 ## Code Conventions
 
@@ -230,8 +238,10 @@ Model changes tracked via `audits` table — **central models only** (User, Tena
 - Use PHP 8 constructor property promotion
 - Always use explicit return types on methods/functions
 - Always use curly braces for control structures (even single-line)
-- PHPDoc for complex array shapes
+- PHPDoc blocks over inline comments; use array shape type definitions in PHPDoc
 - Enum keys in TitleCase (e.g., `AuditStatus`, `RiskLevel`)
+- Run `vendor/bin/pint --dirty` before finalizing any PHP changes
+- Run `composer analyse` to enforce layer boundaries
 
 ### Laravel Best Practices
 
@@ -253,12 +263,13 @@ Model changes tracked via `audits` table — **central models only** (User, Tena
 
 ### Testing Standards
 
-- **ALWAYS use `./test.sh`** to run tests
-- Use Pest v3 (not raw PHPUnit class syntax)
-- Use `RefreshDatabaseWithTenancy` trait (not `RefreshDatabase`)
+- **ALWAYS use `./test.sh`** — never `php artisan test` or `composer test`
+- Use `RefreshDatabaseWithTenancy` trait — **NEVER** `RefreshDatabase`
 - Most tests should be feature tests
-- Use factories for model creation
-- Test happy paths, failure paths, and edge cases
+- Use factories for model creation — check existing states before manual setup
+- Tenant resources created inside `$this->tenant->run(fn)` context
+- Set Spatie team before role assignment in test setup
+- Test: happy paths, failure paths, tenant isolation (cross-tenant leakage)
 
 ## Database Schema
 
@@ -291,12 +302,38 @@ Model changes tracked via `audits` table — **central models only** (User, Tena
 
 When creating models that belong to tenants:
 
-1. Use `TenantConnection` trait — **NOT** `CentralConnection`
-2. Add `tenant_id` to migration and fillable array (auto-set in `creating` boot)
-3. Add `tenant()` relationship method with return type hint
-4. Create factory with tenant assignment
-5. **DO NOT** add `Auditable` trait — only central models use auditing
-6. **NO foreign key constraints** to central database tables
+1. **ALWAYS** extend `BaseModel` — **NEVER** `Model` directly
+2. Traits in order: `HasFactory`, `SoftDeletes`, `TenantConnection`
+3. `boot()` auto-populates: UUID `identifier`, `tenant_id`, `created_by`, `updated_by`
+4. Casts defined in `casts()` **method** — **NEVER** `$casts` property
+5. Override `getRouteKeyName()` to return `'identifier'` (UUID route binding)
+6. **DO NOT** add `Auditable` trait — only central models use auditing
+7. **NO foreign key constraints** to central database tables
+8. `created_by`/`updated_by` = `unsignedBigInteger()->nullable()` — no FK
+9. Tenant-unique constraints: `unique(['tenant_id', 'field'])`
+
+### Repository Pattern for Tenant Models
+
+- Non-super-admin queries: always `where('tenant_id', auth()->user()->tenant_id)`
+- Load relationships on every read/create/update: `->load(['creator', 'updater'])`
+- Inject other repositories for DRY compliance — never duplicate logic
+
+### API Response Envelope
+
+**STRICTLY DEFAULT** envelope — never deviate:
+
+```json
+{
+  "status": "success",
+  "message": "Resource retrieved successfully",
+  "data": { ... },
+  "metadata": { ... }
+}
+```
+
+- Always call `->setMessage()` on resource before returning
+- Use `->addMetadata()` for additional context
+- Unique validation scoped to tenant: `Rule::unique('table')->where('tenant_id', ...)`
 
 ### Creating Central Models
 

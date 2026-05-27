@@ -16,17 +16,22 @@ final class CreateTenantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'     => ['nullable', 'string', 'max:255', 'unique:central.tenants,id', 'regex:/^[a-z0-9_-]+$/'],
-            'name'   => ['required', 'string', 'max:255'],
-            'plan'   => ['nullable', 'string', 'in:starter,professional,enterprise'],
-            'domain' => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'unique:central.tenants,name'],
+            'owner_id' => ['required', 'string', 'exists:central.users,identifier'],
+            'domain' => ['nullable', 'string', 'max:255', 'unique:central.tenants,domain'],
+            'logo' => ['nullable', 'string', 'max:255'],
+            'country_id' => ['nullable', 'integer'],
+            'data_center' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'string', 'in:active,inactive,suspended,pending_setup'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'id.regex' => 'Tenant ID may only contain lowercase letters, numbers, hyphens, and underscores.',
+            'name.unique' => 'A tenant with this name already exists.',
+            'owner_id.exists' => 'The specified owner does not exist.',
+            'domain.unique' => 'This domain is already in use by another tenant.',
         ];
     }
 }

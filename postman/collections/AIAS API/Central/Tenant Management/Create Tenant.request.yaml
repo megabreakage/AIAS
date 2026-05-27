@@ -1,0 +1,58 @@
+$kind: http-request
+description: |-
+  Requires central_token.
+
+  Step 2 of 2 — Creates a new tenant and provisions a dedicated database.
+  `owner_id` must reference an existing user on the central database (see Register Tenant Owner — Step 1).
+
+  Field rules:
+    owner_id — required, integer FK to central users.id
+    name     — required, max 255
+    id       — nullable, lowercase alphanumeric/hyphens/underscores, auto-generated from name if omitted
+    plan     — nullable, one of: starter | professional | enterprise (default: starter)
+    domain   — nullable, must be unique across all tenants
+
+  Triggers TenantCreated event → DB create → migrations → seeder in background.
+
+  After-response script auto-saves:
+    tenant_id         — Stancl slug (b.data.id) for subdomain routing
+    tenant_identifier — AT.{n}.{time()} identifier string (b.data.identifier) stored as tenant_id in tenant tables
+
+  Error responses:
+    401 — Unauthenticated
+    422 — Validation failed (invalid owner_id, duplicate id/domain, invalid format)
+url: "{{central_base_url}}/tenants"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "AirTraffic Ltd",
+      "id": "airtraffic",
+      "owner_id": {{tenant_owner_id}},
+      "plan": "starter",
+      "domain": "airtraffic.co.ke"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status 201", () => pm.response.to.have.status(201));
+      pm.test("Tenant created", () => {
+          const b = pm.response.json();
+          pm.expect(b.data).to.have.property("id");
+          pm.expect(b.data).to.have.property("name");
+          pm.expect(b.data).to.have.property("plan");
+          pm.expect(b.data).to.have.property("status", "active");
+          pm.expect(b.data).to.have.property("owner");
+          pm.expect(b.data).to.have.property("domains");
+          pm.environment.set("tenant_id", b.data.id);
+          pm.environment.set("tenant_identifier", b.data.identifier);
+          console.log("tenant_id auto-saved: " + b.data.id);
+          console.log("tenant_identifier auto-saved: " + b.data.identifier);
+          console.log("Tenant DB provisioning triggered in background.");
+      });
+    language: text/javascript
+order: 3000

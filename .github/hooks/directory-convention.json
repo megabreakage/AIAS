@@ -1,0 +1,11 @@
+{
+    "hooks": {
+        "PreToolUse": [
+            {
+                "type": "command",
+                "command": "./.github/hooks/scripts/directory-convention-check.mjs",
+                "timeout": 10
+            }
+        ]
+    }
+}

@@ -1,23 +1,72 @@
 name: AIAS API — Local
 values:
   - key: central_base_url
-    value: 'http://127.0.0.1:8088/api/v1'
-    description: 'Central domain. Start server: php artisan serve --host=127.0.0.1 --port=8088'
+    value: 'http://localhost:8020/api/v1'
+    description:
+      content: 'Central domain. Start server: php artisan serve --host=localhost --port=8020'
+      type: text/plain
   - key: tenant_base_url
-    value: 'http://{{tenant_id}}.localhost:8088/v1'
-    description: Tenant domain. Resolved from tenant_id variable. Requires /etc/hosts or local DNS for subdomain routing.
+    value: 'http://{{tenant_id}}.localhost:8020/v1'
+    description:
+      content: Tenant domain. Resolved from tenant_id variable. Requires /etc/hosts or local DNS for subdomain routing.
+      type: text/plain
   - key: tenant_id
     value: acme-corp
-    description: Active tenant slug. Must match a tenant in the database.
-  - key: sa_token
+    description:
+      content: Active tenant slug (Stancl ID). Used for subdomain routing. Auto-set by Create Tenant.
+      type: text/plain
+  - key: tenant_identifier
     value: ''
-    description: Super-admin Bearer token. Auto-set by SA Login.
+    description:
+      content: 'Tenant AT.{n}.{time()} identifier string. Auto-set by Create Tenant. Stored as tenant_id in tenant tables.'
+      type: text/plain
+  - key: continent_identifier
+    value: ''
+    description:
+      content: Continent identifier. Auto-set by Create/List Continents.
+      type: text/plain
+  - key: country_identifier
+    value: ''
+    description:
+      content: Country identifier. Auto-set by Create/List Countries.
+      type: text/plain
+  - key: preamble_identifier
+    value: ''
+    description:
+      content: Preamble identifier. Auto-set by Create/List Preambles.
+      type: text/plain
+  - key: central_token
+    value: ''
+    description:
+      content: Super-admin Bearer token. Auto-set by SA Login.
+      type: text/plain
   - key: tenant_token
     value: ''
-    description: Tenant user Bearer token. Auto-set by Tenant Login/Register.
+    description:
+      content: Tenant user Bearer token. Auto-set by Tenant Login/Register.
+      type: text/plain
   - key: sa_email
     value: sa@aias.system
-    description: Default super-admin email (seeded by DatabaseSeeder).
+    description:
+      content: Default super-admin email (seeded by DatabaseSeeder).
+      type: text/plain
   - key: sa_password
     value: password
-    description: Default super-admin password (seeded by DatabaseSeeder).
+    description:
+      content: Default super-admin password (seeded by DatabaseSeeder).
+      type: text/plain
+  - key: tenant_user_identifier
+    value: ''
+    description:
+      content: Tenant user identifier. Auto-set by Create Tenant User.
+      type: text/plain
+  - key: user_identifier
+    value: ''
+    description:
+      content: Tenant user identifier (string). Auto-set by List/Create User.
+      type: text/plain
+  - key: tenant_owner_id
+    value: ''
+    description:
+      content: Central user ID (integer). Auto-set by Register Tenant Owner (Step 1). Used as owner_id in Create Tenant (Step 2).
+      type: text/plain
