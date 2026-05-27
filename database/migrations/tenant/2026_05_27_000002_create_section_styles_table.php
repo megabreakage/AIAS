@@ -10,12 +10,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('checklist_types', function (Blueprint $table): void {
+        Schema::create('section_styles', function (Blueprint $table): void {
             $table->id();
-            $table->string('identifier')->index();
-            $table->string('tenant_id')->index();
-            $table->string('name');
+            $table->string('identifier')->unique()->index();
+            $table->string('tenant_id');
+            $table->string('name')->unique()->index();
             $table->text('description')->nullable();
+            $table->unsignedInteger('columns')->default(1);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_featured')->default(false);
             $table->unsignedBigInteger('created_by')->nullable();
@@ -23,12 +24,14 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['identifier', 'name']);
+            $table->index('is_active');
+            $table->index('is_featured');
+            $table->index('columns');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('checklist_types');
+        Schema::dropIfExists('section_styles');
     }
 };
