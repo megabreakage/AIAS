@@ -1,4 +1,4 @@
-# AI Prompts for CompanySection Module
+# AI Prompts for Company Module
 
 ## 1. Company Module
 
