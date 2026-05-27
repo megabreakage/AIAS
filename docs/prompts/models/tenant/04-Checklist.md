@@ -24,6 +24,6 @@ Create comprehensive *Unit & Feature Tests* for **Checklist** module covering, i
 
 ## 2. Relationships
 
-Checklist Module has a `one-to-many` relationship with SectionStyles. Create a completly featured *Tenant-Scoped* **ChecklistSectionStyle** module. Refer to `docs/prompts/models/05-ChecklistSectionStyle.md` for Model specifications.
+Checklist Module has a `one-to-many` relationship with SectionStyles. Create a completly featured *Tenant-Scoped* **ChecklistSectionStyle** module. Refer to `docs/prompts/models/tenants/05-ChecklistSectionStyle.md` for Model specifications.
 
 Create comprehensive *Unit & Feature Tests* for **ChecklistSectionStyle** module covering, its model, migration, repository, service(if exists),policy, controller, requests & validations, and API resource & collection. Update Postman collection with endpoints for **ChecklistSectionStyle** module, and ensure that all endpoints are properly documented with request and response examples.

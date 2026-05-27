@@ -41,6 +41,11 @@ final class SectionStyle extends BaseModel
         ];
     }
 
+    protected static function newFactory(): SectionStyleFactory
+    {
+        return SectionStyleFactory::new();
+    }
+
     public function getRouteKeyName(): string
     {
         return 'identifier';
