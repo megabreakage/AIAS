@@ -349,6 +349,24 @@ MODULES: list[dict[str, Any]] = [
         ],
     },
     {
+        "name": "Checklists",
+        "route": "checklists",
+        "param": "checklist",
+        "scope": "tenant",
+        "description": "Manage audit checklists with quality controller assignment, preamble linkage, and checklist type classification.",
+        "sample_body": {
+            "name": "Q1 Financial Audit Checklist",
+            "quality_controller_id": None,
+            "preamble_id": None,
+            "checklist_type_id": None,
+            "is_active": True,
+            "is_featured": False,
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore Checklist"},
+        ],
+    },
+    {
         "name": "Clients",
         "route": "clients",
         "param": "client",
@@ -750,6 +768,7 @@ RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
     ("client_id",                   "", "Client identifier string"),
     ("checklist_type_id",            "", "Checklist Type identifier string"),
     ("section_style_id",             "", "Section Style identifier string"),
+    ("checklist_id",                 "", "Checklist identifier string"),
     # --- Audit Templates ---
     ("audit_template_id",           "", "Audit Template identifier string"),
     # --- Core Audit ---

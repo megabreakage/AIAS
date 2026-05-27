@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Tenant\ChecklistController;
 use App\Http\Controllers\Api\V1\Tenant\ChecklistTypeController;
 use App\Http\Controllers\Api\V1\Tenant\PreambleController;
 use App\Http\Controllers\Api\V1\Tenant\SectionStyleController;
@@ -75,5 +76,13 @@ Route::prefix('v1')->group(function () {
         Route::put('/section-styles/{identifier}', [SectionStyleController::class, 'update']);
         Route::delete('/section-styles/{identifier}', [SectionStyleController::class, 'destroy']);
         Route::post('/section-styles/{identifier}/restore', [SectionStyleController::class, 'restore']);
+
+        // Checklist routes
+        Route::get('/checklists', [ChecklistController::class, 'index']);
+        Route::post('/checklists', [ChecklistController::class, 'store']);
+        Route::get('/checklists/{identifier}', [ChecklistController::class, 'show']);
+        Route::put('/checklists/{identifier}', [ChecklistController::class, 'update']);
+        Route::delete('/checklists/{identifier}', [ChecklistController::class, 'destroy']);
+        Route::post('/checklists/{identifier}/restore', [ChecklistController::class, 'restore']);
     });
 });

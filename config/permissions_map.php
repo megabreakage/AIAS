@@ -165,6 +165,8 @@ return [
 
         'section-styles' => ['view', 'create', 'update', 'delete', 'restore'],
 
+        'checklists' => ['view', 'create', 'update', 'delete', 'restore'],
+
     ],
 
 ];
