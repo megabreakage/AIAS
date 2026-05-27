@@ -6,7 +6,6 @@ namespace App\Providers;
 
 use App\Models\Central\Continent;
 use App\Models\Central\Country;
-use App\Models\Central\SectionStyle;
 use App\Models\Central\Tenant;
 use App\Models\Tenant\ChecklistType;
 use App\Models\Tenant\Preamble;
@@ -15,7 +14,6 @@ use App\Policies\ChecklistTypePolicy;
 use App\Policies\ContinentPolicy;
 use App\Policies\CountryPolicy;
 use App\Policies\PreamblePolicy;
-use App\Policies\SectionStylePolicy;
 use App\Policies\TenantPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Event;
@@ -35,7 +33,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Continent::class, ContinentPolicy::class);
         Gate::policy(Country::class, CountryPolicy::class);
         Gate::policy(Preamble::class, PreamblePolicy::class);
-        Gate::policy(SectionStyle::class, SectionStylePolicy::class);
         Gate::policy(Tenant::class, TenantPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
 

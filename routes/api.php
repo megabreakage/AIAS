@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Central\CentralUserController;
 use App\Http\Controllers\Api\V1\Central\ContinentController;
 use App\Http\Controllers\Api\V1\Central\CountryController;
-use App\Http\Controllers\Api\V1\Central\SectionStyleController;
 use App\Http\Controllers\Api\V1\Central\TenantUserController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\TenantController;
@@ -49,12 +48,5 @@ Route::prefix('v1')->group(function () {
         Route::put('/countries/{identifier}', [CountryController::class, 'update']);
         Route::delete('/countries/{identifier}', [CountryController::class, 'destroy']);
         Route::post('/countries/{identifier}/restore', [CountryController::class, 'restore']);
-
-        Route::get('/section-styles', [SectionStyleController::class, 'index'])->name('api.section-styles.index');
-        Route::post('/section-styles', [SectionStyleController::class, 'store'])->name('api.section-styles.store');
-        Route::get('/section-styles/{identifier}', [SectionStyleController::class, 'show'])->name('api.section-styles.show');
-        Route::put('/section-styles/{identifier}', [SectionStyleController::class, 'update'])->name('api.section-styles.update');
-        Route::delete('/section-styles/{identifier}', [SectionStyleController::class, 'destroy'])->name('api.section-styles.destroy');
-        Route::post('/section-styles/{identifier}/restore', [SectionStyleController::class, 'restore'])->name('api.section-styles.restore');
     });
 });
