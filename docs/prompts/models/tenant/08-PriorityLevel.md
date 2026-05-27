@@ -9,7 +9,8 @@ Create a completly featured *Tenant-Scoped* **PriorityLevel** module with the fo
 - `tenant_id`: required, string, indexed,
 - `name`: required, string, not null,
 - `colour_code`: string, nullable,
-- `period`
+- `period`: integer, nullable, (number of days for the priority level)
+- `period_unit`: enum('D', 'W', 'M', 'Y'), nullable, (D for Day, W for Week, M for Month, Y for Year)
 - `description`: text, nullable,
 - `is_active`: boolean, default true,
 - `is_featured`: boolean, default false,
@@ -24,7 +25,7 @@ Create comprehensive *Unit & Feature Tests* for **PriorityLevel** module coverin
 ```python3 docs/prompts/aias/scripts/generate-module.py \\
     --model-name=PriorityLevel \\
     --table-name=priority_levels \\
-    --columns="id:primary,identifier:uuid,tenant_id:string,name:string,colour_code:string,period:string,description:text,is_active:boolean,is_featured:boolean,created_by:unsignedBigInteger,updated_by:unsignedBigInteger,created_at:timestamp,updated_at:timestamp,deleted_at:timestamp" \
+    --columns="id:primary,identifier:uuid,tenant_id:string,name:string,colour_code:string,period:integer,period_unit:enum('D','W','M','Y'),description:text,is_active:boolean,is_featured:boolean,created_by:unsignedBigInteger,updated_by:unsignedBigInteger,created_at:timestamp,updated_at:timestamp,deleted_at:timestamp" \
     --relationships="" \
     --tenant-scoped=true
 ```

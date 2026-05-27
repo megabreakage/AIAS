@@ -1,0 +1,43 @@
+$kind: http-request
+name: Update Company
+description: Update an existing company.
+url: '{{tenant_base_url}}/companies/{{company_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Apex Holdings Ltd",
+      "address": "123 Business Park, Westlands",
+      "office_location": "Nairobi, Kenya",
+      "postal_code": "00100",
+      "country_id": null,
+      "level_of_operations": "local",
+      "trading_name": "Apex",
+      "website": "https://apexholdings.test",
+      "email": "info@apexholdings.test",
+      "phone": "+254712345678",
+      "description": "Leading investment and holding company.",
+      "is_active": true,
+      "is_featured": false,
+      "company_contacts": [
+        {
+          "user_id": null,
+          "contact_type": "primary"
+        }
+      ]
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

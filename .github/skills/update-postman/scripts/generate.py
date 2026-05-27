@@ -367,6 +367,34 @@ MODULES: list[dict[str, Any]] = [
         ],
     },
     {
+        "name": "Companies",
+        "route": "companies",
+        "param": "company",
+        "scope": "tenant",
+        "description": "Manage tenant companies with geocoding support, logo upload, and company contacts.",
+        "sample_body": {
+            "name": "Apex Holdings Ltd",
+            "address": "123 Business Park, Westlands",
+            "office_location": "Nairobi, Kenya",
+            "postal_code": "00100",
+            "country_id": None,
+            "level_of_operations": "local",
+            "trading_name": "Apex",
+            "website": "https://apexholdings.test",
+            "email": "info@apexholdings.test",
+            "phone": "+254712345678",
+            "description": "Leading investment and holding company.",
+            "is_active": True,
+            "is_featured": False,
+            "company_contacts": [
+                {"user_id": None, "contact_type": "primary"},
+            ],
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore Company"},
+        ],
+    },
+    {
         "name": "Clients",
         "route": "clients",
         "param": "client",
@@ -769,6 +797,7 @@ RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
     ("checklist_type_id",            "", "Checklist Type identifier string"),
     ("section_style_id",             "", "Section Style identifier string"),
     ("checklist_id",                 "", "Checklist identifier string"),
+    ("company_id",                   "", "Company identifier string"),
     # --- Audit Templates ---
     ("audit_template_id",           "", "Audit Template identifier string"),
     # --- Core Audit ---
