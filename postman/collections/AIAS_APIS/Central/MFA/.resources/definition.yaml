@@ -1,3 +1,0 @@
-$kind: collection
-description: Multi-factor authentication management (TOTP-based).
-order: 9000

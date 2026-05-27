@@ -755,15 +755,51 @@ RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
 ]
 
 # ---------------------------------------------------------------------------
-# BUILDER HELPERS
+# YAML UTILITIES
 # ---------------------------------------------------------------------------
 
-STD_HEADERS = [
-    {"key": "Accept",       "value": "application/json"},
-    {"key": "Content-Type", "value": "application/json"},
-]
+# Stable bearer auth UUID (keep stable so Postman recognises re-imports).
+BEARER_AUTH_ID = "cba390d9-dacd-4cef-8639-728436a27ea3"
 
-INDEX_QUERY_PARAMS = [
+
+class _LiteralStr(str):
+    """Forces YAML literal block scalar style (|-) for multi-line strings."""
+
+
+def _literal_representer(dumper: yaml.Dumper, data: "_LiteralStr") -> yaml.ScalarNode:
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+
+
+class _V3Dumper(yaml.Dumper):
+    """Custom YAML Dumper: literal blocks for _LiteralStr, key order preserved."""
+
+
+_V3Dumper.add_representer(_LiteralStr, _literal_representer)
+
+
+def _write_yaml(path: Path, data: dict) -> None:
+    """Write a v3 definition or request YAML file."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        yaml.dump(data, Dumper=_V3Dumper, allow_unicode=True, sort_keys=False, default_flow_style=False)
+    )
+
+
+def _name_to_filename(name: str) -> str:
+    """Convert a display name to a filesystem-safe stem (no extension)."""
+    return re.sub(r"[/\\:]", "-", name).strip()
+
+
+def _lines_to_code(lines: list[str]) -> _LiteralStr:
+    """Join exec lines into a single literal-block YAML string."""
+    return _LiteralStr("\n".join(lines))
+
+
+# ---------------------------------------------------------------------------
+# SCRIPT CONSTANTS
+# ---------------------------------------------------------------------------
+
+INDEX_QUERY_PARAMS: list[dict] = [
     {"key": "page",         "value": "1",          "description": "Page number (min: 1)"},
     {"key": "per_page",     "value": "15",          "description": "Items per page (max: 100)"},
     {"key": "search",       "value": "",            "description": "Full-text search term"},
@@ -834,31 +870,9 @@ GENERIC_TEST_SCRIPT = [
     "});",
 ]
 
-
-def make_url(raw: str, path_parts: list[str], query: Optional[list[dict]] = None, host_var: str = "base_url") -> dict:
-    url: dict[str, Any] = {
-        "raw": raw,
-        "host": [f"{{{{{host_var}}}}}"],
-        "path": path_parts,
-    }
-    if query:
-        url["query"] = query
-    return url
-
-
-def make_body(payload: dict) -> dict:
-    return {
-        "mode": "raw",
-        "raw": json.dumps(payload, indent=2),
-        "options": {"raw": {"language": "json"}},
-    }
-
-
-def make_event(listen: str, exec_lines: list[str]) -> dict:
-    return {
-        "listen": listen,
-        "script": {"type": "text/javascript", "exec": exec_lines},
-    }
+# ---------------------------------------------------------------------------
+# SHARED HELPERS
+# ---------------------------------------------------------------------------
 
 
 def param_to_var_name(param: str) -> str:
@@ -885,352 +899,313 @@ def get_host_var(mod: dict) -> str:
 
 
 # ---------------------------------------------------------------------------
-# REQUEST BUILDERS
+# V3 REQUEST BUILDERS
+# Each builder returns (filename_stem, request_dict).
 # ---------------------------------------------------------------------------
 
 
-def build_index_request(mod: dict) -> dict:
-    route = mod["route"]
-    host_var = get_host_var(mod)
-    raw_url = f"{{{{{host_var}}}}}/{route}"
-    query_params = list(INDEX_QUERY_PARAMS)
-    if mod["scope"] == "tenant":
-        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string (required)"}] + query_params
-    return {
-        "name": f"List {mod['name']}",
-        "request": {
-            "method": "GET",
-            "header": STD_HEADERS,
-            "url": make_url(raw_url, [route], query_params, host_var),
-            "description": f"Retrieve paginated list of {mod['name'].lower()}.",
-        },
-        "event": [make_event("test", GENERIC_TEST_SCRIPT)],
-        "response": [],
+def _std_headers() -> dict:
+    return {"Accept": "application/json", "Content-Type": "application/json"}
+
+
+def _tenant_qp() -> dict:
+    return {"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string (required)"}
+
+
+def _scripts(exec_lines: list[str]) -> list[dict]:
+    return [{"type": "afterResponse", "code": _lines_to_code(exec_lines), "language": "text/javascript"}]
+
+
+def _json_body(payload: dict) -> dict:
+    return {"type": "json", "content": _LiteralStr(json.dumps(payload, indent=2))}
+
+
+def _make_request(
+    name: str,
+    description: str,
+    url: str,
+    method: str,
+    query_params: Optional[list[dict]] = None,
+    body: Optional[dict] = None,
+    exec_lines: Optional[list[str]] = None,
+    order: int = 1000,
+) -> tuple[str, dict]:
+    data: dict[str, Any] = {
+        "$kind": "http-request",
+        "name": name,
+        "description": description,
+        "url": url,
+        "method": method,
+        "headers": _std_headers(),
     }
+    if body is not None:
+        data["body"] = body
+    if query_params:
+        data["queryParams"] = query_params
+    if exec_lines:
+        data["scripts"] = _scripts(exec_lines)
+    data["order"] = order
+    return _name_to_filename(name), data
 
 
-def build_store_request(mod: dict) -> dict:
-    route = mod["route"]
+def build_index_request(mod: dict, order: int = 1000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
-    raw_url = f"{{{{{host_var}}}}}/{route}"
+    url = f"{{{{{host_var}}}}}/{mod['route']}"
+    qp: list[dict] = []
+    if mod["scope"] == "tenant":
+        qp.append(_tenant_qp())
+    qp.extend(INDEX_QUERY_PARAMS)
+    return _make_request(
+        name=f"List {mod['name']}",
+        description=f"Retrieve paginated list of {mod['name'].lower()}.",
+        url=url, method="GET", query_params=qp,
+        exec_lines=GENERIC_TEST_SCRIPT, order=order,
+    )
+
+
+def build_store_request(mod: dict, order: int = 2000) -> tuple[str, dict]:
+    host_var = get_host_var(mod)
+    url = f"{{{{{host_var}}}}}/{mod['route']}"
     var_name = param_to_var_name(mod["param"]) + "_id"
     create_script = CREATE_TEST_SCRIPT_TEMPLATE.format(var_name=var_name).splitlines()
-    body = {**mod.get("sample_body", {})}
+    payload = {**mod.get("sample_body", {})}
     if mod["scope"] == "tenant":
-        body = {"tenant_id": "{{tenant_id}}", **body}
-    return {
-        "name": f"Create {singular(mod['name'])}",
-        "request": {
-            "method": "POST",
-            "header": STD_HEADERS,
-            "body": make_body(body),
-            "url": make_url(raw_url, [route], host_var=host_var),
-            "description": f"Create a new {singular(mod['name']).lower()}.",
-        },
-        "event": [make_event("test", create_script)],
-        "response": [],
-    }
+        payload = {"tenant_id": "{{tenant_id}}", **payload}
+    return _make_request(
+        name=f"Create {singular(mod['name'])}",
+        description=f"Create a new {singular(mod['name']).lower()}.",
+        url=url, method="POST", body=_json_body(payload),
+        exec_lines=create_script, order=order,
+    )
 
 
-def build_show_request(mod: dict) -> dict:
-    route = mod["route"]
-    param = mod["param"]
+def build_show_request(mod: dict, order: int = 3000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
-    var_name = param_to_var_name(param) + "_id"
-    raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}"
-    query_params = None
+    var_name = param_to_var_name(mod["param"]) + "_id"
+    url = f"{{{{{host_var}}}}}/{mod['route']}/{{{{{var_name}}}}}"
+    qp: list[dict] = []
     if mod["scope"] == "tenant":
-        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string (required)"}]
-    return {
-        "name": f"Get {singular(mod['name'])}",
-        "request": {
-            "method": "GET",
-            "header": STD_HEADERS,
-            "url": make_url(raw_url, [route, f"{{{{{var_name}}}}}"], query_params, host_var),
-            "description": f"Retrieve a single {singular(mod['name']).lower()} by ID.",
-        },
-        "event": [make_event("test", GENERIC_TEST_SCRIPT)],
-        "response": [],
-    }
+        qp.append(_tenant_qp())
+    return _make_request(
+        name=f"Get {singular(mod['name'])}",
+        description=f"Retrieve a single {singular(mod['name']).lower()} by ID.",
+        url=url, method="GET", query_params=qp or None,
+        exec_lines=GENERIC_TEST_SCRIPT, order=order,
+    )
 
 
-def build_update_request(mod: dict) -> dict:
-    route = mod["route"]
-    param = mod["param"]
+def build_update_request(mod: dict, order: int = 4000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
-    var_name = param_to_var_name(param) + "_id"
-    raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}"
-    body = {**mod.get("sample_body", {})}
+    var_name = param_to_var_name(mod["param"]) + "_id"
+    url = f"{{{{{host_var}}}}}/{mod['route']}/{{{{{var_name}}}}}"
+    payload = {**mod.get("sample_body", {})}
     if mod["scope"] == "tenant":
-        body = {"tenant_id": "{{tenant_id}}", **body}
-    return {
-        "name": f"Update {singular(mod['name'])}",
-        "request": {
-            "method": "PUT",
-            "header": STD_HEADERS,
-            "body": make_body(body),
-            "url": make_url(raw_url, [route, f"{{{{{var_name}}}}}"], host_var=host_var),
-            "description": f"Update an existing {singular(mod['name']).lower()}.",
-        },
-        "event": [make_event("test", GENERIC_TEST_SCRIPT)],
-        "response": [],
-    }
+        payload = {"tenant_id": "{{tenant_id}}", **payload}
+    return _make_request(
+        name=f"Update {singular(mod['name'])}",
+        description=f"Update an existing {singular(mod['name']).lower()}.",
+        url=url, method="PUT", body=_json_body(payload),
+        exec_lines=GENERIC_TEST_SCRIPT, order=order,
+    )
 
 
-def build_destroy_request(mod: dict) -> dict:
-    route = mod["route"]
-    param = mod["param"]
+def build_destroy_request(mod: dict, order: int = 5000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
-    var_name = param_to_var_name(param) + "_id"
-    raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}"
-    query_params = None
+    var_name = param_to_var_name(mod["param"]) + "_id"
+    url = f"{{{{{host_var}}}}}/{mod['route']}/{{{{{var_name}}}}}"
+    qp: list[dict] = []
     if mod["scope"] == "tenant":
-        query_params = [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string (required)"}]
-    return {
-        "name": f"Delete {singular(mod['name'])}",
-        "request": {
-            "method": "DELETE",
-            "header": STD_HEADERS,
-            "url": make_url(raw_url, [route, f"{{{{{var_name}}}}}"], query_params, host_var),
-            "description": f"Soft-delete a {singular(mod['name']).lower()}.",
-        },
-        "event": [make_event("test", GENERIC_TEST_SCRIPT)],
-        "response": [],
-    }
+        qp.append(_tenant_qp())
+    return _make_request(
+        name=f"Delete {singular(mod['name'])}",
+        description=f"Soft-delete a {singular(mod['name']).lower()}.",
+        url=url, method="DELETE", query_params=qp or None,
+        exec_lines=GENERIC_TEST_SCRIPT, order=order,
+    )
 
 
-def build_extra_action_request(mod: dict, action: dict) -> dict:
-    route = mod["route"]
-    param = mod["param"]
+def build_extra_action_request(mod: dict, action: dict, order: int = 6000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
-    var_name = param_to_var_name(param) + "_id"
+    var_name = param_to_var_name(mod["param"]) + "_id"
     action_path = action["path"]
     no_id = action.get("no_id", False)
     method = action.get("method", "POST")
 
     if no_id:
-        raw_url = f"{{{{{host_var}}}}}/{route}/{action_path}"
-        path_parts = [route, action_path]
+        url = f"{{{{{host_var}}}}}/{mod['route']}/{action_path}"
     else:
-        raw_url = f"{{{{{host_var}}}}}/{route}/{{{{{var_name}}}}}/{action_path}"
-        path_parts = [route, f"{{{{{var_name}}}}}", action_path]
+        url = f"{{{{{host_var}}}}}/{mod['route']}/{{{{{var_name}}}}}/{action_path}"
 
-    tenant_query: Optional[list[dict]] = (
-        [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string (required)"}]
-        if mod["scope"] == "tenant"
-        else None
+    qp: Optional[list[dict]] = None
+    body: Optional[dict] = None
+
+    if method in ("GET", "DELETE"):
+        raw_qp: list[dict] = []
+        if mod["scope"] == "tenant":
+            raw_qp.append(_tenant_qp())
+        qp = raw_qp or None
+    elif method in ("POST", "PUT", "PATCH"):
+        payload: dict[str, Any] = {}
+        if mod["scope"] == "tenant":
+            payload["tenant_id"] = "{{tenant_id}}"
+        body = _json_body(payload)
+
+    return _make_request(
+        name=action["name"],
+        description=action["name"],
+        url=url, method=method, query_params=qp, body=body,
+        exec_lines=GENERIC_TEST_SCRIPT, order=order,
     )
 
-    request_obj: dict[str, Any] = {
-        "method": method,
-        "header": STD_HEADERS,
-        "url": make_url(
-            raw_url,
-            path_parts,
-            tenant_query if method in ("GET", "DELETE") else None,
-            host_var,
+
+def build_module_requests(mod: dict) -> list[tuple[str, dict]]:
+    """Return ordered list of (filename_stem, request_dict) for a module."""
+    items: list[tuple[str, dict]] = []
+    order = 1000
+
+    if not mod.get("skip_crud", False):
+        items.append(build_index_request(mod, order));   order += 1000
+        items.append(build_store_request(mod, order));   order += 1000
+        items.append(build_show_request(mod, order));    order += 1000
+        items.append(build_update_request(mod, order));  order += 1000
+        items.append(build_destroy_request(mod, order)); order += 1000
+
+    for action in mod.get("extra_actions", []):
+        items.append(build_extra_action_request(mod, action, order))
+        order += 1000
+
+    return items
+
+
+def build_auth_requests() -> list[tuple[str, dict]]:
+    """Build Auth folder requests for the v3 collection."""
+    return [
+        _make_request(
+            name="Login (Central / Super-Admin)",
+            description="Authenticate as a central super-admin user. Returns a Bearer access token.",
+            url="{{base_url}}/v1/auth/login", method="POST",
+            body=_json_body({"email": "{{user_email}}", "password": "{{user_password}}"}),
+            exec_lines=LOGIN_TEST_SCRIPT, order=1000,
         ),
-        "description": action["name"],
-    }
-
-    if method in ("POST", "PUT", "PATCH"):
-        body: dict[str, Any] = {}
-        if mod["scope"] == "tenant":
-            body["tenant_id"] = "{{tenant_id}}"
-        request_obj["body"] = make_body(body)
-
-    return {
-        "name": action["name"],
-        "request": request_obj,
-        "event": [make_event("test", GENERIC_TEST_SCRIPT)],
-        "response": [],
-    }
+        _make_request(
+            name="Login (Tenant User)",
+            description="Authenticate as a tenant user. tenant_id is the tenant UUID identifier.",
+            url="{{tenant_base_url}}/v1/auth/login", method="POST",
+            body=_json_body({"tenant_id": "{{tenant_id}}", "email": "{{user_email}}", "password": "{{user_password}}"}),
+            exec_lines=LOGIN_TEST_SCRIPT, order=2000,
+        ),
+        _make_request(
+            name="Register (Tenant User)",
+            description="Register a new user within a tenant context.",
+            url="{{tenant_base_url}}/v1/auth/register", method="POST",
+            body=_json_body({
+                "tenant_id": "{{tenant_id}}",
+                "first_name": "Jane", "last_name": "Auditor",
+                "email": "jane.auditor@example.test",
+                "password": "Password123!", "password_confirmation": "Password123!",
+            }),
+            exec_lines=GENERIC_TEST_SCRIPT, order=3000,
+        ),
+        _make_request(
+            name="Get Authenticated User",
+            description="Retrieve the currently authenticated user with roles and tenant context.",
+            url="{{tenant_base_url}}/v1/auth/me", method="GET",
+            query_params=[{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID"}],
+            exec_lines=ME_TEST_SCRIPT, order=4000,
+        ),
+        _make_request(
+            name="Logout",
+            description="Revoke the current Bearer access token.",
+            url="{{tenant_base_url}}/v1/auth/logout", method="POST",
+            body=_json_body({"tenant_id": "{{tenant_id}}"}),
+            exec_lines=GENERIC_TEST_SCRIPT, order=5000,
+        ),
+    ]
 
 
 # ---------------------------------------------------------------------------
-# FOLDER BUILDERS
+# V3 COLLECTION WRITER
 # ---------------------------------------------------------------------------
 
 
-def build_auth_folder(base_url: str, tenant_base_url: str) -> dict:
-    return {
-        "name": "Auth",
+def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, collection_id: str) -> None:
+    """Write the full v3 collection as a directory of YAML files."""
+    if output_dir.exists():
+        shutil.rmtree(output_dir)
+
+    # ── Collection root definition ─────────────────────────────────────────
+    _write_yaml(output_dir / ".resources" / "definition.yaml", {
+        "$kind": "collection",
+        "id": collection_id,
+        "name": COLLECTION_NAME,
+        "description": COLLECTION_DESCRIPTION,
+        "variables": {
+            "base_url": base_url,
+            "tenant_base_url": tenant_base_url,
+        },
+        "auth": [{
+            "id": BEARER_AUTH_ID,
+            "type": "bearer",
+            "name": "bearer auth",
+            "credentials": {"token": "{{access_token}}"},
+        }],
+    })
+
+    # ── Central group ──────────────────────────────────────────────────────
+    _write_yaml(output_dir / "Central" / ".resources" / "definition.yaml", {
+        "$kind": "collection",
+        "description": (
+            "Cross-tenant (central database) resources: "
+            "Authentication, IAM, reference data, audit standards, and regulation frameworks. "
+            "Accessible without tenant context \u2014 requires Bearer token only."
+        ),
+        "order": 1000,
+    })
+
+    _write_yaml(output_dir / "Central" / "Auth" / ".resources" / "definition.yaml", {
+        "$kind": "collection",
         "description": (
             "Authentication endpoints. "
             "Central login ({{base_url}}/v1/auth/login) for super-admin users. "
             "Tenant login ({{tenant_base_url}}/v1/auth/login) requires tenant_id in the request body."
         ),
-        "item": [
-            {
-                "name": "Login (Central / Super-Admin)",
-                "request": {
-                    "method": "POST",
-                    "header": STD_HEADERS,
-                    "body": make_body({
-                        "email": "{{user_email}}",
-                        "password": "{{user_password}}",
-                    }),
-                    "url": make_url(
-                        "{{base_url}}/v1/auth/login",
-                        ["v1", "auth", "login"],
-                    ),
-                    "description": "Authenticate as a central super-admin user. Returns a Bearer access token.",
-                },
-                "event": [make_event("test", LOGIN_TEST_SCRIPT)],
-                "response": [],
-            },
-            {
-                "name": "Login (Tenant User)",
-                "request": {
-                    "method": "POST",
-                    "header": STD_HEADERS,
-                    "body": make_body({
-                        "tenant_id": "{{tenant_id}}",
-                        "email": "{{user_email}}",
-                        "password": "{{user_password}}",
-                    }),
-                    "url": make_url(
-                        "{{tenant_base_url}}/v1/auth/login",
-                        ["v1", "auth", "login"],
-                        host_var="tenant_base_url",
-                    ),
-                    "description": "Authenticate as a tenant user. tenant_id is the tenant UUID identifier.",
-                },
-                "event": [make_event("test", LOGIN_TEST_SCRIPT)],
-                "response": [],
-            },
-            {
-                "name": "Register (Tenant User)",
-                "request": {
-                    "method": "POST",
-                    "header": STD_HEADERS,
-                    "body": make_body({
-                        "tenant_id": "{{tenant_id}}",
-                        "first_name": "Jane",
-                        "last_name": "Auditor",
-                        "email": "jane.auditor@example.test",
-                        "password": "Password123!",
-                        "password_confirmation": "Password123!",
-                    }),
-                    "url": make_url(
-                        "{{tenant_base_url}}/v1/auth/register",
-                        ["v1", "auth", "register"],
-                        host_var="tenant_base_url",
-                    ),
-                    "description": "Register a new user within a tenant context.",
-                },
-                "event": [make_event("test", GENERIC_TEST_SCRIPT)],
-                "response": [],
-            },
-            {
-                "name": "Get Authenticated User",
-                "request": {
-                    "method": "GET",
-                    "header": STD_HEADERS,
-                    "url": make_url(
-                        "{{tenant_base_url}}/v1/auth/me",
-                        ["v1", "auth", "me"],
-                        [{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID"}],
-                        "tenant_base_url",
-                    ),
-                    "description": "Retrieve the currently authenticated user with roles and tenant context.",
-                },
-                "event": [make_event("test", ME_TEST_SCRIPT)],
-                "response": [],
-            },
-            {
-                "name": "Logout",
-                "request": {
-                    "method": "POST",
-                    "header": STD_HEADERS,
-                    "body": make_body({"tenant_id": "{{tenant_id}}"}),
-                    "url": make_url(
-                        "{{tenant_base_url}}/v1/auth/logout",
-                        ["v1", "auth", "logout"],
-                        host_var="tenant_base_url",
-                    ),
-                    "description": "Revoke the current Bearer access token.",
-                },
-                "event": [make_event("test", GENERIC_TEST_SCRIPT)],
-                "response": [],
-            },
-        ],
-    }
-def build_module_folder(mod: dict) -> dict:
-    items: list[dict] = []
+        "order": 1000,
+    })
+    for stem, req in build_auth_requests():
+        _write_yaml(output_dir / "Central" / "Auth" / f"{stem}.request.yaml", req)
 
-    if not mod.get("skip_crud", False):
-        items.append(build_index_request(mod))
-        items.append(build_store_request(mod))
-        items.append(build_show_request(mod))
-        items.append(build_update_request(mod))
-        items.append(build_destroy_request(mod))
+    central_mods = [m for m in MODULES if m["scope"] == "central"]
+    for idx, mod in enumerate(central_mods):
+        folder_order = (idx + 2) * 1000  # Auth is 1000; modules start at 2000
+        _write_yaml(output_dir / "Central" / mod["name"] / ".resources" / "definition.yaml", {
+            "$kind": "collection",
+            "description": mod.get("description", ""),
+            "order": folder_order,
+        })
+        for stem, req in build_module_requests(mod):
+            _write_yaml(output_dir / "Central" / mod["name"] / f"{stem}.request.yaml", req)
 
-    for action in mod.get("extra_actions", []):
-        items.append(build_extra_action_request(mod, action))
-
-    return {
-        "name": mod["name"],
-        "description": mod.get("description", ""),
-        "item": items,
-    }
-
-
-# ---------------------------------------------------------------------------
-# COLLECTION BUILDER
-# ---------------------------------------------------------------------------
-
-
-def build_collection(base_url: str, tenant_base_url: str, collection_id: str) -> dict:
-    central_folders: list[dict] = []
-    tenant_folders: list[dict] = []
-
-    for mod in MODULES:
-        folder = build_module_folder(mod)
-        if mod["scope"] == "central":
-            central_folders.append(folder)
-        else:
-            tenant_folders.append(folder)
-
-    central_group = {
-        "name": "Central",
-        "description": (
-            "Cross-tenant (central database) resources: "
-            "Authentication, IAM, reference data, audit standards, and regulation frameworks. "
-            "Accessible without tenant context — requires Bearer token only."
-        ),
-        # Auth folder is the first item under Central
-        "item": [build_auth_folder(base_url, tenant_base_url)] + central_folders,
-    }
-
-    tenant_group = {
-        "name": "Tenant",
+    # ── Tenant group ───────────────────────────────────────────────────────
+    _write_yaml(output_dir / "Tenant" / ".resources" / "definition.yaml", {
+        "$kind": "collection",
         "description": (
             "Tenant-scoped resources isolated per organisation database. "
             "Pass tenant_id (identifier string, e.g. AT.1.1748000000) in request body (POST/PUT/PATCH) "
             "or query string (GET/DELETE). "
             "Covers audit engagements, findings, risk, compliance, controls, and reports."
         ),
-        "item": tenant_folders,
-    }
+        "order": 2000,
+    })
 
-    return {
-        "info": {
-            "_postman_id": collection_id,
-            "name": COLLECTION_NAME,
-            "description": COLLECTION_DESCRIPTION,
-            "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-        },
-        "auth": {
-            "type": "bearer",
-            "bearer": [{"key": "token", "value": "{{access_token}}", "type": "string"}],
-        },
-        "item": [central_group, tenant_group],
-        "variable": [
-            {"key": "base_url",        "value": base_url,        "type": "string"},
-            {"key": "tenant_base_url", "value": tenant_base_url, "type": "string"},
-        ],
-    }
+    tenant_mods = [m for m in MODULES if m["scope"] == "tenant"]
+    for idx, mod in enumerate(tenant_mods):
+        _write_yaml(output_dir / "Tenant" / mod["name"] / ".resources" / "definition.yaml", {
+            "$kind": "collection",
+            "description": mod.get("description", ""),
+            "order": (idx + 1) * 1000,
+        })
+        for stem, req in build_module_requests(mod):
+            _write_yaml(output_dir / "Tenant" / mod["name"] / f"{stem}.request.yaml", req)
 
 
 # ---------------------------------------------------------------------------
@@ -1261,73 +1236,60 @@ def build_env_file(env: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# JQ SUMMARY (optional — requires `pip3 install jq`)
+# SUMMARY
 # ---------------------------------------------------------------------------
 
 
-def jq_summary(collection_path: Path) -> None:
-    try:
-        import jq as jq_lib
-    except ImportError:
-        print("\n  Tip: `pip3 install jq` for a post-generation folder/request summary.\n")
+def print_summary(output_dir: Path) -> None:
+    """Print a folder/request count summary by walking the v3 directory."""
+    if not output_dir.exists():
         return
 
-    data = json.loads(collection_path.read_text())
-
-    # Count total sub-folders and total requests.
-    # Structure: Central (sub-folders including Auth), Tenant (sub-folders).
-    total_subfolders = 0
-    total_requests = 0
-    display_rows: list[tuple[str, int]] = []
-
-    for group in data.get("item", []):
-        group_name: str = group.get("name", "")
-        group_items: list[dict] = group.get("item", [])
-
-        display_rows.append((f"── {group_name} ──", -1))
-        for subfolder in group_items:
-            subfolder_items: list[dict] = subfolder.get("item", [])
-            # Sub-folder may contain direct requests (Auth) or nested sub-folders
-            if subfolder_items and "item" in subfolder_items[0]:
-                # Nested group (shouldn't happen in this schema but handle gracefully)
-                req_count = sum(len(s.get("item", [])) for s in subfolder_items)
-            else:
-                req_count = len(subfolder_items)
-            total_subfolders += 1
-            total_requests += req_count
-            display_rows.append((f"  {subfolder['name']}", req_count))
-
     line = "\u2500" * 60
+    display_rows: list[tuple[str, int]] = []
+    total_folders = 0
+    total_requests = 0
+
+    for group_dir in sorted(output_dir.iterdir()):
+        if not group_dir.is_dir() or group_dir.name.startswith("."):
+            continue
+        display_rows.append((f"\u2500\u2500 {group_dir.name} \u2500\u2500", -1))
+        for folder_dir in sorted(group_dir.iterdir()):
+            if not folder_dir.is_dir() or folder_dir.name.startswith("."):
+                continue
+            req_count = sum(1 for f in folder_dir.iterdir() if f.name.endswith(".request.yaml"))
+            total_folders += 1
+            total_requests += req_count
+            display_rows.append((f"  {folder_dir.name}", req_count))
+
     print(f"\n{line}")
-    print(f"  Collection  : {COLLECTION_NAME}")
-    print(f"  Sub-Folders : {total_subfolders}")
+    print(f"  Collection  : {COLLECTION_NAME}  (v3)")
+    print(f"  Folders     : {total_folders}")
     print(f"  Requests    : {total_requests}")
     print(f"{line}")
 
-    for name, count in display_rows:
+    for label, count in display_rows:
         if count == -1:
-            # Section header
-            print(f"\n  {name}")
+            print(f"\n  {label}")
         else:
-            print(f"  {name:<30}{count:>3}")
+            print(f"  {label:<32}{count:>3}")
 
     print(f"{line}\n")
 
 
-def jq_extract_folder(collection_path: Path, folder_name: str) -> None:
-    try:
-        import jq as jq_lib
-    except ImportError:
-        print("jq not installed. Run: pip3 install jq")
-        return
-
-    data = json.loads(collection_path.read_text())
-    query = f'.item[] | select(.name == "{folder_name}")'
-    result = jq_lib.first(query, data)
-    if result is None:
-        print(f"Folder not found: {folder_name}")
-        return
-    print(json.dumps(result, indent=2))
+def extract_folder_files(output_dir: Path, folder_name: str) -> None:
+    """Print all request YAML files in a named folder."""
+    for group_dir in output_dir.iterdir():
+        if not group_dir.is_dir():
+            continue
+        folder_dir = group_dir / folder_name
+        if folder_dir.exists():
+            for req_file in sorted(folder_dir.iterdir()):
+                if req_file.name.endswith(".request.yaml"):
+                    print(f"\n=== {req_file.name} ===")
+                    print(req_file.read_text())
+            return
+    print(f"Folder not found: {folder_name}")
 
 
 # ---------------------------------------------------------------------------
@@ -1336,17 +1298,11 @@ def jq_extract_folder(collection_path: Path, folder_name: str) -> None:
 
 
 def resolve_output_paths(args: argparse.Namespace) -> tuple[Path, list[dict]]:
-    """
-    Resolve the collection output path and environment file paths.
-    When run from the MatterMiner repo scaffold context, prepend docs/prompts/aias/.
-    """
+    """Resolve collection output directory and environment file paths."""
     script_dir = Path(__file__).resolve().parent
-    # .github/skills/update-postman/scripts/generate.py
-    # → project root is 4 levels up when inside AIAS project
-    # → when inside MatterMiner scaffold: docs/prompts/aias is the AIAS project root
-    aias_root = script_dir.parent.parent.parent.parent  # up from scripts/
+    # .github/skills/update-postman/scripts/generate.py → project root is 4 levels up
+    aias_root = script_dir.parent.parent.parent.parent
 
-    # Detect scaffold context: if the parent of aias_root contains PROMPT.md
     collection_out = Path(args.output)
     if not collection_out.is_absolute():
         collection_out = aias_root / collection_out
@@ -1363,7 +1319,7 @@ def resolve_output_paths(args: argparse.Namespace) -> tuple[Path, list[dict]]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Generate AIAS Postman collection and environment files."
+        description="Generate AIAS Postman v3 collection (YAML directory) and environment files."
     )
     parser.add_argument(
         "--base-url",
@@ -1378,7 +1334,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         default=DEFAULT_OUTPUT,
-        help=f"Collection output path (default: {DEFAULT_OUTPUT})",
+        help=f"Collection output directory (default: {DEFAULT_OUTPUT})",
     )
     parser.add_argument(
         "--collection-id",
@@ -1388,7 +1344,7 @@ def main() -> None:
     parser.add_argument(
         "--extract-folder",
         metavar="FOLDER_NAME",
-        help="Print a single folder's JSON after generation (requires jq)",
+        help="Print request YAML files for a named folder after generation",
     )
     parser.add_argument(
         "--env-only",
@@ -1401,13 +1357,9 @@ def main() -> None:
     collection_out, resolved_envs = resolve_output_paths(args)
 
     if not args.env_only:
-        # Generate collection
-        collection_out.parent.mkdir(parents=True, exist_ok=True)
-        collection = build_collection(args.base_url, args.tenant_base_url, args.collection_id)
-        collection_out.write_text(json.dumps(collection, indent=2))
-        print(f"Collection written \u2192 {collection_out}")
+        write_v3_collection(collection_out, args.base_url, args.tenant_base_url, args.collection_id)
+        print(f"Collection written \u2192 {collection_out}  (v3 YAML)")
 
-    # Generate environment files
     env_filter_map = {
         "local": "Local",
         "dev": "Development",
@@ -1427,11 +1379,12 @@ def main() -> None:
         print(f"Environment written \u2192 {env_path}")
 
     if not args.env_only:
-        jq_summary(collection_out)
+        print_summary(collection_out)
 
         if args.extract_folder:
-            jq_extract_folder(collection_out, args.extract_folder)
+            extract_folder_files(collection_out, args.extract_folder)
 
 
 if __name__ == "__main__":
     main()
+
