@@ -1,0 +1,5 @@
+$kind: collection
+description: "Cross-tenant (central database) resources: Authentication, IAM,
+  reference data, audit standards, and regulation frameworks. Accessible without
+  tenant context — requires Bearer token only."
+order: 1000

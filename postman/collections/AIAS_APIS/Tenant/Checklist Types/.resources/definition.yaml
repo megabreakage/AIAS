@@ -1,0 +1,3 @@
+$kind: collection
+description: Manage checklist type definitions used across audit engagements.
+order: 4000

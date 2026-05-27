@@ -1,0 +1,31 @@
+$kind: http-request
+description: Retrieve the currently authenticated user with roles and tenant context.
+url: "{{tenant_base_url}}/v1/auth/me"
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+queryParams:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    description: Tenant UUID
+scripts:
+  - type: afterResponse
+    code: >-
+      if (pm.response.code === 200) {
+          const json = pm.response.json();
+          if (json.data) {
+              pm.environment.set('user_id', json.data.id);
+              pm.environment.set('user_name', (json.data.first_name + ' ' + json.data.last_name).trim());
+              if (json.data.tenant_id) {
+                  pm.environment.set('tenant_id', json.data.tenant_id);
+              }
+              console.log('User context saved:', json.data.email);
+          }
+      }
+
+      pm.test('Me endpoint successful', () => {
+          pm.response.to.have.status(200);
+      });
+    language: text/javascript
+order: 4000

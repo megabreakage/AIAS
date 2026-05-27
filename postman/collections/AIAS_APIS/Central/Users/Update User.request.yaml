@@ -1,0 +1,29 @@
+$kind: http-request
+description: Update an existing user.
+url: "{{base_url}}/users/{{user_id}}"
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "first_name": "Jane",
+      "last_name": "Auditor",
+      "email": "jane.auditor@pinnacleaudit.test",
+      "password": "Password123!",
+      "password_confirmation": "Password123!",
+      "role": "auditor",
+      "status": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Response is JSON', () => { pm.response.to.be.json; });
+      pm.test('Status is success', () => {
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('status', 'success');
+      });
+    language: text/javascript
+order: 4000

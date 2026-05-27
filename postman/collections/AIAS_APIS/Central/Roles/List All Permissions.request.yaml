@@ -1,0 +1,17 @@
+$kind: http-request
+description: List All Permissions
+url: "{{base_url}}/roles/permissions"
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Response is JSON', () => { pm.response.to.be.json; });
+      pm.test('Status is success', () => {
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('status', 'success');
+      });
+    language: text/javascript
+order: 6000

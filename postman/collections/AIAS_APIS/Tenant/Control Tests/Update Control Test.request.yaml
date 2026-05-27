@@ -1,0 +1,29 @@
+$kind: http-request
+description: Update an existing control test.
+url: "{{tenant_base_url}}/control-tests/{{control_test_id}}"
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: >-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "control_objective_id": "{{control_objective_id}}",
+      "title": "Test revenue authorisation approvals",
+      "description": "Select a sample of 30 revenue transactions and verify authorisation signatures",
+      "test_type": "reperformance",
+      "sample_size": 30,
+      "assigned_to": "{{user_id}}"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Response is JSON', () => { pm.response.to.be.json; });
+      pm.test('Status is success', () => {
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('status', 'success');
+      });
+    language: text/javascript
+order: 4000
