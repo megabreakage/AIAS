@@ -1,0 +1,6 @@
+$kind: collection
+description: Tenant-scoped resources isolated per organisation database. Pass tenant_id
+  (identifier string, e.g. AT.1.1748000000) in request body (POST/PUT/PATCH) or query
+  string (GET/DELETE). Covers audit engagements, findings, risk, compliance, controls,
+  and reports.
+order: 2000

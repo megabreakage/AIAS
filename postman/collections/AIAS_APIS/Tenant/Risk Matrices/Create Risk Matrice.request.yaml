@@ -1,0 +1,38 @@
+$kind: http-request
+name: Create Risk Matrice
+description: Create a new risk matrice.
+url: '{{tenant_base_url}}/risk-matrices'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "name": "FY2025 Risk Matrix",
+      "likelihood_scale": 5,
+      "impact_scale": 5
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Status code is 201', () => { pm.response.to.have.status(201); });
+    pm.test('Response envelope valid', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status');
+        pm.expect(j).to.have.property('data');
+    });
+    if (pm.response.code === 201) {
+        const j = pm.response.json();
+        // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+        const resourceId = j.data && (j.data.identifier || j.data.id);
+        if (resourceId) {
+            pm.environment.set('risk_matrix_id', String(resourceId));
+            console.log('Saved risk_matrix_id:', resourceId);
+        }
+    }
+  language: text/javascript
+order: 2000

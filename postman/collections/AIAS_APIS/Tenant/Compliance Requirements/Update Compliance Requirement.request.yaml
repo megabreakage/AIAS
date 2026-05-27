@@ -1,0 +1,30 @@
+$kind: http-request
+name: Update Compliance Requirement
+description: Update an existing compliance requirement.
+url: '{{tenant_base_url}}/compliance-requirements/{{compliance_requirement_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "regulation_framework_id": "{{regulation_framework_id}}",
+      "title": "Section 302 CEO/CFO Certification",
+      "description": "Chief executives must certify accuracy of financial reports",
+      "compliance_type": "mandatory",
+      "due_date": "2026-03-31"
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

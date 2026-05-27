@@ -1,0 +1,28 @@
+$kind: http-request
+name: Update Audit Template
+description: Update an existing audit template.
+url: '{{tenant_base_url}}/audit-templates/{{audit_template_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Financial Statement Audit Template",
+      "audit_standard_id": "{{audit_standard_id}}",
+      "description": "Standard template for financial statement audits",
+      "status": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

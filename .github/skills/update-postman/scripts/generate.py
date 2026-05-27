@@ -332,6 +332,23 @@ MODULES: list[dict[str, Any]] = [
         ],
     },
     {
+        "name": "Section Styles",
+        "route": "section-styles",
+        "param": "sectionStyle",
+        "scope": "tenant",
+        "description": "Manage section style definitions that control layout and presentation of checklist sections.",
+        "sample_body": {
+            "name": "Two Column Layout",
+            "description": "A two-column layout for side-by-side checklist items.",
+            "columns": 2,
+            "is_active": True,
+            "is_featured": False,
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore Section Style"},
+        ],
+    },
+    {
         "name": "Clients",
         "route": "clients",
         "param": "client",
@@ -732,6 +749,7 @@ RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
     ("preamble_id",                 "", "Preamble identifier string"),
     ("client_id",                   "", "Client identifier string"),
     ("checklist_type_id",            "", "Checklist Type identifier string"),
+    ("section_style_id",             "", "Section Style identifier string"),
     # --- Audit Templates ---
     ("audit_template_id",           "", "Audit Template identifier string"),
     # --- Core Audit ---

@@ -1,0 +1,30 @@
+$kind: http-request
+name: Update Control Objective
+description: Update an existing control objective.
+url: '{{tenant_base_url}}/control-objectives/{{control_objective_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "title": "Revenue Authorisation Control",
+      "description": "All revenue transactions must be authorised by a designated authority",
+      "control_type": "preventive",
+      "risk_category_id": "{{risk_category_id}}",
+      "status": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

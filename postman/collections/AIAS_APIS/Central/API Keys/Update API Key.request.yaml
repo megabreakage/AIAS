@@ -1,0 +1,26 @@
+$kind: http-request
+name: Update API Key
+description: Update an existing api key.
+url: '{{base_url}}/api-keys/{{id_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "service_user_id": "{{service_user_id}}",
+      "name": "Production Key",
+      "expires_at": "2027-12-31"
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

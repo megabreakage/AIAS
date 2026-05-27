@@ -1,0 +1,28 @@
+$kind: http-request
+name: Update Regulation Framework
+description: Update an existing regulation framework.
+url: '{{base_url}}/regulation-frameworks/{{regulation_framework_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "SOX",
+      "code": "SOX",
+      "description": "Sarbanes-Oxley Act \u2014 US public company accounting reform",
+      "jurisdiction": "United States",
+      "status": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

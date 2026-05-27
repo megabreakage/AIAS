@@ -1,0 +1,30 @@
+$kind: http-request
+name: Update Audit Procedure
+description: Update an existing audit procedure.
+url: '{{tenant_base_url}}/audit-procedures/{{audit_procedure_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_plan_id": "{{audit_plan_id}}",
+      "title": "Agree revenue per ledger to source documents",
+      "description": "Obtain the revenue ledger and agree totals to the trial balance",
+      "procedure_type": "substantive",
+      "assigned_to": "{{user_id}}",
+      "due_date": "2026-01-25"
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

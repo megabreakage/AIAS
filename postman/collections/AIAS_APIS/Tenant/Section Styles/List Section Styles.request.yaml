@@ -1,0 +1,41 @@
+$kind: http-request
+name: List Section Styles
+description: Retrieve paginated list of section styles.
+url: '{{tenant_base_url}}/section-styles'
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+queryParams:
+- key: tenant_id
+  value: '{{tenant_id}}'
+  description: Tenant identifier string (required)
+- key: page
+  value: '1'
+  description: 'Page number (min: 1)'
+- key: per_page
+  value: '15'
+  description: 'Items per page (max: 100)'
+- key: search
+  value: ''
+  description: Full-text search term
+- key: sort_by
+  value: created_at
+  description: Sort column
+- key: sort_order
+  value: desc
+  description: asc | desc
+- key: show_deleted
+  value: '0'
+  description: 'Include soft-deleted: 0|1'
+  disabled: true
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 1000

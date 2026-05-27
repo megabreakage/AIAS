@@ -1,0 +1,18 @@
+$kind: collection
+id: aias-a1b2c3d4-e5f6-7890-abcd-ef1234567890
+name: AIAS API
+description: 'REST API collection for AIAS — Adaptive Intelligent Audit System. A
+  multi-tenant Laravel 13 platform for audit engagements, compliance tracking, risk
+  assessments, and audit workflows. Built with Passport OAuth2 and Stancl Tenancy
+  v3. Tenant identification: pass `tenant_id` (identifier string, e.g. AT.1.1748000000)
+  in request body (POST/PUT/PATCH) or as a query parameter (GET/DELETE). Tenant routes
+  use {{tenant_base_url}} (no /api prefix).'
+variables:
+  base_url: http://localhost:8020/api
+  tenant_base_url: http://localhost:8020
+auth:
+- id: cba390d9-dacd-4cef-8639-728436a27ea3
+  type: bearer
+  name: bearer auth
+  credentials:
+    token: '{{access_token}}'

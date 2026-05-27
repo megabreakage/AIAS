@@ -14,13 +14,27 @@ use App\Repositories\Tenant\SectionStyleRepository;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
-use Tests\Traits\RefreshDatabaseWithTenancy;
 
-uses(RefreshDatabaseWithTenancy::class);
+/**
+ * Ensure the section_styles table exists in the central testing database.
+ * Required for Rule::unique validation queries in form requests.
+ */
+function ensureSectionStylesTable(): void
+{
+    if (!Schema::hasTable('section_styles')) {
+        Artisan::call('migrate', [
+            '--path' => 'database/migrations/tenant/2026_05_27_000002_create_section_styles_table.php',
+            '--realpath' => false,
+            '--force' => true,
+        ]);
+    }
+}
 
 // ---------------------------------------------------------------------------
 // Route registration
@@ -346,6 +360,8 @@ describe('SectionStyle routes unauthenticated', function (): void {
 
 describe('SectionStyle routes permission enforcement', function (): void {
     beforeEach(function (): void {
+        ensureSectionStylesTable();
+
         $this->withoutMiddleware([
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,
@@ -381,6 +397,8 @@ describe('SectionStyle routes permission enforcement', function (): void {
 
 describe('SectionStyle routes with permission granted', function (): void {
     beforeEach(function (): void {
+        ensureSectionStylesTable();
+
         $this->withoutMiddleware([
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,
@@ -549,6 +567,8 @@ describe('SectionStyle routes with permission granted', function (): void {
 
 describe('SectionStyle store validation', function (): void {
     beforeEach(function (): void {
+        ensureSectionStylesTable();
+
         $this->withoutMiddleware([
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,
@@ -680,6 +700,8 @@ describe('SectionStyle store validation', function (): void {
 
 describe('SectionStyle update validation', function (): void {
     beforeEach(function (): void {
+        ensureSectionStylesTable();
+
         $this->withoutMiddleware([
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,

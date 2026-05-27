@@ -1,0 +1,29 @@
+$kind: http-request
+name: Update Section Style
+description: Update an existing section style.
+url: '{{tenant_base_url}}/section-styles/{{section_style_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Two Column Layout",
+      "description": "A two-column layout for side-by-side checklist items.",
+      "columns": 2,
+      "is_active": true,
+      "is_featured": false
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

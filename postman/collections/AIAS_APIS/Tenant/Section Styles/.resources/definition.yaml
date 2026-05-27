@@ -1,0 +1,4 @@
+$kind: collection
+description: Manage section style definitions that control layout and presentation
+  of checklist sections.
+order: 5000

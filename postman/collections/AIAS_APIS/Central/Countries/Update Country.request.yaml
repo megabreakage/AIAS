@@ -1,0 +1,29 @@
+$kind: http-request
+name: Update Country
+description: Update an existing country.
+url: '{{base_url}}/countries/{{country_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Kenya",
+      "code": "KE",
+      "continent_id": "{{continent_id}}",
+      "currency": "KES",
+      "currency_sign": "KSh",
+      "status": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000
