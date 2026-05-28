@@ -115,6 +115,12 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    public function ownerRoles(): array
+    {
+        return $this->owner?->roles()->pluck('name')
+            ->toArray() ?? [];
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
