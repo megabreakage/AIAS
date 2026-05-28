@@ -182,3 +182,7 @@ values:
       type: text/plain
   - key: user_name
     value: ''
+  - key: tenant_email
+    value: ''
+  - key: tenant_password
+    value: ''

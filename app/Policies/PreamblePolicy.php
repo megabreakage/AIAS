@@ -23,35 +23,35 @@ final class PreamblePolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('preamble.view');
+        return $user->hasPermissionTo('preambles.view');
     }
 
     public function view(User $user, Preamble $preamble): bool
     {
-        return $user->hasPermissionTo('preamble.view')
+        return $user->hasPermissionTo('preambles.view')
             && $user->tenant_id === $preamble->tenant_id;
     }
 
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('preamble.create');
+        return $user->hasPermissionTo('preambles.create');
     }
 
     public function update(User $user, Preamble $preamble): bool
     {
-        return $user->hasPermissionTo('preamble.update')
+        return $user->hasPermissionTo('preambles.update')
             && $user->tenant_id === $preamble->tenant_id;
     }
 
     public function delete(User $user, Preamble $preamble): bool
     {
-        return $user->hasPermissionTo('preamble.delete')
+        return $user->hasPermissionTo('preambles.delete')
             && $user->tenant_id === $preamble->tenant_id;
     }
 
     public function restore(User $user, Preamble $preamble): bool
     {
-        return $user->hasPermissionTo('preamble.restore')
+        return $user->hasPermissionTo('preambles.restore')
             && $user->tenant_id === $preamble->tenant_id;
     }
 }

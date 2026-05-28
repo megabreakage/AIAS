@@ -173,6 +173,8 @@ return [
 
         'audits' => ['view', 'create', 'update', 'delete', 'restore'],
 
+        'preambles' => ['view', 'create', 'update', 'delete', 'restore'],
+
     ],
 
 ];
