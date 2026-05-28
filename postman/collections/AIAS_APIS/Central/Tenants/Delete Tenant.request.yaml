@@ -1,7 +1,8 @@
 $kind: http-request
 name: Delete Tenant
-description: Soft-delete a tenant.
-url: '{{base_url}}/tenants/{{id_id}}'
+description: Soft-delete a tenant record. The record is not permanently removed. Restore
+  it with the corresponding `POST /tenants/{{tenant_id}}/restore` request.
+url: '{{base_url}}/v1/tenants/{{tenant_id}}'
 method: DELETE
 headers:
   Accept: application/json

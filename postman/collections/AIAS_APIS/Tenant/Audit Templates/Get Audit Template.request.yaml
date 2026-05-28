@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Audit Template
-description: Retrieve a single audit template by ID.
-url: '{{tenant_base_url}}/audit-templates/{{audit_template_id}}'
+description: 'Retrieve a single audit template by its `identifier` string.
+
+
+  Replace `{{audit_template_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/audit-templates/{{audit_template_id}}'
 method: GET
 headers:
   Accept: application/json

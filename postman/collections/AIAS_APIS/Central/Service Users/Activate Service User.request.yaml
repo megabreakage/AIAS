@@ -1,7 +1,7 @@
 $kind: http-request
 name: Activate Service User
 description: Activate Service User
-url: '{{base_url}}/service-users/{{id_id}}/activate'
+url: '{{base_url}}/v1/service-users/{{id_id}}/activate'
 method: POST
 headers:
   Accept: application/json

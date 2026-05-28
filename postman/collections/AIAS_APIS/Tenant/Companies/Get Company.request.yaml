@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Company
-description: Retrieve a single company by ID.
-url: '{{tenant_base_url}}/companies/{{company_id}}'
+description: 'Retrieve a single company by its `identifier` string.
+
+
+  Replace `{{company_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/companies/{{company_id}}'
 method: GET
 headers:
   Accept: application/json

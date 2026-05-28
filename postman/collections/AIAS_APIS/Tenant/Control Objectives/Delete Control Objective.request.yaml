@@ -1,7 +1,9 @@
 $kind: http-request
 name: Delete Control Objective
-description: Soft-delete a control objective.
-url: '{{tenant_base_url}}/control-objectives/{{control_objective_id}}'
+description: Soft-delete a control objective record. The record is not permanently
+  removed. Restore it with the corresponding `POST /control-objectives/{{control_objective_id}}/restore`
+  request.
+url: '{{tenant_base_url}}/v1/control-objectives/{{control_objective_id}}'
 method: DELETE
 headers:
   Accept: application/json

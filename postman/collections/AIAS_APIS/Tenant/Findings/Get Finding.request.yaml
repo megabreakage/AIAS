@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Finding
-description: Retrieve a single finding by ID.
-url: '{{tenant_base_url}}/findings/{{finding_id}}'
+description: 'Retrieve a single finding by its `identifier` string.
+
+
+  Replace `{{finding_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/findings/{{finding_id}}'
 method: GET
 headers:
   Accept: application/json

@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Audit
-description: Restore Audit
-url: '{{tenant_base_url}}/audits/{{audit_id}}/restore'
+description: Restore a soft-deleted audit record.
+url: '{{tenant_base_url}}/v1/audits/{{audit_id}}/restore'
 method: POST
 headers:
   Accept: application/json

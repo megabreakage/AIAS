@@ -1,7 +1,8 @@
 $kind: http-request
 name: Delete Report
-description: Soft-delete a report.
-url: '{{tenant_base_url}}/reports/{{report_id}}'
+description: Soft-delete a report record. The record is not permanently removed. Restore
+  it with the corresponding `POST /reports/{{report_id}}/restore` request.
+url: '{{tenant_base_url}}/v1/reports/{{report_id}}'
 method: DELETE
 headers:
   Accept: application/json

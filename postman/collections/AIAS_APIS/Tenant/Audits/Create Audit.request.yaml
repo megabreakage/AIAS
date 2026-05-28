@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Audit
-description: Create a new audit.
-url: '{{tenant_base_url}}/audits'
+description: 'Create a new audit record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{audit_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/audits'
 method: POST
 headers:
   Accept: application/json
@@ -16,7 +20,6 @@ body:
       "audit_end_date": "2026-07-31 17:00:00",
       "scope": "internal",
       "checklist_id": null,
-      "task_type_id": null,
       "department_id": "{{department_id}}",
       "lead_auditor_id": null,
       "quality_manager_id": null,

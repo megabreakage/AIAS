@@ -1,7 +1,9 @@
 $kind: http-request
 name: Delete Audit Engagement
-description: Soft-delete a audit engagement.
-url: '{{tenant_base_url}}/audit-engagements/{{audit_engagement_id}}'
+description: Soft-delete a audit engagement record. The record is not permanently
+  removed. Restore it with the corresponding `POST /audit-engagements/{{audit_engagement_id}}/restore`
+  request.
+url: '{{tenant_base_url}}/v1/audit-engagements/{{audit_engagement_id}}'
 method: DELETE
 headers:
   Accept: application/json

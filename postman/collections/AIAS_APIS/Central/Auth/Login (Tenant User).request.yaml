@@ -1,6 +1,11 @@
 $kind: http-request
 name: Login (Tenant User)
-description: Authenticate as a tenant user. tenant_id is the tenant UUID identifier.
+description: 'Authenticate as a tenant-scoped user.
+
+
+  `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`). Returns a
+  Bearer `access_token` saved automatically to `{{access_token}}`. After login, all
+  tenant-scoped requests use `{{tenant_id}}` from the environment.'
 url: '{{tenant_base_url}}/v1/auth/login'
 method: POST
 headers:
@@ -30,9 +35,15 @@ scripts:
             console.log('Token saved:', j.data.token.substring(0, 20) + '...');
         }
         if (j.data && j.data.user) {
-            pm.environment.set('user_id', j.data.user.id);
-            console.log('User ID saved:', j.data.user.id);
+            // Resources use 'identifier' string, not numeric 'id'
+            const userId = j.data.user.identifier || j.data.user.id;
+            pm.environment.set('user_id', String(userId));
+            console.log('User ID saved:', userId);
+            if (j.data.user.tenant_id) {
+                pm.environment.set('tenant_id', j.data.user.tenant_id);
+                console.log('Tenant ID saved:', j.data.user.tenant_id);
+            }
         }
     }
   language: text/javascript
-order: 2000
+order: 3000

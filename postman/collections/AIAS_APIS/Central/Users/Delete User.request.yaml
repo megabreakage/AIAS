@@ -1,7 +1,8 @@
 $kind: http-request
 name: Delete User
-description: Soft-delete a user.
-url: '{{base_url}}/users/{{user_id}}'
+description: Soft-delete a user record. The record is not permanently removed. Restore
+  it with the corresponding `POST /users/{{user_id}}/restore` request.
+url: '{{base_url}}/v1/users/{{user_id}}'
 method: DELETE
 headers:
   Accept: application/json

@@ -1,0 +1,34 @@
+$kind: http-request
+name: Get Authenticated User (Central)
+description: 'Retrieve the currently authenticated central/super-admin user.
+
+
+  No `tenant_id` required. Returns user profile with roles. The test script saves
+  `user_id` (identifier string) to the active environment.'
+url: '{{base_url}}/v1/auth/me'
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Me endpoint successful', () => {
+        pm.response.to.have.status(200);
+    });
+    if (pm.response.code === 200) {
+        const json = pm.response.json();
+        if (json.data) {
+            // Resources use 'identifier' string, not numeric 'id'
+            const userId = json.data.identifier || json.data.id;
+            pm.environment.set('user_id', String(userId));
+            const userName = (json.data.first_name + ' ' + (json.data.last_name || '')).trim();
+            pm.environment.set('user_name', userName);
+            if (json.data.tenant_id) {
+                pm.environment.set('tenant_id', json.data.tenant_id);
+            }
+            console.log('User context saved:', json.data.email, '| tenant:', json.data.tenant_id);
+        }
+    }
+  language: text/javascript
+order: 6000

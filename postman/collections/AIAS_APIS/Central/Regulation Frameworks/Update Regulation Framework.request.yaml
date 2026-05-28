@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Regulation Framework
-description: Update an existing regulation framework.
-url: '{{base_url}}/regulation-frameworks/{{regulation_framework_id}}'
+description: 'Update an existing regulation framework record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{regulation_framework_id}}` with the identifier of the record to update.'
+url: '{{base_url}}/v1/regulation-frameworks/{{regulation_framework_id}}'
 method: PUT
 headers:
   Accept: application/json

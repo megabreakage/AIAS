@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Country
-description: Create a new country.
-url: '{{base_url}}/countries'
+description: 'Create a new country record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{country_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/countries'
 method: POST
 headers:
   Accept: application/json
@@ -11,10 +15,15 @@ body:
   content: |-
     {
       "name": "Kenya",
-      "code": "KE",
-      "continent_id": "{{continent_id}}",
+      "slug": "kenya",
+      "continent_id": 1,
+      "short_code": "KE",
+      "iso_code": "KE",
       "currency": "KES",
+      "currency_name": "Kenyan Shilling",
       "currency_sign": "KSh",
+      "country_code": "+254",
+      "phone_digits": 9,
       "status": true
     }
 scripts:

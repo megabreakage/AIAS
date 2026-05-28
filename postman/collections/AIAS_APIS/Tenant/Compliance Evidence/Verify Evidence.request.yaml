@@ -1,7 +1,7 @@
 $kind: http-request
 name: Verify Evidence
 description: Verify Evidence
-url: '{{tenant_base_url}}/compliance-evidence/{{compliance_evidence_id}}/verify'
+url: '{{tenant_base_url}}/v1/compliance-evidence/{{compliance_evidence_id}}/verify'
 method: POST
 headers:
   Accept: application/json

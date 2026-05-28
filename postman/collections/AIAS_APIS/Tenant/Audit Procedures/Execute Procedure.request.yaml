@@ -1,7 +1,7 @@
 $kind: http-request
 name: Execute Procedure
 description: Execute Procedure
-url: '{{tenant_base_url}}/audit-procedures/{{audit_procedure_id}}/execute'
+url: '{{tenant_base_url}}/v1/audit-procedures/{{audit_procedure_id}}/execute'
 method: POST
 headers:
   Accept: application/json

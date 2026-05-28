@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Audit Plan
-description: Update an existing audit plan.
-url: '{{tenant_base_url}}/audit-plans/{{audit_plan_id}}'
+description: 'Update an existing audit plan record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{audit_plan_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/audit-plans/{{audit_plan_id}}'
 method: PUT
 headers:
   Accept: application/json

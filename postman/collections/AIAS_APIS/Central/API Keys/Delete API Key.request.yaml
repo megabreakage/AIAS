@@ -1,7 +1,8 @@
 $kind: http-request
 name: Delete API Key
-description: Soft-delete a api key.
-url: '{{base_url}}/api-keys/{{id_id}}'
+description: Soft-delete a api key record. The record is not permanently removed.
+  Restore it with the corresponding `POST /api-keys/{{id_id}}/restore` request.
+url: '{{base_url}}/v1/api-keys/{{id_id}}'
 method: DELETE
 headers:
   Accept: application/json

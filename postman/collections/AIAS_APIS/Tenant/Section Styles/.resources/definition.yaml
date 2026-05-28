@@ -1,4 +1,12 @@
 $kind: collection
-description: Manage section style definitions that control layout and presentation
+description: 'Manage section style definitions that control layout and presentation
   of checklist sections.
-order: 5000
+
+
+  `columns` defines the number of columns in the section layout (e.g. `1`, `2`, `3`).
+  `is_active` controls visibility in section style dropdowns. `is_featured` pins the
+  style to the top of lists.
+
+
+  Soft-deleted section styles can be restored via `POST /section-styles/{identifier}/restore`.'
+order: 3000

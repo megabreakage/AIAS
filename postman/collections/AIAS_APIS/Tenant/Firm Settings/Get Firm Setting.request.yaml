@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Firm Setting
-description: Retrieve a single firm setting by ID.
-url: '{{tenant_base_url}}/firm-settings/{{firm_settings_id}}'
+description: 'Retrieve a single firm setting by its `identifier` string.
+
+
+  Replace `{{firm_settings_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/firm-settings/{{firm_settings_id}}'
 method: GET
 headers:
   Accept: application/json

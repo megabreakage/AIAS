@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Department
-description: Restore Department
-url: '{{tenant_base_url}}/departments/{{department_id}}/restore'
+description: Restore a soft-deleted department record.
+url: '{{tenant_base_url}}/v1/departments/{{department_id}}/restore'
 method: POST
 headers:
   Accept: application/json

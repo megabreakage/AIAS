@@ -1,7 +1,9 @@
 $kind: http-request
 name: Delete Control Test
-description: Soft-delete a control test.
-url: '{{tenant_base_url}}/control-tests/{{control_test_id}}'
+description: Soft-delete a control test record. The record is not permanently removed.
+  Restore it with the corresponding `POST /control-tests/{{control_test_id}}/restore`
+  request.
+url: '{{tenant_base_url}}/v1/control-tests/{{control_test_id}}'
 method: DELETE
 headers:
   Accept: application/json

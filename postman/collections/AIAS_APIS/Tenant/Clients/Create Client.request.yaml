@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Client
-description: Create a new client.
-url: '{{tenant_base_url}}/clients'
+description: 'Create a new client record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{client_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/clients'
 method: POST
 headers:
   Accept: application/json

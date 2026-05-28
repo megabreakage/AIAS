@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Tenant
-description: Update an existing tenant.
-url: '{{base_url}}/tenants/{{id_id}}'
+description: 'Update an existing tenant record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{tenant_id}}` with the identifier of the record to update.'
+url: '{{base_url}}/v1/tenants/{{tenant_id}}'
 method: PUT
 headers:
   Accept: application/json
@@ -11,9 +15,11 @@ body:
   content: |-
     {
       "name": "Pinnacle Audit Partners",
-      "email": "admin@pinnacleaudit.test",
-      "password": "Password123!",
-      "password_confirmation": "Password123!"
+      "owner_id": "{{user_id}}",
+      "domain": "pinnacleaudit.aias.app",
+      "country_id": 1,
+      "data_center": "us-east-1",
+      "status": "active"
     }
 scripts:
 - type: afterResponse

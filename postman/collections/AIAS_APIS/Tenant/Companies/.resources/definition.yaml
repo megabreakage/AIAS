@@ -1,4 +1,13 @@
 $kind: collection
-description: Manage tenant companies with geocoding support, logo upload, and company
-  contacts.
-order: 7000
+description: 'Manage tenant companies — the client organisations being audited.
+
+
+  `level_of_operations` values: `local`, `regional`, `national`, `international`,
+  `multinational`. `company_contacts` is an array of contact assignments; `contact_type`
+  values: `primary`, `secondary`, `billing`, `technical`. `country_id` is an integer
+  FK (numeric ID) to the countries table. `latitude` and `longitude` are decimal geocoding
+  coordinates (optional). `logo` is a URL or storage path to the company logo.
+
+
+  Soft-deleted companies can be restored via `POST /companies/{identifier}/restore`.'
+order: 6000

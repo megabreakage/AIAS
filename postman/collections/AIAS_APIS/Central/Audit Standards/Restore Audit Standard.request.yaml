@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Audit Standard
 description: Restore Audit Standard
-url: '{{base_url}}/audit-standards/{{audit_standard_id}}/restore'
+url: '{{base_url}}/v1/audit-standards/{{audit_standard_id}}/restore'
 method: POST
 headers:
   Accept: application/json

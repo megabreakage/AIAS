@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Risk Matrice
-description: Retrieve a single risk matrice by ID.
-url: '{{tenant_base_url}}/risk-matrices/{{risk_matrix_id}}'
+description: 'Retrieve a single risk matrice by its `identifier` string.
+
+
+  Replace `{{risk_matrix_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/risk-matrices/{{risk_matrix_id}}'
 method: GET
 headers:
   Accept: application/json

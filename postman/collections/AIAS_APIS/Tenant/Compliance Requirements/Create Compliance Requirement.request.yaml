@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Compliance Requirement
-description: Create a new compliance requirement.
-url: '{{tenant_base_url}}/compliance-requirements'
+description: 'Create a new compliance requirement record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{compliance_requirement_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/compliance-requirements'
 method: POST
 headers:
   Accept: application/json

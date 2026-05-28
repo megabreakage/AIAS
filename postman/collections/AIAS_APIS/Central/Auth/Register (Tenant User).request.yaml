@@ -1,6 +1,11 @@
 $kind: http-request
 name: Register (Tenant User)
-description: Register a new user within a tenant context.
+description: 'Register a new user within a tenant context.
+
+
+  `tenant_id` is required. `username` must be unique within the tenant. `password_confirmation`
+  must match `password`. `preferred_timezone` should be a valid IANA timezone string
+  (e.g. `Africa/Nairobi`). `is_active` defaults to `true` if omitted.'
 url: '{{tenant_base_url}}/v1/auth/register'
 method: POST
 headers:
@@ -11,11 +16,19 @@ body:
   content: |-
     {
       "tenant_id": "{{tenant_id}}",
+      "title": "Mr",
       "first_name": "Jane",
+      "middle_name": null,
       "last_name": "Auditor",
+      "username": "jane.auditor",
       "email": "jane.auditor@example.test",
+      "country_code": "+254",
+      "phone": "712345678",
       "password": "Password123!",
-      "password_confirmation": "Password123!"
+      "password_confirmation": "Password123!",
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": "Nairobi, Kenya",
+      "is_active": true
     }
 scripts:
 - type: afterResponse
@@ -26,4 +39,4 @@ scripts:
         pm.expect(j).to.have.property('status', 'success');
     });
   language: text/javascript
-order: 3000
+order: 4000

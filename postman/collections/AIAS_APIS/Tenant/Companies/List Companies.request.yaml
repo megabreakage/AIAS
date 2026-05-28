@@ -1,7 +1,12 @@
 $kind: http-request
 name: List Companies
-description: Retrieve paginated list of companies.
-url: '{{tenant_base_url}}/companies'
+description: 'Retrieve a paginated list of companies.
+
+
+  Supports filtering via `search`, sorting via `sort_by`/`sort_order`, and pagination
+  via `page`/`per_page` (max 100 per page). Pass `show_deleted=1` to include soft-deleted
+  records. Pass `tenant_id` as a query parameter to scope results to the tenant.'
+url: '{{tenant_base_url}}/v1/companies'
 method: GET
 headers:
   Accept: application/json

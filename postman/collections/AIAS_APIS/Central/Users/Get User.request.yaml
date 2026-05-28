@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get User
-description: Retrieve a single user by ID.
-url: '{{base_url}}/users/{{user_id}}'
+description: 'Retrieve a single user by its `identifier` string.
+
+
+  Replace `{{user_id}}` with the identifier saved after creation.'
+url: '{{base_url}}/v1/users/{{user_id}}'
 method: GET
 headers:
   Accept: application/json

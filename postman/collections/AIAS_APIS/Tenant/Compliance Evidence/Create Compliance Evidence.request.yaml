@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Compliance Evidence
-description: Create a new compliance evidence.
-url: '{{tenant_base_url}}/compliance-evidence'
+description: 'Create a new compliance evidence record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{compliance_evidence_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/compliance-evidence'
 method: POST
 headers:
   Accept: application/json

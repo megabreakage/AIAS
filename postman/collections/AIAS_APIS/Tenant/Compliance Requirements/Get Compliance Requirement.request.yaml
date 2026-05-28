@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Compliance Requirement
-description: Retrieve a single compliance requirement by ID.
-url: '{{tenant_base_url}}/compliance-requirements/{{compliance_requirement_id}}'
+description: 'Retrieve a single compliance requirement by its `identifier` string.
+
+
+  Replace `{{compliance_requirement_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/compliance-requirements/{{compliance_requirement_id}}'
 method: GET
 headers:
   Accept: application/json

@@ -1,7 +1,8 @@
 $kind: http-request
 name: Delete Role
-description: Soft-delete a role.
-url: '{{base_url}}/roles/{{role_id}}'
+description: Soft-delete a role record. The record is not permanently removed. Restore
+  it with the corresponding `POST /roles/{{role_id}}/restore` request.
+url: '{{base_url}}/v1/roles/{{role_id}}'
 method: DELETE
 headers:
   Accept: application/json

@@ -1,7 +1,7 @@
 $kind: http-request
 name: Reject Workpaper
 description: Reject Workpaper
-url: '{{tenant_base_url}}/workpapers/{{workpaper_id}}/reject'
+url: '{{tenant_base_url}}/v1/workpapers/{{workpaper_id}}/reject'
 method: POST
 headers:
   Accept: application/json

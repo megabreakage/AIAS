@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Risk Category
-description: Retrieve a single risk category by ID.
-url: '{{base_url}}/risk-categories/{{risk_category_id}}'
+description: 'Retrieve a single risk category by its `identifier` string.
+
+
+  Replace `{{risk_category_id}}` with the identifier saved after creation.'
+url: '{{base_url}}/v1/risk-categories/{{risk_category_id}}'
 method: GET
 headers:
   Accept: application/json

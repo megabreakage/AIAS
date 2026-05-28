@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Client
 description: Restore Client
-url: '{{tenant_base_url}}/clients/{{client_id}}/restore'
+url: '{{tenant_base_url}}/v1/clients/{{client_id}}/restore'
 method: POST
 headers:
   Accept: application/json

@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Section Style
-description: Create a new section style.
-url: '{{tenant_base_url}}/section-styles'
+description: 'Create a new section style record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{section_style_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/section-styles'
 method: POST
 headers:
   Accept: application/json

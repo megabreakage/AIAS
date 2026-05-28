@@ -1,7 +1,8 @@
 $kind: http-request
 name: Delete Workpaper
-description: Soft-delete a workpaper.
-url: '{{tenant_base_url}}/workpapers/{{workpaper_id}}'
+description: Soft-delete a workpaper record. The record is not permanently removed.
+  Restore it with the corresponding `POST /workpapers/{{workpaper_id}}/restore` request.
+url: '{{tenant_base_url}}/v1/workpapers/{{workpaper_id}}'
 method: DELETE
 headers:
   Accept: application/json

@@ -1,3 +1,16 @@
 $kind: collection
-description: Global country reference data. Supports continent filter.
+description: 'Global country reference data linked to continents.
+
+
+  `continent_id` is the **numeric integer ID** of the continent record (not the identifier
+  string). Use the continent''s database `id` — not the `identifier` string.
+
+
+  `short_code` and `iso_code` are 2-character country codes (e.g. `KE`). `currency`
+  is the 3-letter ISO currency code (e.g. `KES`). `country_code` is the telephone
+  dialling prefix (e.g. `+254`). `phone_digits` is the number of local digits after
+  the country code (e.g. `9`).
+
+
+  Soft-deleted countries can be restored via `POST /countries/{identifier}/restore`.'
 order: 4000

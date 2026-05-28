@@ -1,7 +1,7 @@
 $kind: http-request
 name: List All Permissions
 description: List All Permissions
-url: '{{base_url}}/roles/permissions'
+url: '{{base_url}}/v1/roles/permissions'
 method: GET
 headers:
   Accept: application/json

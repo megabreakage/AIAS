@@ -1,4 +1,12 @@
 $kind: collection
-description: Manage quality management preamble documents (scope, objectives, authority
-  declarations).
-order: 3000
+description: 'Manage quality management preamble documents.
+
+
+  Preambles establish the scope, objectives, and authority declarations for audit
+  quality frameworks. `status` values: `draft`, `active`, `archived`. `effective_date`
+  is when the preamble comes into force (YYYY-MM-DD). `is_featured` pins the preamble
+  to the top of lists.
+
+
+  Soft-deleted preambles can be restored via `POST /preambles/{identifier}/restore`.'
+order: 1000

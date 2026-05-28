@@ -1,7 +1,7 @@
 $kind: http-request
 name: Deactivate Service User
 description: Deactivate Service User
-url: '{{base_url}}/service-users/{{id_id}}/deactivate'
+url: '{{base_url}}/v1/service-users/{{id_id}}/deactivate'
 method: POST
 headers:
   Accept: application/json

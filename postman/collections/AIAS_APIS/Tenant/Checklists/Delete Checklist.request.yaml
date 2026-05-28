@@ -1,7 +1,8 @@
 $kind: http-request
 name: Delete Checklist
-description: Soft-delete a checklist.
-url: '{{tenant_base_url}}/checklists/{{checklist_id}}'
+description: Soft-delete a checklist record. The record is not permanently removed.
+  Restore it with the corresponding `POST /checklists/{{checklist_id}}/restore` request.
+url: '{{tenant_base_url}}/v1/checklists/{{checklist_id}}'
 method: DELETE
 headers:
   Accept: application/json

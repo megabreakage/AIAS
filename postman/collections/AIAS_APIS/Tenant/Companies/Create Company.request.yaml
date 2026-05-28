@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Company
-description: Create a new company.
-url: '{{tenant_base_url}}/companies'
+description: 'Create a new company record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{company_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/companies'
 method: POST
 headers:
   Accept: application/json
@@ -14,6 +18,8 @@ body:
       "name": "Apex Holdings Ltd",
       "address": "123 Business Park, Westlands",
       "office_location": "Nairobi, Kenya",
+      "latitude": -1.2921,
+      "longitude": 36.8219,
       "postal_code": "00100",
       "country_id": null,
       "level_of_operations": "local",

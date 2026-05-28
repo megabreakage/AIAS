@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Audit Plan
-description: Create a new audit plan.
-url: '{{tenant_base_url}}/audit-plans'
+description: 'Create a new audit plan record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{audit_plan_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/audit-plans'
 method: POST
 headers:
   Accept: application/json

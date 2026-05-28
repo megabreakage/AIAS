@@ -1,7 +1,7 @@
 $kind: http-request
 name: Approve Report
 description: Approve Report
-url: '{{tenant_base_url}}/reports/{{report_id}}/approve'
+url: '{{tenant_base_url}}/v1/reports/{{report_id}}/approve'
 method: POST
 headers:
   Accept: application/json

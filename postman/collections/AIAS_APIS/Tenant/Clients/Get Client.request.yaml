@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Client
-description: Retrieve a single client by ID.
-url: '{{tenant_base_url}}/clients/{{client_id}}'
+description: 'Retrieve a single client by its `identifier` string.
+
+
+  Replace `{{client_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/clients/{{client_id}}'
 method: GET
 headers:
   Accept: application/json

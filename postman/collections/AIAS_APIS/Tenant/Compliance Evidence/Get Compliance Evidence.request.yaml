@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Compliance Evidence
-description: Retrieve a single compliance evidence by ID.
-url: '{{tenant_base_url}}/compliance-evidence/{{compliance_evidence_id}}'
+description: 'Retrieve a single compliance evidence by its `identifier` string.
+
+
+  Replace `{{compliance_evidence_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/compliance-evidence/{{compliance_evidence_id}}'
 method: GET
 headers:
   Accept: application/json

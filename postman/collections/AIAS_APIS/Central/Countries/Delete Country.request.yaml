@@ -1,7 +1,8 @@
 $kind: http-request
 name: Delete Country
-description: Soft-delete a country.
-url: '{{base_url}}/countries/{{country_id}}'
+description: Soft-delete a country record. The record is not permanently removed.
+  Restore it with the corresponding `POST /countries/{{country_id}}/restore` request.
+url: '{{base_url}}/v1/countries/{{country_id}}'
 method: DELETE
 headers:
   Accept: application/json

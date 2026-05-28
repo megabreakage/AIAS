@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Tenant
-description: Retrieve a single tenant by ID.
-url: '{{base_url}}/tenants/{{id_id}}'
+description: 'Retrieve a single tenant by its `identifier` string.
+
+
+  Replace `{{tenant_id}}` with the identifier saved after creation.'
+url: '{{base_url}}/v1/tenants/{{tenant_id}}'
 method: GET
 headers:
   Accept: application/json

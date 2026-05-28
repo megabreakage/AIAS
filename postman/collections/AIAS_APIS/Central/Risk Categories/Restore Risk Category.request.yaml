@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Risk Category
 description: Restore Risk Category
-url: '{{base_url}}/risk-categories/{{risk_category_id}}/restore'
+url: '{{base_url}}/v1/risk-categories/{{risk_category_id}}/restore'
 method: POST
 headers:
   Accept: application/json

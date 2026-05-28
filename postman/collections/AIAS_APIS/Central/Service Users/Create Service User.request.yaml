@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Service User
-description: Create a new service user.
-url: '{{base_url}}/service-users'
+description: 'Create a new service user record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{id_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/service-users'
 method: POST
 headers:
   Accept: application/json

@@ -1,7 +1,9 @@
 $kind: http-request
 name: Delete Compliance Requirement
-description: Soft-delete a compliance requirement.
-url: '{{tenant_base_url}}/compliance-requirements/{{compliance_requirement_id}}'
+description: Soft-delete a compliance requirement record. The record is not permanently
+  removed. Restore it with the corresponding `POST /compliance-requirements/{{compliance_requirement_id}}/restore`
+  request.
+url: '{{tenant_base_url}}/v1/compliance-requirements/{{compliance_requirement_id}}'
 method: DELETE
 headers:
   Accept: application/json

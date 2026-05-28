@@ -1,5 +1,27 @@
 $kind: collection
-description: Authentication endpoints. Central login ({{base_url}}/v1/auth/login)
-  for super-admin users. Tenant login ({{tenant_base_url}}/v1/auth/login) requires
-  tenant_id in the request body.
+description: '## Authentication
+
+
+  Authentication endpoints for both central and tenant users.
+
+
+  **Workflow:**
+
+  1. Call **Health Check** to verify the server is running.
+
+  2. Call **Login (Central / Super-Admin)** to get a Bearer token for central operations.
+
+  3. Call **Login (Tenant User)** (with `tenant_id`) to get a Bearer token for tenant
+  operations.
+
+  4. The test scripts auto-save `access_token`, `user_id`, and `tenant_id` to the
+  environment.
+
+  5. All subsequent requests use `{{access_token}}` via Bearer auth.
+
+
+  **Central login:** `POST {{base_url}}/v1/auth/login` — no `tenant_id` needed.
+
+  **Tenant login:** `POST {{tenant_base_url}}/v1/auth/login` — requires `tenant_id`
+  in body.'
 order: 1000

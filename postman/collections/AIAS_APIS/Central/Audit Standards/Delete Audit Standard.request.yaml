@@ -1,7 +1,9 @@
 $kind: http-request
 name: Delete Audit Standard
-description: Soft-delete a audit standard.
-url: '{{base_url}}/audit-standards/{{audit_standard_id}}'
+description: Soft-delete a audit standard record. The record is not permanently removed.
+  Restore it with the corresponding `POST /audit-standards/{{audit_standard_id}}/restore`
+  request.
+url: '{{base_url}}/v1/audit-standards/{{audit_standard_id}}'
 method: DELETE
 headers:
   Accept: application/json

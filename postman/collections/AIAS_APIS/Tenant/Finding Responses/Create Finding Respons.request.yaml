@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Finding Respons
-description: Create a new finding respons.
-url: '{{tenant_base_url}}/finding-responses'
+description: 'Create a new finding respons record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{finding_response_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/finding-responses'
 method: POST
 headers:
   Accept: application/json

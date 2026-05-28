@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Role
-description: Create a new role.
-url: '{{base_url}}/roles'
+description: 'Create a new role record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{role_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/roles'
 method: POST
 headers:
   Accept: application/json

@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Risk Matrix
 description: Restore Risk Matrix
-url: '{{tenant_base_url}}/risk-matrices/{{risk_matrix_id}}/restore'
+url: '{{tenant_base_url}}/v1/risk-matrices/{{risk_matrix_id}}/restore'
 method: POST
 headers:
   Accept: application/json

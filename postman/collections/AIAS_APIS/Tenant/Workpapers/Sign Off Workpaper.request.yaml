@@ -1,7 +1,7 @@
 $kind: http-request
 name: Sign Off Workpaper
 description: Sign Off Workpaper
-url: '{{tenant_base_url}}/workpapers/{{workpaper_id}}/sign-off'
+url: '{{tenant_base_url}}/v1/workpapers/{{workpaper_id}}/sign-off'
 method: POST
 headers:
   Accept: application/json

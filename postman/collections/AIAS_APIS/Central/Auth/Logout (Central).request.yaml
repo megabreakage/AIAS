@@ -1,8 +1,11 @@
 $kind: http-request
-name: Change Password
-description: Change Password
-url: '{{base_url}}/users/{{user_id}}/change-password'
-method: PATCH
+name: Logout (Central)
+description: 'Revoke the current Bearer access token for a central / super-admin user.
+
+
+  No `tenant_id` required. After logout the `access_token` is invalidated.'
+url: '{{base_url}}/v1/auth/logout'
+method: POST
 headers:
   Accept: application/json
   Content-Type: application/json
@@ -19,4 +22,4 @@ scripts:
         pm.expect(j).to.have.property('status', 'success');
     });
   language: text/javascript
-order: 7000
+order: 8000

@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Section Style
-description: Update an existing section style.
-url: '{{tenant_base_url}}/section-styles/{{section_style_id}}'
+description: 'Update an existing section style record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{section_style_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/section-styles/{{section_style_id}}'
 method: PUT
 headers:
   Accept: application/json

@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Audit
-description: Retrieve a single audit by ID.
-url: '{{tenant_base_url}}/audits/{{audit_id}}'
+description: 'Retrieve a single audit by its `identifier` string.
+
+
+  Replace `{{audit_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/audits/{{audit_id}}'
 method: GET
 headers:
   Accept: application/json

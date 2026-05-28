@@ -1,7 +1,9 @@
 $kind: http-request
 name: Delete Department
-description: Soft-delete a department.
-url: '{{tenant_base_url}}/departments/{{department_id}}'
+description: Soft-delete a department record. The record is not permanently removed.
+  Restore it with the corresponding `POST /departments/{{department_id}}/restore`
+  request.
+url: '{{tenant_base_url}}/v1/departments/{{department_id}}'
 method: DELETE
 headers:
   Accept: application/json

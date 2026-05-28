@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Risk Assessment
 description: Restore Risk Assessment
-url: '{{tenant_base_url}}/risk-assessments/{{risk_assessment_id}}/restore'
+url: '{{tenant_base_url}}/v1/risk-assessments/{{risk_assessment_id}}/restore'
 method: POST
 headers:
   Accept: application/json

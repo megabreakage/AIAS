@@ -1,7 +1,7 @@
 $kind: http-request
 name: Setup MFA
 description: Setup MFA
-url: '{{base_url}}/mfa/setup'
+url: '{{base_url}}/v1/mfa/setup'
 method: POST
 headers:
   Accept: application/json

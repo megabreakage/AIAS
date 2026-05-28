@@ -1,7 +1,7 @@
 $kind: http-request
 name: Schedule Report Delivery
 description: Schedule Report Delivery
-url: '{{tenant_base_url}}/reports/{{report_id}}/schedule'
+url: '{{tenant_base_url}}/v1/reports/{{report_id}}/schedule'
 method: POST
 headers:
   Accept: application/json

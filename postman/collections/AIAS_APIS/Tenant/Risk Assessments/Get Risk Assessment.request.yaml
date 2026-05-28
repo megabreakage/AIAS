@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Risk Assessment
-description: Retrieve a single risk assessment by ID.
-url: '{{tenant_base_url}}/risk-assessments/{{risk_assessment_id}}'
+description: 'Retrieve a single risk assessment by its `identifier` string.
+
+
+  Replace `{{risk_assessment_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/risk-assessments/{{risk_assessment_id}}'
 method: GET
 headers:
   Accept: application/json

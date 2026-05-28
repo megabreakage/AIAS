@@ -1,7 +1,12 @@
 $kind: http-request
 name: List API Keys
-description: Retrieve paginated list of api keys.
-url: '{{base_url}}/api-keys'
+description: 'Retrieve a paginated list of api keys.
+
+
+  Supports filtering via `search`, sorting via `sort_by`/`sort_order`, and pagination
+  via `page`/`per_page` (max 100 per page). Pass `show_deleted=1` to include soft-deleted
+  records.'
+url: '{{base_url}}/v1/api-keys'
 method: GET
 headers:
   Accept: application/json

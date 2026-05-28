@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Checklist Type
-description: Retrieve a single checklist type by ID.
-url: '{{tenant_base_url}}/checklist-types/{{checklist_type_id}}'
+description: 'Retrieve a single checklist type by its `identifier` string.
+
+
+  Replace `{{checklist_type_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/checklist-types/{{checklist_type_id}}'
 method: GET
 headers:
   Accept: application/json

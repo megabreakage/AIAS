@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Audit Procedure
-description: Retrieve a single audit procedure by ID.
-url: '{{tenant_base_url}}/audit-procedures/{{audit_procedure_id}}'
+description: 'Retrieve a single audit procedure by its `identifier` string.
+
+
+  Replace `{{audit_procedure_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/audit-procedures/{{audit_procedure_id}}'
 method: GET
 headers:
   Accept: application/json

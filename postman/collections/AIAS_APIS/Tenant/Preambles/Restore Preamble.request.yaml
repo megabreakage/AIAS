@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Preamble
-description: Restore Preamble
-url: '{{tenant_base_url}}/preambles/{{preamble_id}}/restore'
+description: Restore a soft-deleted preamble record.
+url: '{{tenant_base_url}}/v1/preambles/{{preamble_id}}/restore'
 method: POST
 headers:
   Accept: application/json

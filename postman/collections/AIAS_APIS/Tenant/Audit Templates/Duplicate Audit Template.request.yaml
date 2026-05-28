@@ -1,7 +1,7 @@
 $kind: http-request
 name: Duplicate Audit Template
 description: Duplicate Audit Template
-url: '{{tenant_base_url}}/audit-templates/{{audit_template_id}}/duplicate'
+url: '{{tenant_base_url}}/v1/audit-templates/{{audit_template_id}}/duplicate'
 method: POST
 headers:
   Accept: application/json

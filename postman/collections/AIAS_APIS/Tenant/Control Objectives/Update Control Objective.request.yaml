@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Control Objective
-description: Update an existing control objective.
-url: '{{tenant_base_url}}/control-objectives/{{control_objective_id}}'
+description: 'Update an existing control objective record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{control_objective_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/control-objectives/{{control_objective_id}}'
 method: PUT
 headers:
   Accept: application/json

@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Continent
-description: Create a new continent.
-url: '{{base_url}}/continents'
+description: 'Create a new continent record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{continent_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/continents'
 method: POST
 headers:
   Accept: application/json
@@ -11,7 +15,9 @@ body:
   content: |-
     {
       "name": "Africa",
-      "code": "AF",
+      "slug": "africa",
+      "short_code": "AF",
+      "iso_code": "AF",
       "status": true
     }
 scripts:

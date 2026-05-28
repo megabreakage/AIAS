@@ -1,7 +1,7 @@
 $kind: http-request
 name: Assign Auditors
 description: Assign Auditors
-url: '{{tenant_base_url}}/audit-engagements/{{audit_engagement_id}}/assign'
+url: '{{tenant_base_url}}/v1/audit-engagements/{{audit_engagement_id}}/assign'
 method: POST
 headers:
   Accept: application/json

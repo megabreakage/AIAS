@@ -1,7 +1,7 @@
 $kind: http-request
 name: Confirm MFA Setup
 description: Confirm MFA Setup
-url: '{{base_url}}/mfa/confirm'
+url: '{{base_url}}/v1/mfa/confirm'
 method: POST
 headers:
   Accept: application/json

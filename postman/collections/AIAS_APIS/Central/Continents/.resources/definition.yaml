@@ -1,3 +1,12 @@
 $kind: collection
-description: Global continent reference data shared across all tenants.
+description: 'Global continent reference data shared across all tenants.
+
+
+  Continents are top-level geographic groupings used to organise countries. `short_code`
+  is a 2-character abbreviation (e.g. `AF`). `iso_code` is the ISO 3166-1 alpha-2
+  code (e.g. `AF`). `slug` is a URL-friendly identifier auto-generated from the name
+  if not provided.
+
+
+  Soft-deleted continents can be restored via `POST /continents/{identifier}/restore`.'
 order: 3000

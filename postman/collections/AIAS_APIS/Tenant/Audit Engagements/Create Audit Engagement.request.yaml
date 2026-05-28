@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Audit Engagement
-description: Create a new audit engagement.
-url: '{{tenant_base_url}}/audit-engagements'
+description: 'Create a new audit engagement record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{audit_engagement_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/audit-engagements'
 method: POST
 headers:
   Accept: application/json

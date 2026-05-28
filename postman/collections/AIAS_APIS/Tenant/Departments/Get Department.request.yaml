@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Department
-description: Retrieve a single department by ID.
-url: '{{tenant_base_url}}/departments/{{department_id}}'
+description: 'Retrieve a single department by its `identifier` string.
+
+
+  Replace `{{department_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/departments/{{department_id}}'
 method: GET
 headers:
   Accept: application/json

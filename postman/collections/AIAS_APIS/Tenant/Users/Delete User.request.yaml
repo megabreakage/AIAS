@@ -1,19 +1,16 @@
 $kind: http-request
-name: Update Group
-description: Update an existing group.
-url: '{{tenant_base_url}}/groups/{{group_id}}'
-method: PUT
+name: Delete User
+description: Soft-delete a user record. The record is not permanently removed. Restore
+  it with the corresponding `POST /users/{{tenant_user_id}}/restore` request.
+url: '{{tenant_base_url}}/v1/users/{{tenant_user_id}}'
+method: DELETE
 headers:
   Accept: application/json
   Content-Type: application/json
-body:
-  type: json
-  content: |-
-    {
-      "tenant_id": "{{tenant_id}}",
-      "name": "Senior Audit Team",
-      "status": true
-    }
+queryParams:
+- key: tenant_id
+  value: '{{tenant_id}}'
+  description: Tenant identifier string (required)
 scripts:
 - type: afterResponse
   code: |-
@@ -23,4 +20,4 @@ scripts:
         pm.expect(j).to.have.property('status', 'success');
     });
   language: text/javascript
-order: 4000
+order: 5000

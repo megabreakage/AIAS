@@ -1,7 +1,7 @@
 $kind: http-request
-name: Restore User
-description: Restore User
-url: '{{base_url}}/users/{{user_id}}/restore'
+name: Restore Country
+description: Restore a soft-deleted country record.
+url: '{{base_url}}/v1/countries/{{country_id}}/restore'
 method: POST
 headers:
   Accept: application/json

@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Audit Standard
-description: Update an existing audit standard.
-url: '{{base_url}}/audit-standards/{{audit_standard_id}}'
+description: 'Update an existing audit standard record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{audit_standard_id}}` with the identifier of the record to update.'
+url: '{{base_url}}/v1/audit-standards/{{audit_standard_id}}'
 method: PUT
 headers:
   Accept: application/json

@@ -1,0 +1,37 @@
+$kind: http-request
+name: Create Tenant User
+description: 'Create a new central user account and assign them to this tenant. The
+  user is created in the central database and linked to the tenant via `owner_id`.
+  Required fields: `first_name`, `last_name`, `username`, `email`, `password`.'
+url: '{{base_url}}/v1/tenants/{{tenant_id}}/users'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Ms",
+      "first_name": "Jane",
+      "middle_name": "",
+      "last_name": "Auditor",
+      "username": "jane.auditor",
+      "email": "jane.auditor@pinnacleaudit.test",
+      "country_code": "+254",
+      "phone": "0712345678",
+      "password": "Password123!",
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": "Nairobi, Kenya",
+      "is_active": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 6000

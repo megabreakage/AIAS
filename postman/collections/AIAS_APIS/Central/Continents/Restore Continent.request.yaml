@@ -1,7 +1,7 @@
 $kind: http-request
-name: Logout
-description: Revoke the current Bearer access token.
-url: '{{tenant_base_url}}/v1/auth/logout'
+name: Restore Continent
+description: Restore a soft-deleted continent record.
+url: '{{base_url}}/v1/continents/{{continent_id}}/restore'
 method: POST
 headers:
   Accept: application/json
@@ -9,9 +9,7 @@ headers:
 body:
   type: json
   content: |-
-    {
-      "tenant_id": "{{tenant_id}}"
-    }
+    {}
 scripts:
 - type: afterResponse
   code: |-
@@ -21,4 +19,4 @@ scripts:
         pm.expect(j).to.have.property('status', 'success');
     });
   language: text/javascript
-order: 5000
+order: 6000

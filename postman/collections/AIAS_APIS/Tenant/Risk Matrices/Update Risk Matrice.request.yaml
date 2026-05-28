@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Risk Matrice
-description: Update an existing risk matrice.
-url: '{{tenant_base_url}}/risk-matrices/{{risk_matrix_id}}'
+description: 'Update an existing risk matrice record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{risk_matrix_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/risk-matrices/{{risk_matrix_id}}'
 method: PUT
 headers:
   Accept: application/json

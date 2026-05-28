@@ -1,7 +1,7 @@
 $kind: http-request
 name: Disable MFA
 description: Disable MFA
-url: '{{base_url}}/mfa/disable'
+url: '{{base_url}}/v1/mfa/disable'
 method: POST
 headers:
   Accept: application/json

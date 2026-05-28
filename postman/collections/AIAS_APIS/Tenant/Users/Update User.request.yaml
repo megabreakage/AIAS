@@ -1,0 +1,40 @@
+$kind: http-request
+name: Update User
+description: 'Update an existing user record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{tenant_user_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/users/{{tenant_user_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "title": "Ms",
+      "first_name": "Jane",
+      "middle_name": "",
+      "last_name": "Auditor",
+      "username": "jane.auditor",
+      "email": "jane.auditor@example.test",
+      "country_code": "+254",
+      "phone": "0712345678",
+      "password": "Password123!",
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": "Nairobi, Kenya",
+      "is_active": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Audit Template
 description: Restore Audit Template
-url: '{{tenant_base_url}}/audit-templates/{{audit_template_id}}/restore'
+url: '{{tenant_base_url}}/v1/audit-templates/{{audit_template_id}}/restore'
 method: POST
 headers:
   Accept: application/json

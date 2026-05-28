@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Workpaper
 description: Restore Workpaper
-url: '{{tenant_base_url}}/workpapers/{{workpaper_id}}/restore'
+url: '{{tenant_base_url}}/v1/workpapers/{{workpaper_id}}/restore'
 method: POST
 headers:
   Accept: application/json

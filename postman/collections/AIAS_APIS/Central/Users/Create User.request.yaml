@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create User
-description: Create a new user.
-url: '{{base_url}}/users'
+description: 'Create a new user record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{user_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/users'
 method: POST
 headers:
   Accept: application/json
@@ -10,13 +14,18 @@ body:
   type: json
   content: |-
     {
+      "title": "Dr",
       "first_name": "Jane",
+      "middle_name": "",
       "last_name": "Auditor",
+      "username": "jane.auditor",
       "email": "jane.auditor@pinnacleaudit.test",
+      "country_code": "+254",
+      "phone": "0712345678",
       "password": "Password123!",
-      "password_confirmation": "Password123!",
-      "role": "auditor",
-      "status": true
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": "Nairobi, Kenya",
+      "is_active": true
     }
 scripts:
 - type: afterResponse

@@ -1,6 +1,32 @@
 $kind: collection
-description: Tenant-scoped resources isolated per organisation database. Pass tenant_id
-  (identifier string, e.g. AT.1.1748000000) in request body (POST/PUT/PATCH) or query
-  string (GET/DELETE). Covers audit engagements, findings, risk, compliance, controls,
-  and reports.
+description: '## Tenant Resources
+
+
+  Resources isolated per organisation (tenant) — each tenant has its own MySQL database.
+
+
+  **How to scope requests:**
+
+  - `POST`/`PUT`/`PATCH` requests: include `tenant_id` in the JSON body.
+
+  - `GET`/`DELETE` requests: pass `tenant_id` as a query parameter.
+
+  - `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`).
+
+
+  **Base URL:** `{{tenant_base_url}}` (e.g. `http://localhost:8020`)
+
+
+  **Includes:**
+
+  - Users, Companies, Departments
+
+  - Quality Management: Preambles, Checklist Types, Section Styles, Checklists
+
+  - Audit Management: Audits
+
+  - (Future) Engagements, Findings, Risk Assessments, Workpapers, Reports
+
+
+  All soft-deleted records can be restored via `POST /{resource}/{identifier}/restore`.'
 order: 2000

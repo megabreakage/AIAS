@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Country
-description: Retrieve a single country by ID.
-url: '{{base_url}}/countries/{{country_id}}'
+description: 'Retrieve a single country by its `identifier` string.
+
+
+  Replace `{{country_id}}` with the identifier saved after creation.'
+url: '{{base_url}}/v1/countries/{{country_id}}'
 method: GET
 headers:
   Accept: application/json

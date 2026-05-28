@@ -1,7 +1,7 @@
 $kind: http-request
 name: Status Statistics
 description: Status Statistics
-url: '{{tenant_base_url}}/audit-engagements/stats/status'
+url: '{{tenant_base_url}}/v1/audit-engagements/stats/status'
 method: GET
 headers:
   Accept: application/json

@@ -1,7 +1,9 @@
 $kind: http-request
 name: Delete Audit Plan
-description: Soft-delete a audit plan.
-url: '{{tenant_base_url}}/audit-plans/{{audit_plan_id}}'
+description: Soft-delete a audit plan record. The record is not permanently removed.
+  Restore it with the corresponding `POST /audit-plans/{{audit_plan_id}}/restore`
+  request.
+url: '{{tenant_base_url}}/v1/audit-plans/{{audit_plan_id}}'
 method: DELETE
 headers:
   Accept: application/json

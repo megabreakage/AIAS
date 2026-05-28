@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Checklist Type
-description: Restore Checklist Type
-url: '{{tenant_base_url}}/checklist-types/{{checklist_type_id}}/restore'
+description: Restore a soft-deleted checklist type record.
+url: '{{tenant_base_url}}/v1/checklist-types/{{checklist_type_id}}/restore'
 method: POST
 headers:
   Accept: application/json

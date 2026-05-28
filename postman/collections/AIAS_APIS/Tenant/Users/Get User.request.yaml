@@ -1,8 +1,11 @@
 $kind: http-request
-name: Delete Group
-description: Soft-delete a group.
-url: '{{tenant_base_url}}/groups/{{group_id}}'
-method: DELETE
+name: Get User
+description: 'Retrieve a single user by its `identifier` string.
+
+
+  Replace `{{tenant_user_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/users/{{tenant_user_id}}'
+method: GET
 headers:
   Accept: application/json
   Content-Type: application/json
@@ -19,4 +22,4 @@ scripts:
         pm.expect(j).to.have.property('status', 'success');
     });
   language: text/javascript
-order: 5000
+order: 3000

@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Control Test
-description: Retrieve a single control test by ID.
-url: '{{tenant_base_url}}/control-tests/{{control_test_id}}'
+description: 'Retrieve a single control test by its `identifier` string.
+
+
+  Replace `{{control_test_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/control-tests/{{control_test_id}}'
 method: GET
 headers:
   Accept: application/json

@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore API Key
 description: Restore API Key
-url: '{{base_url}}/api-keys/{{id_id}}/restore'
+url: '{{base_url}}/v1/api-keys/{{id_id}}/restore'
 method: POST
 headers:
   Accept: application/json

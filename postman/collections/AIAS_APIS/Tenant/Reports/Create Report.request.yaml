@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Report
-description: Create a new report.
-url: '{{tenant_base_url}}/reports'
+description: 'Create a new report record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{report_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/reports'
 method: POST
 headers:
   Accept: application/json

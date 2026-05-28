@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Tenant
-description: Create a new tenant.
-url: '{{base_url}}/tenants'
+description: 'Create a new tenant record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{tenant_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/tenants'
 method: POST
 headers:
   Accept: application/json
@@ -11,9 +15,11 @@ body:
   content: |-
     {
       "name": "Pinnacle Audit Partners",
-      "email": "admin@pinnacleaudit.test",
-      "password": "Password123!",
-      "password_confirmation": "Password123!"
+      "owner_id": "{{user_id}}",
+      "domain": "pinnacleaudit.aias.app",
+      "country_id": 1,
+      "data_center": "us-east-1",
+      "status": "active"
     }
 scripts:
 - type: afterResponse
@@ -29,8 +35,8 @@ scripts:
         // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
         const resourceId = j.data && (j.data.identifier || j.data.id);
         if (resourceId) {
-            pm.environment.set('id_id', String(resourceId));
-            console.log('Saved id_id:', resourceId);
+            pm.environment.set('tenant_id', String(resourceId));
+            console.log('Saved tenant_id:', resourceId);
         }
     }
   language: text/javascript

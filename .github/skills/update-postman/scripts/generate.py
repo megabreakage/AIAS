@@ -53,11 +53,52 @@ except ModuleNotFoundError as _e:
 
 COLLECTION_NAME = "AIAS API"
 COLLECTION_DESCRIPTION = (
-    "REST API collection for AIAS — Adaptive Intelligent Audit System. "
-    "A multi-tenant Laravel 13 platform for audit engagements, compliance tracking, "
-    "risk assessments, and audit workflows. Built with Passport OAuth2 and Stancl Tenancy v3. "
-    "Tenant identification: pass `tenant_id` (identifier string, e.g. AT.1.1748000000) in request body (POST/PUT/PATCH) "
-    "or as a query parameter (GET/DELETE). Tenant routes use {{tenant_base_url}} (no /api prefix)."
+    "# AIAS — Adaptive Intelligent Audit System\n\n"
+    "A multi-tenant Laravel 13 REST API for audit engagements, compliance tracking, "
+    "risk assessments, and audit workflows.\n\n"
+    "## Authentication\n\n"
+    "All protected endpoints require a `Bearer` token in the `Authorization` header.\n\n"
+    "**Central (super-admin):** `POST {{base_url}}/v1/auth/login` — returns a token for managing "
+    "tenants, users, reference data, and global audit standards.\n\n"
+    "**Tenant user:** `POST {{tenant_base_url}}/v1/auth/login` — include `tenant_id` in the JSON body. "
+    "Returns a token scoped to that tenant's database.\n\n"
+    "## Route Prefixes\n\n"
+    "| Scope | Base Variable | Prefix | Example |\n"
+    "|-------|--------------|--------|--------|\n"
+    "| Central | `{{base_url}}` | `/api/v1/` | `{{base_url}}/v1/tenants` |\n"
+    "| Tenant | `{{tenant_base_url}}` | `/v1/` | `{{tenant_base_url}}/v1/audits` |\n\n"
+    "## Tenant Identification\n\n"
+    "Pass `tenant_id` (identifier string, e.g. `AT.1.1748000000`) in every tenant-scoped request:\n"
+    "- **POST / PUT / PATCH** — include `tenant_id` in the JSON body\n"
+    "- **GET / DELETE** — include `tenant_id` as a query parameter\n\n"
+    "The `{{tenant_id}}` variable is auto-populated after login and stored in the environment.\n\n"
+    "## Response Envelope\n\n"
+    "All responses follow a consistent envelope:\n"
+    "```json\n"
+    "{\n"
+    '  "status": "success",\n'
+    '  "message": "Resource retrieved successfully",\n'
+    '  "data": { ... },\n'
+    '  "metadata": { "total": 42, "page": 1 }\n'
+    "}\n"
+    "```\n\n"
+    "## Pagination\n\n"
+    "List endpoints support: `?page=1&per_page=15&search=&sort_by=created_at&sort_order=desc`\n\n"
+    "## Soft Deletes\n\n"
+    "All resources support soft-delete. Use `POST /{id}/restore` to restore a soft-deleted record. "
+    "Pass `?show_deleted=1` on list endpoints to include soft-deleted records.\n\n"
+    "## ID / Identifier Convention\n\n"
+    "Resources use a string `identifier` (format: `AT.{n}.{timestamp}`) for route binding and references. "
+    "Numeric database `id` values are not exposed. "
+    "**Exception:** `continent_id` in country records is a numeric integer FK — not an identifier string.\n\n"
+    "## Environment Variables\n\n"
+    "Key variables auto-populated by test scripts:\n"
+    "- `access_token` — Bearer token (after login)\n"
+    "- `user_id` — Authenticated user identifier\n"
+    "- `tenant_id` — Current tenant identifier\n"
+    "- `<resource>_id` — Identifier of the last created resource (e.g. `audit_engagement_id`)\n\n"
+    "## Tech Stack\n\n"
+    "Laravel 13 · PHP 8.4 · Passport OAuth2 · Stancl Tenancy v3 · Spatie Permission · MySQL"
 )
 DEFAULT_BASE_URL = "http://localhost:8020/api"
 DEFAULT_TENANT_BASE_URL = "http://localhost:8020"
@@ -94,17 +135,50 @@ MODULES: list[dict[str, Any]] = [
     {
         "name": "Tenants",
         "route": "tenants",
-        "param": "id",
+        "param": "tenant",
         "scope": "central",
-        "description": "Manage tenants (organisations / audit firms). Super-admin only for create/delete.",
+        "description": (
+            "Manage tenants (organisations / audit firms). "
+            "Super-admin access only for create and delete operations.\n\n"
+            "A tenant represents an isolated audit firm with its own database. "
+            "`owner_id` must be the `identifier` string of an existing central user who becomes the firm owner. "
+            "`data_center` specifies the cloud region for tenant DB provisioning (e.g. `us-east-1`). "
+            "`status` values: `active`, `inactive`, `suspended`, `pending_setup`.\n\n"
+            "**Note:** There is no restore endpoint for tenants — deletion is permanent (soft-delete only)."
+        ),
         "sample_body": {
             "name": "Pinnacle Audit Partners",
-            "email": "admin@pinnacleaudit.test",
-            "password": "Password123!",
-            "password_confirmation": "Password123!",
+            "owner_id": "{{user_id}}",
+            "domain": "pinnacleaudit.aias.app",
+            "country_id": 1,
+            "data_center": "us-east-1",
+            "status": "active",
         },
         "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Tenant"},
+            {
+                "method": "POST",
+                "path": "users",
+                "name": "Create Tenant User",
+                "description": (
+                    "Create a new central user account and assign them to this tenant. "
+                    "The user is created in the central database and linked to the tenant via `owner_id`. "
+                    "Required fields: `first_name`, `last_name`, `username`, `email`, `password`."
+                ),
+                "body": {
+                    "title": "Ms",
+                    "first_name": "Jane",
+                    "middle_name": "",
+                    "last_name": "Auditor",
+                    "username": "jane.auditor",
+                    "email": "jane.auditor@pinnacleaudit.test",
+                    "country_code": "+254",
+                    "phone": "0712345678",
+                    "password": "Password123!",
+                    "preferred_timezone": "Africa/Nairobi",
+                    "office_location": "Nairobi, Kenya",
+                    "is_active": True,
+                },
+            },
         ],
     },
     {
@@ -112,26 +186,57 @@ MODULES: list[dict[str, Any]] = [
         "route": "continents",
         "param": "continent",
         "scope": "central",
-        "description": "Global continent reference data shared across all tenants.",
-        "sample_body": {"name": "Africa", "code": "AF", "status": True},
-        "extra_actions": [],
+        "description": (
+            "Global continent reference data shared across all tenants.\n\n"
+            "Continents are top-level geographic groupings used to organise countries. "
+            "`short_code` is a 2-character abbreviation (e.g. `AF`). "
+            "`iso_code` is the ISO 3166-1 alpha-2 code (e.g. `AF`). "
+            "`slug` is a URL-friendly identifier auto-generated from the name if not provided.\n\n"
+            "Soft-deleted continents can be restored via `POST /continents/{identifier}/restore`."
+        ),
+        "sample_body": {
+            "name": "Africa",
+            "slug": "africa",
+            "short_code": "AF",
+            "iso_code": "AF",
+            "status": True,
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore Continent",
+             "description": "Restore a soft-deleted continent record."},
+        ],
     },
     {
         "name": "Countries",
         "route": "countries",
         "param": "country",
         "scope": "central",
-        "description": "Global country reference data. Supports continent filter.",
+        "description": (
+            "Global country reference data linked to continents.\n\n"
+            "`continent_id` is the **numeric integer ID** of the continent record (not the identifier string). "
+            "Use the continent's database `id` — not the `identifier` string.\n\n"
+            "`short_code` and `iso_code` are 2-character country codes (e.g. `KE`). "
+            "`currency` is the 3-letter ISO currency code (e.g. `KES`). "
+            "`country_code` is the telephone dialling prefix (e.g. `+254`). "
+            "`phone_digits` is the number of local digits after the country code (e.g. `9`).\n\n"
+            "Soft-deleted countries can be restored via `POST /countries/{identifier}/restore`."
+        ),
         "sample_body": {
             "name": "Kenya",
-            "code": "KE",
-            "continent_id": "{{continent_id}}",
+            "slug": "kenya",
+            "continent_id": 1,
+            "short_code": "KE",
+            "iso_code": "KE",
             "currency": "KES",
+            "currency_name": "Kenyan Shilling",
             "currency_sign": "KSh",
+            "country_code": "+254",
+            "phone_digits": 9,
             "status": True,
         },
         "extra_actions": [
-            {"method": "GET", "path": "select", "name": "Countries Select List", "no_id": True},
+            {"method": "POST", "path": "restore", "name": "Restore Country",
+             "description": "Restore a soft-deleted country record."},
         ],
     },
     {
@@ -139,21 +244,32 @@ MODULES: list[dict[str, Any]] = [
         "route": "users",
         "param": "user",
         "scope": "central",
-        "description": "Manage platform users. Supports RBAC roles via Spatie Permission.",
+        "description": (
+            "Create central platform users (super-admins and tenant owners).\n\n"
+            "Only `POST /v1/users` is currently implemented — full CRUD management is handled "
+            "through tenant-scoped user management.\n\n"
+            "Required: `first_name`, `last_name`, `username` (unique), `email` (unique), `password`.\n"
+            "Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`, "
+            "`office_location`, `avatar`, `notes`, `is_active`.\n\n"
+            "Note: `password_confirmation` is not required. `role` and `status` fields do not exist "
+            "in the request — use tenant user management for role assignment."
+        ),
         "sample_body": {
+            "title": "Dr",
             "first_name": "Jane",
+            "middle_name": "",
             "last_name": "Auditor",
+            "username": "jane.auditor",
             "email": "jane.auditor@pinnacleaudit.test",
+            "country_code": "+254",
+            "phone": "0712345678",
             "password": "Password123!",
-            "password_confirmation": "Password123!",
-            "role": "auditor",
-            "status": True,
+            "preferred_timezone": "Africa/Nairobi",
+            "office_location": "Nairobi, Kenya",
+            "is_active": True,
         },
-        "extra_actions": [
-            {"method": "POST",  "path": "restore",        "name": "Restore User"},
-            {"method": "PATCH", "path": "change-password", "name": "Change Password"},
-            {"method": "PATCH", "path": "toggle-active",   "name": "Toggle Active Status"},
-        ],
+        "extra_actions": [],
+        "skip_crud": False,
     },
     {
         "name": "Roles",
@@ -277,33 +393,18 @@ MODULES: list[dict[str, Any]] = [
 
     # ── Tenant-Scoped Reference Data ─────────────────────────────────────────
     {
-        "name": "Departments",
-        "route": "departments",
-        "param": "department",
-        "scope": "tenant",
-        "description": "Manage internal organisational departments within the audit firm.",
-        "sample_body": {"name": "Financial Audit", "code": "FIN-AUDIT", "status": True},
-        "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Department"},
-        ],
-    },
-    {
-        "name": "Groups",
-        "route": "groups",
-        "param": "group",
-        "scope": "tenant",
-        "description": "Manage user groups for audit team assignments.",
-        "sample_body": {"name": "Senior Audit Team", "status": True},
-        "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Group"},
-        ],
-    },
-    {
         "name": "Preambles",
         "route": "preambles",
         "param": "preamble",
         "scope": "tenant",
-        "description": "Manage quality management preamble documents (scope, objectives, authority declarations).",
+        "description": (
+            "Manage quality management preamble documents.\n\n"
+            "Preambles establish the scope, objectives, and authority declarations for audit quality frameworks. "
+            "`status` values: `draft`, `active`, `archived`. "
+            "`effective_date` is when the preamble comes into force (YYYY-MM-DD). "
+            "`is_featured` pins the preamble to the top of lists.\n\n"
+            "Soft-deleted preambles can be restored via `POST /preambles/{identifier}/restore`."
+        ),
         "sample_body": {
             "name": "Quality Management Framework Preamble",
             "description": "Establishes the scope and objectives of the quality management framework.",
@@ -312,7 +413,8 @@ MODULES: list[dict[str, Any]] = [
             "is_featured": False,
         },
         "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Preamble"},
+            {"method": "POST", "path": "restore", "name": "Restore Preamble",
+             "description": "Restore a soft-deleted preamble record."},
         ],
     },
     {
@@ -320,7 +422,13 @@ MODULES: list[dict[str, Any]] = [
         "route": "checklist-types",
         "param": "checklistType",
         "scope": "tenant",
-        "description": "Manage checklist type definitions used across audit engagements.",
+        "description": (
+            "Manage checklist type definitions used across audit engagements.\n\n"
+            "Checklist types categorise the nature of checklists (e.g. Pre-Engagement, Field Work, Closing). "
+            "`is_active` controls visibility in checklist selection dropdowns. "
+            "`is_featured` pins the type to the top of lists.\n\n"
+            "Soft-deleted types can be restored via `POST /checklist-types/{identifier}/restore`."
+        ),
         "sample_body": {
             "name": "Pre-Engagement Checklist",
             "description": "Checklist items to complete before commencing an audit engagement.",
@@ -328,7 +436,8 @@ MODULES: list[dict[str, Any]] = [
             "is_featured": False,
         },
         "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Checklist Type"},
+            {"method": "POST", "path": "restore", "name": "Restore Checklist Type",
+             "description": "Restore a soft-deleted checklist type record."},
         ],
     },
     {
@@ -336,7 +445,13 @@ MODULES: list[dict[str, Any]] = [
         "route": "section-styles",
         "param": "sectionStyle",
         "scope": "tenant",
-        "description": "Manage section style definitions that control layout and presentation of checklist sections.",
+        "description": (
+            "Manage section style definitions that control layout and presentation of checklist sections.\n\n"
+            "`columns` defines the number of columns in the section layout (e.g. `1`, `2`, `3`). "
+            "`is_active` controls visibility in section style dropdowns. "
+            "`is_featured` pins the style to the top of lists.\n\n"
+            "Soft-deleted section styles can be restored via `POST /section-styles/{identifier}/restore`."
+        ),
         "sample_body": {
             "name": "Two Column Layout",
             "description": "A two-column layout for side-by-side checklist items.",
@@ -345,7 +460,8 @@ MODULES: list[dict[str, Any]] = [
             "is_featured": False,
         },
         "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Section Style"},
+            {"method": "POST", "path": "restore", "name": "Restore Section Style",
+             "description": "Restore a soft-deleted section style record."},
         ],
     },
     {
@@ -353,7 +469,14 @@ MODULES: list[dict[str, Any]] = [
         "route": "checklists",
         "param": "checklist",
         "scope": "tenant",
-        "description": "Manage audit checklists with quality controller assignment, preamble linkage, and checklist type classification.",
+        "description": (
+            "Manage audit checklists with quality controller assignment, preamble linkage, and type classification.\n\n"
+            "`quality_controller_id` is the `identifier` of the user responsible for quality control. "
+            "`preamble_id` links the checklist to a quality management preamble. "
+            "`checklist_type_id` classifies the checklist (e.g. Pre-Engagement, Field Work). "
+            "All three ID fields accept identifier strings or `null`.\n\n"
+            "Soft-deleted checklists can be restored via `POST /checklists/{identifier}/restore`."
+        ),
         "sample_body": {
             "name": "Q1 Financial Audit Checklist",
             "quality_controller_id": None,
@@ -363,7 +486,41 @@ MODULES: list[dict[str, Any]] = [
             "is_featured": False,
         },
         "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Checklist"},
+            {"method": "POST", "path": "restore", "name": "Restore Checklist",
+             "description": "Restore a soft-deleted checklist record."},
+        ],
+    },
+    {
+        "name": "Users",
+        "route": "users",
+        "param": "tenant_user",
+        "scope": "tenant",
+        "description": (
+            "Manage tenant-scoped user accounts within the audit firm.\n\n"
+            "Required: `first_name`, `last_name`, `username` (unique within tenant), `email` (unique within tenant), `password`.\n"
+            "Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`, "
+            "`office_location`, `avatar`, `notes`, `is_active`.\n\n"
+            "Note: `role` assignment is managed separately via the Roles endpoints. "
+            "`is_active` (boolean) replaces the older `status` field.\n\n"
+            "Soft-deleted users can be restored via `POST /users/{identifier}/restore`."
+        ),
+        "sample_body": {
+            "title": "Ms",
+            "first_name": "Jane",
+            "middle_name": "",
+            "last_name": "Auditor",
+            "username": "jane.auditor",
+            "email": "jane.auditor@example.test",
+            "country_code": "+254",
+            "phone": "0712345678",
+            "password": "Password123!",
+            "preferred_timezone": "Africa/Nairobi",
+            "office_location": "Nairobi, Kenya",
+            "is_active": True,
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore User",
+             "description": "Restore a soft-deleted tenant user account."},
         ],
     },
     {
@@ -371,11 +528,21 @@ MODULES: list[dict[str, Any]] = [
         "route": "companies",
         "param": "company",
         "scope": "tenant",
-        "description": "Manage tenant companies with geocoding support, logo upload, and company contacts.",
+        "description": (
+            "Manage tenant companies — the client organisations being audited.\n\n"
+            "`level_of_operations` values: `local`, `regional`, `national`, `international`, `multinational`. "
+            "`company_contacts` is an array of contact assignments; `contact_type` values: `primary`, `secondary`, `billing`, `technical`. "
+            "`country_id` is an integer FK (numeric ID) to the countries table. "
+            "`latitude` and `longitude` are decimal geocoding coordinates (optional). "
+            "`logo` is a URL or storage path to the company logo.\n\n"
+            "Soft-deleted companies can be restored via `POST /companies/{identifier}/restore`."
+        ),
         "sample_body": {
             "name": "Apex Holdings Ltd",
             "address": "123 Business Park, Westlands",
             "office_location": "Nairobi, Kenya",
+            "latitude": -1.2921,
+            "longitude": 36.8219,
             "postal_code": "00100",
             "country_id": None,
             "level_of_operations": "local",
@@ -391,7 +558,8 @@ MODULES: list[dict[str, Any]] = [
             ],
         },
         "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Company"},
+            {"method": "POST", "path": "restore", "name": "Restore Company",
+             "description": "Restore a soft-deleted company record."},
         ],
     },
     {
@@ -399,11 +567,20 @@ MODULES: list[dict[str, Any]] = [
         "route": "departments",
         "param": "department",
         "scope": "tenant",
-        "description": "Manage tenant departments with geocoding support and department members.",
+        "description": (
+            "Manage tenant departments with geocoding support, member assignments, and department head linkage.\n\n"
+            "`department_head` is the `identifier` string of the user appointed as department head. "
+            "`department_members` is an array of `{user_id}` objects listing department member identifiers. "
+            "`country_id` is an integer FK (numeric ID) to the countries table. "
+            "`latitude` and `longitude` are decimal geocoding coordinates (optional).\n\n"
+            "Soft-deleted departments can be restored via `POST /departments/{identifier}/restore`."
+        ),
         "sample_body": {
             "name": "Finance & Accounts",
             "address": "2nd Floor, HQ Tower",
             "office_location": "Nairobi, Kenya",
+            "latitude": -1.2921,
+            "longitude": 36.8219,
             "postal_code": "00100",
             "country_id": None,
             "department_head": None,
@@ -415,7 +592,8 @@ MODULES: list[dict[str, Any]] = [
             ],
         },
         "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Department"},
+            {"method": "POST", "path": "restore", "name": "Restore Department",
+             "description": "Restore a soft-deleted department record."},
         ],
     },
     {
@@ -423,14 +601,23 @@ MODULES: list[dict[str, Any]] = [
         "route": "audits",
         "param": "audit",
         "scope": "tenant",
-        "description": "Manage tenant audit records with scope, status stages, and reference numbers.",
+        "description": (
+            "Manage tenant audit records — the core audit execution entity.\n\n"
+            "`scope` values: `internal`, `external`, `compliance`, `operational`, `financial`. "
+            "`checklist_id` links the audit to a quality management checklist (identifier string or null). "
+            "`department_id` is the `identifier` of the department being audited. "
+            "`lead_auditor_id` and `quality_manager_id` are user identifier strings. "
+            "`audit_start_date` and `audit_end_date` accept datetime strings (`YYYY-MM-DD HH:MM:SS`). "
+            "`add_appendix` (boolean) indicates whether to attach an appendix to the audit report.\n\n"
+            "Status progression is tracked via status stages. "
+            "Soft-deleted audits can be restored via `POST /audits/{identifier}/restore`."
+        ),
         "sample_body": {
             "name": "Annual Financial Compliance Audit 2026",
             "audit_start_date": "2026-07-01 08:00:00",
             "audit_end_date": "2026-07-31 17:00:00",
             "scope": "internal",
             "checklist_id": None,
-            "task_type_id": None,
             "department_id": "{{department_id}}",
             "lead_auditor_id": None,
             "quality_manager_id": None,
@@ -439,7 +626,8 @@ MODULES: list[dict[str, Any]] = [
             "is_featured": False,
         },
         "extra_actions": [
-            {"method": "POST", "path": "restore", "name": "Restore Audit"},
+            {"method": "POST", "path": "restore", "name": "Restore Audit",
+             "description": "Restore a soft-deleted audit record."},
         ],
     },
     {
@@ -824,12 +1012,12 @@ ENVIRONMENTS = [
 # ---------------------------------------------------------------------------
 
 RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
-    # --- Auto-populated ---
+    # --- Auto-populated by login / me scripts ---
     ("tenant_id",                   "", "Current tenant identifier string (auto-populated after login)"),
-    ("user_id",                     "", "Authenticated user ID (auto-populated after login)"),
+    ("user_id",                     "", "Authenticated user identifier (auto-populated after login)"),
     # --- Global Reference ---
-    ("continent_id",                "", "Continent identifier string"),
-    ("country_id",                  "", "Country identifier string"),
+    ("continent_id",                "", "Continent identifier string (auto-populated after Create Continent)"),
+    ("country_id",                  "", "Country identifier string (auto-populated after Create Country)"),
     ("audit_standard_id",           "", "Audit Standard identifier string"),
     ("regulation_framework_id",     "", "Regulation Framework identifier string"),
     ("risk_category_id",            "", "Risk Category identifier string"),
@@ -838,16 +1026,16 @@ RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
     ("service_user_id",             "", "Service User identifier string"),
     ("api_key_id",                  "", "API Key identifier string"),
     # --- Tenant Reference ---
+    ("preamble_id",                 "", "Preamble identifier string"),
+    ("checklist_type_id",           "", "Checklist Type identifier string"),
+    ("section_style_id",            "", "Section Style identifier string"),
+    ("checklist_id",                "", "Checklist identifier string"),
+    ("tenant_user_id",              "", "Tenant User identifier string (auto-populated after Create User in tenant scope)"),
+    ("company_id",                  "", "Company identifier string"),
     ("department_id",               "", "Department identifier string"),
     ("audit_id",                    "", "Audit identifier string"),
-    ("group_id",                    "", "Group identifier string"),
-    ("preamble_id",                 "", "Preamble identifier string"),
     ("client_id",                   "", "Client identifier string"),
-    ("checklist_type_id",            "", "Checklist Type identifier string"),
-    ("section_style_id",             "", "Section Style identifier string"),
-    ("checklist_id",                 "", "Checklist identifier string"),
-    ("company_id",                   "", "Company identifier string"),
-    ("department_id",               "", "Department identifier string"),
+    ("group_id",                    "", "Group identifier string"),
     # --- Audit Templates ---
     ("audit_template_id",           "", "Audit Template identifier string"),
     # --- Core Audit ---
@@ -938,27 +1126,36 @@ LOGIN_TEST_SCRIPT = [
     "        console.log('Token saved:', j.data.token.substring(0, 20) + '...');",
     "    }",
     "    if (j.data && j.data.user) {",
-    "        pm.environment.set('user_id', j.data.user.id);",
-    "        console.log('User ID saved:', j.data.user.id);",
+    "        // Resources use 'identifier' string, not numeric 'id'",
+    "        const userId = j.data.user.identifier || j.data.user.id;",
+    "        pm.environment.set('user_id', String(userId));",
+    "        console.log('User ID saved:', userId);",
+    "        if (j.data.user.tenant_id) {",
+    "            pm.environment.set('tenant_id', j.data.user.tenant_id);",
+    "            console.log('Tenant ID saved:', j.data.user.tenant_id);",
+    "        }",
     "    }",
     "}",
 ]
 
 ME_TEST_SCRIPT = [
-    "if (pm.response.code === 200) {",
-    "    const json = pm.response.json();",
-    "    if (json.data) {",
-    "        pm.environment.set('user_id', json.data.id);",
-    "        pm.environment.set('user_name', (json.data.first_name + ' ' + json.data.last_name).trim());",
-    "        if (json.data.tenant_id) {",
-    "            pm.environment.set('tenant_id', json.data.tenant_id);",
-    "        }",
-    "        console.log('User context saved:', json.data.email);",
-    "    }",
-    "}",
     "pm.test('Me endpoint successful', () => {",
     "    pm.response.to.have.status(200);",
     "});",
+    "if (pm.response.code === 200) {",
+    "    const json = pm.response.json();",
+    "    if (json.data) {",
+    "        // Resources use 'identifier' string, not numeric 'id'",
+    "        const userId = json.data.identifier || json.data.id;",
+    "        pm.environment.set('user_id', String(userId));",
+    "        const userName = (json.data.first_name + ' ' + (json.data.last_name || '')).trim();",
+    "        pm.environment.set('user_name', userName);",
+    "        if (json.data.tenant_id) {",
+    "            pm.environment.set('tenant_id', json.data.tenant_id);",
+    "        }",
+    "        console.log('User context saved:', json.data.email, '| tenant:', json.data.tenant_id);",
+    "    }",
+    "}",
 ]
 
 CREATE_TEST_SCRIPT_TEMPLATE = """\
@@ -1066,14 +1263,20 @@ def _make_request(
 
 def build_index_request(mod: dict, order: int = 1000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
-    url = f"{{{{{host_var}}}}}/{mod['route']}"
+    url = f"{{{{{host_var}}}}}/v1/{mod['route']}"
     qp: list[dict] = []
     if mod["scope"] == "tenant":
         qp.append(_tenant_qp())
     qp.extend(INDEX_QUERY_PARAMS)
     return _make_request(
         name=f"List {mod['name']}",
-        description=f"Retrieve paginated list of {mod['name'].lower()}.",
+        description=(
+            f"Retrieve a paginated list of {mod['name'].lower()}.\n\n"
+            f"Supports filtering via `search`, sorting via `sort_by`/`sort_order`, "
+            f"and pagination via `page`/`per_page` (max 100 per page). "
+            f"Pass `show_deleted=1` to include soft-deleted records."
+            + (" Pass `tenant_id` as a query parameter to scope results to the tenant." if mod["scope"] == "tenant" else "")
+        ),
         url=url, method="GET", query_params=qp,
         exec_lines=GENERIC_TEST_SCRIPT, order=order,
     )
@@ -1081,15 +1284,20 @@ def build_index_request(mod: dict, order: int = 1000) -> tuple[str, dict]:
 
 def build_store_request(mod: dict, order: int = 2000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
-    url = f"{{{{{host_var}}}}}/{mod['route']}"
+    url = f"{{{{{host_var}}}}}/v1/{mod['route']}"
     var_name = param_to_var_name(mod["param"]) + "_id"
     create_script = CREATE_TEST_SCRIPT_TEMPLATE.format(var_name=var_name).splitlines()
     payload = {**mod.get("sample_body", {})}
     if mod["scope"] == "tenant":
         payload = {"tenant_id": "{{tenant_id}}", **payload}
+    singular_name = singular(mod['name'])
     return _make_request(
-        name=f"Create {singular(mod['name'])}",
-        description=f"Create a new {singular(mod['name']).lower()}.",
+        name=f"Create {singular_name}",
+        description=(
+            f"Create a new {singular_name.lower()} record.\n\n"
+            f"On success the `identifier` of the new record is automatically saved to "
+            f"`{{{{{var_name}}}}}` in the active environment via the post-response test script."
+        ),
         url=url, method="POST", body=_json_body(payload),
         exec_lines=create_script, order=order,
     )
@@ -1098,13 +1306,17 @@ def build_store_request(mod: dict, order: int = 2000) -> tuple[str, dict]:
 def build_show_request(mod: dict, order: int = 3000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
     var_name = param_to_var_name(mod["param"]) + "_id"
-    url = f"{{{{{host_var}}}}}/{mod['route']}/{{{{{var_name}}}}}"
+    url = f"{{{{{host_var}}}}}/v1/{mod['route']}/{{{{{var_name}}}}}"
     qp: list[dict] = []
     if mod["scope"] == "tenant":
         qp.append(_tenant_qp())
+    singular_name = singular(mod['name'])
     return _make_request(
-        name=f"Get {singular(mod['name'])}",
-        description=f"Retrieve a single {singular(mod['name']).lower()} by ID.",
+        name=f"Get {singular_name}",
+        description=(
+            f"Retrieve a single {singular_name.lower()} by its `identifier` string.\n\n"
+            f"Replace `{{{{{var_name}}}}}` with the identifier saved after creation."
+        ),
         url=url, method="GET", query_params=qp or None,
         exec_lines=GENERIC_TEST_SCRIPT, order=order,
     )
@@ -1113,13 +1325,18 @@ def build_show_request(mod: dict, order: int = 3000) -> tuple[str, dict]:
 def build_update_request(mod: dict, order: int = 4000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
     var_name = param_to_var_name(mod["param"]) + "_id"
-    url = f"{{{{{host_var}}}}}/{mod['route']}/{{{{{var_name}}}}}"
+    url = f"{{{{{host_var}}}}}/v1/{mod['route']}/{{{{{var_name}}}}}"
     payload = {**mod.get("sample_body", {})}
     if mod["scope"] == "tenant":
         payload = {"tenant_id": "{{tenant_id}}", **payload}
+    singular_name = singular(mod['name'])
     return _make_request(
-        name=f"Update {singular(mod['name'])}",
-        description=f"Update an existing {singular(mod['name']).lower()}.",
+        name=f"Update {singular_name}",
+        description=(
+            f"Update an existing {singular_name.lower()} record.\n\n"
+            f"Send only the fields you want to change — all fields are optional on update. "
+            f"Replace `{{{{{var_name}}}}}` with the identifier of the record to update."
+        ),
         url=url, method="PUT", body=_json_body(payload),
         exec_lines=GENERIC_TEST_SCRIPT, order=order,
     )
@@ -1128,13 +1345,17 @@ def build_update_request(mod: dict, order: int = 4000) -> tuple[str, dict]:
 def build_destroy_request(mod: dict, order: int = 5000) -> tuple[str, dict]:
     host_var = get_host_var(mod)
     var_name = param_to_var_name(mod["param"]) + "_id"
-    url = f"{{{{{host_var}}}}}/{mod['route']}/{{{{{var_name}}}}}"
+    url = f"{{{{{host_var}}}}}/v1/{mod['route']}/{{{{{var_name}}}}}"
     qp: list[dict] = []
     if mod["scope"] == "tenant":
         qp.append(_tenant_qp())
+    singular_name = singular(mod['name'])
     return _make_request(
-        name=f"Delete {singular(mod['name'])}",
-        description=f"Soft-delete a {singular(mod['name']).lower()}.",
+        name=f"Delete {singular_name}",
+        description=(
+            f"Soft-delete a {singular_name.lower()} record. The record is not permanently removed. "
+            f"Restore it with the corresponding `POST /{mod['route']}/{{{{{var_name}}}}}/restore` request."
+        ),
         url=url, method="DELETE", query_params=qp or None,
         exec_lines=GENERIC_TEST_SCRIPT, order=order,
     )
@@ -1148,9 +1369,9 @@ def build_extra_action_request(mod: dict, action: dict, order: int = 6000) -> tu
     method = action.get("method", "POST")
 
     if no_id:
-        url = f"{{{{{host_var}}}}}/{mod['route']}/{action_path}"
+        url = f"{{{{{host_var}}}}}/v1/{mod['route']}/{action_path}"
     else:
-        url = f"{{{{{host_var}}}}}/{mod['route']}/{{{{{var_name}}}}}/{action_path}"
+        url = f"{{{{{host_var}}}}}/v1/{mod['route']}/{{{{{var_name}}}}}/{action_path}"
 
     qp: Optional[list[dict]] = None
     body: Optional[dict] = None
@@ -1161,14 +1382,20 @@ def build_extra_action_request(mod: dict, action: dict, order: int = 6000) -> tu
             raw_qp.append(_tenant_qp())
         qp = raw_qp or None
     elif method in ("POST", "PUT", "PATCH"):
-        payload: dict[str, Any] = {}
-        if mod["scope"] == "tenant":
-            payload["tenant_id"] = "{{tenant_id}}"
+        # Allow action to supply a custom body; fall back to empty payload
+        if "body" in action:
+            payload: dict[str, Any] = dict(action["body"])
+        else:
+            payload = {}
+        if mod["scope"] == "tenant" and "tenant_id" not in payload:
+            payload = {"tenant_id": "{{tenant_id}}", **payload}
         body = _json_body(payload)
+
+    description = action.get("description", action["name"])
 
     return _make_request(
         name=action["name"],
-        description=action["name"],
+        description=description,
         url=url, method=method, query_params=qp, body=body,
         exec_lines=GENERIC_TEST_SCRIPT, order=order,
     )
@@ -1197,44 +1424,110 @@ def build_auth_requests() -> list[tuple[str, dict]]:
     """Build Auth folder requests for the v3 collection."""
     return [
         _make_request(
-            name="Login (Central / Super-Admin)",
-            description="Authenticate as a central super-admin user. Returns a Bearer access token.",
-            url="{{base_url}}/v1/auth/login", method="POST",
-            body=_json_body({"email": "{{user_email}}", "password": "{{user_password}}"}),
-            exec_lines=LOGIN_TEST_SCRIPT, order=1000,
+            name="Health Check",
+            description=(
+                "Verify the API server is running and reachable.\n\n"
+                "No authentication required. Returns `200 OK` with a status message when the server is healthy. "
+                "Both central (`{{base_url}}/v1/health`) and tenant (`{{tenant_base_url}}/v1/health`) health "
+                "endpoints are available."
+            ),
+            url="{{base_url}}/v1/health", method="GET",
+            exec_lines=GENERIC_TEST_SCRIPT, order=1000,
         ),
         _make_request(
-            name="Login (Tenant User)",
-            description="Authenticate as a tenant user. tenant_id is the tenant UUID identifier.",
-            url="{{tenant_base_url}}/v1/auth/login", method="POST",
-            body=_json_body({"tenant_id": "{{tenant_id}}", "email": "{{user_email}}", "password": "{{user_password}}"}),
+            name="Login (Central / Super-Admin)",
+            description=(
+                "Authenticate as a central super-admin user.\n\n"
+                "Returns a Bearer `access_token` in `data.token`. "
+                "The test script automatically saves `access_token`, `user_id`, and `tenant_id` "
+                "to the active environment. "
+                "Use `{{base_url}}/v1/auth/login` — no `tenant_id` is required for central login."
+            ),
+            url="{{base_url}}/v1/auth/login", method="POST",
+            body=_json_body({"email": "{{user_email}}", "password": "{{user_password}}"}),
             exec_lines=LOGIN_TEST_SCRIPT, order=2000,
         ),
         _make_request(
+            name="Login (Tenant User)",
+            description=(
+                "Authenticate as a tenant-scoped user.\n\n"
+                "`tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`). "
+                "Returns a Bearer `access_token` saved automatically to `{{access_token}}`. "
+                "After login, all tenant-scoped requests use `{{tenant_id}}` from the environment."
+            ),
+            url="{{tenant_base_url}}/v1/auth/login", method="POST",
+            body=_json_body({"tenant_id": "{{tenant_id}}", "email": "{{user_email}}", "password": "{{user_password}}"}),
+            exec_lines=LOGIN_TEST_SCRIPT, order=3000,
+        ),
+        _make_request(
             name="Register (Tenant User)",
-            description="Register a new user within a tenant context.",
+            description=(
+                "Register a new user within a tenant context.\n\n"
+                "`tenant_id` is required. `username` must be unique within the tenant. "
+                "`password_confirmation` must match `password`. "
+                "`preferred_timezone` should be a valid IANA timezone string (e.g. `Africa/Nairobi`). "
+                "`is_active` defaults to `true` if omitted."
+            ),
             url="{{tenant_base_url}}/v1/auth/register", method="POST",
             body=_json_body({
                 "tenant_id": "{{tenant_id}}",
-                "first_name": "Jane", "last_name": "Auditor",
+                "title": "Mr",
+                "first_name": "Jane",
+                "middle_name": None,
+                "last_name": "Auditor",
+                "username": "jane.auditor",
                 "email": "jane.auditor@example.test",
-                "password": "Password123!", "password_confirmation": "Password123!",
+                "country_code": "+254",
+                "phone": "712345678",
+                "password": "Password123!",
+                "password_confirmation": "Password123!",
+                "preferred_timezone": "Africa/Nairobi",
+                "office_location": "Nairobi, Kenya",
+                "is_active": True,
             }),
-            exec_lines=GENERIC_TEST_SCRIPT, order=3000,
+            exec_lines=GENERIC_TEST_SCRIPT, order=4000,
         ),
         _make_request(
-            name="Get Authenticated User",
-            description="Retrieve the currently authenticated user with roles and tenant context.",
+            name="Get Authenticated User (Tenant)",
+            description=(
+                "Retrieve the currently authenticated tenant user with their roles, permissions, and tenant context.\n\n"
+                "The test script saves `user_id` (identifier string) and `tenant_id` to the active environment. "
+                "Pass `tenant_id` as a query parameter to scope the request."
+            ),
             url="{{tenant_base_url}}/v1/auth/me", method="GET",
-            query_params=[{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant UUID"}],
-            exec_lines=ME_TEST_SCRIPT, order=4000,
+            query_params=[{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string"}],
+            exec_lines=ME_TEST_SCRIPT, order=5000,
         ),
         _make_request(
-            name="Logout",
-            description="Revoke the current Bearer access token.",
+            name="Get Authenticated User (Central)",
+            description=(
+                "Retrieve the currently authenticated central/super-admin user.\n\n"
+                "No `tenant_id` required. Returns user profile with roles. "
+                "The test script saves `user_id` (identifier string) to the active environment."
+            ),
+            url="{{base_url}}/v1/auth/me", method="GET",
+            exec_lines=ME_TEST_SCRIPT, order=6000,
+        ),
+        _make_request(
+            name="Logout (Tenant)",
+            description=(
+                "Revoke the current Bearer access token for a tenant user.\n\n"
+                "After logout the `access_token` is invalidated. "
+                "Pass `tenant_id` to ensure the correct tenant context is used for token revocation."
+            ),
             url="{{tenant_base_url}}/v1/auth/logout", method="POST",
             body=_json_body({"tenant_id": "{{tenant_id}}"}),
-            exec_lines=GENERIC_TEST_SCRIPT, order=5000,
+            exec_lines=GENERIC_TEST_SCRIPT, order=7000,
+        ),
+        _make_request(
+            name="Logout (Central)",
+            description=(
+                "Revoke the current Bearer access token for a central / super-admin user.\n\n"
+                "No `tenant_id` required. After logout the `access_token` is invalidated."
+            ),
+            url="{{base_url}}/v1/auth/logout", method="POST",
+            body=_json_body({}),
+            exec_lines=GENERIC_TEST_SCRIPT, order=8000,
         ),
     ]
 
@@ -1271,9 +1564,18 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
     _write_yaml(output_dir / "Central" / ".resources" / "definition.yaml", {
         "$kind": "collection",
         "description": (
-            "Cross-tenant (central database) resources: "
-            "Authentication, IAM, reference data, audit standards, and regulation frameworks. "
-            "Accessible without tenant context \u2014 requires Bearer token only."
+            "## Central Resources\n\n"
+            "Cross-tenant (central database) resources accessible to **super-admin** users "
+            "and shared infrastructure services.\n\n"
+            "**Includes:**\n"
+            "- Authentication (login/logout/me for both central and tenant users)\n"
+            "- Tenant management (create organisations, invite owners)\n"
+            "- User management (register users, assign roles)\n"
+            "- Global reference data (Continents, Countries)\n"
+            "- Audit Standards and Regulation Frameworks\n\n"
+            "**Base URL:** `{{base_url}}` (e.g. `http://localhost:8020/api`)\n\n"
+            "All requests under this folder use Bearer token authentication. "
+            "No `tenant_id` is required for central-scope requests."
         ),
         "order": 1000,
     })
@@ -1281,9 +1583,16 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
     _write_yaml(output_dir / "Central" / "Auth" / ".resources" / "definition.yaml", {
         "$kind": "collection",
         "description": (
-            "Authentication endpoints. "
-            "Central login ({{base_url}}/v1/auth/login) for super-admin users. "
-            "Tenant login ({{tenant_base_url}}/v1/auth/login) requires tenant_id in the request body."
+            "## Authentication\n\n"
+            "Authentication endpoints for both central and tenant users.\n\n"
+            "**Workflow:**\n"
+            "1. Call **Health Check** to verify the server is running.\n"
+            "2. Call **Login (Central / Super-Admin)** to get a Bearer token for central operations.\n"
+            "3. Call **Login (Tenant User)** (with `tenant_id`) to get a Bearer token for tenant operations.\n"
+            "4. The test scripts auto-save `access_token`, `user_id`, and `tenant_id` to the environment.\n"
+            "5. All subsequent requests use `{{access_token}}` via Bearer auth.\n\n"
+            "**Central login:** `POST {{base_url}}/v1/auth/login` — no `tenant_id` needed.\n"
+            "**Tenant login:** `POST {{tenant_base_url}}/v1/auth/login` — requires `tenant_id` in body."
         ),
         "order": 1000,
     })
@@ -1305,10 +1614,19 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
     _write_yaml(output_dir / "Tenant" / ".resources" / "definition.yaml", {
         "$kind": "collection",
         "description": (
-            "Tenant-scoped resources isolated per organisation database. "
-            "Pass tenant_id (identifier string, e.g. AT.1.1748000000) in request body (POST/PUT/PATCH) "
-            "or query string (GET/DELETE). "
-            "Covers audit engagements, findings, risk, compliance, controls, and reports."
+            "## Tenant Resources\n\n"
+            "Resources isolated per organisation (tenant) — each tenant has its own MySQL database.\n\n"
+            "**How to scope requests:**\n"
+            "- `POST`/`PUT`/`PATCH` requests: include `tenant_id` in the JSON body.\n"
+            "- `GET`/`DELETE` requests: pass `tenant_id` as a query parameter.\n"
+            "- `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`).\n\n"
+            "**Base URL:** `{{tenant_base_url}}` (e.g. `http://localhost:8020`)\n\n"
+            "**Includes:**\n"
+            "- Users, Companies, Departments\n"
+            "- Quality Management: Preambles, Checklist Types, Section Styles, Checklists\n"
+            "- Audit Management: Audits\n"
+            "- (Future) Engagements, Findings, Risk Assessments, Workpapers, Reports\n\n"
+            "All soft-deleted records can be restored via `POST /{resource}/{identifier}/restore`."
         ),
         "order": 2000,
     })

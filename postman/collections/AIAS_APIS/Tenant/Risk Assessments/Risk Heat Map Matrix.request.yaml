@@ -1,7 +1,7 @@
 $kind: http-request
 name: Risk Heat Map Matrix
 description: Risk Heat Map Matrix
-url: '{{tenant_base_url}}/risk-assessments/matrix'
+url: '{{tenant_base_url}}/v1/risk-assessments/matrix'
 method: GET
 headers:
   Accept: application/json

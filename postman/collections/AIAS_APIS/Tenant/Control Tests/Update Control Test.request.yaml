@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Control Test
-description: Update an existing control test.
-url: '{{tenant_base_url}}/control-tests/{{control_test_id}}'
+description: 'Update an existing control test record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{control_test_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/control-tests/{{control_test_id}}'
 method: PUT
 headers:
   Accept: application/json

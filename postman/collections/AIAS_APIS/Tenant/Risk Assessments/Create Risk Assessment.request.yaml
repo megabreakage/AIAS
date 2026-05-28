@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Risk Assessment
-description: Create a new risk assessment.
-url: '{{tenant_base_url}}/risk-assessments'
+description: 'Create a new risk assessment record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{risk_assessment_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/risk-assessments'
 method: POST
 headers:
   Accept: application/json

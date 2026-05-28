@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create API Key
-description: Create a new api key.
-url: '{{base_url}}/api-keys'
+description: 'Create a new api key record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{id_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/api-keys'
 method: POST
 headers:
   Accept: application/json

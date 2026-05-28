@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update API Key
-description: Update an existing api key.
-url: '{{base_url}}/api-keys/{{id_id}}'
+description: 'Update an existing api key record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{id_id}}` with the identifier of the record to update.'
+url: '{{base_url}}/v1/api-keys/{{id_id}}'
 method: PUT
 headers:
   Accept: application/json

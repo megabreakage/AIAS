@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Report
-description: Retrieve a single report by ID.
-url: '{{tenant_base_url}}/reports/{{report_id}}'
+description: 'Retrieve a single report by its `identifier` string.
+
+
+  Replace `{{report_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/reports/{{report_id}}'
 method: GET
 headers:
   Accept: application/json

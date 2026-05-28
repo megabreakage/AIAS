@@ -1,7 +1,7 @@
 $kind: http-request
 name: Update MFA Method
 description: Update MFA Method
-url: '{{base_url}}/mfa/method'
+url: '{{base_url}}/v1/mfa/method'
 method: PUT
 headers:
   Accept: application/json

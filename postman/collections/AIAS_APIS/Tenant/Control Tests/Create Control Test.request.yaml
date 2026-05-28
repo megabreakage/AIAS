@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Control Test
-description: Create a new control test.
-url: '{{tenant_base_url}}/control-tests'
+description: 'Create a new control test record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{control_test_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/control-tests'
 method: POST
 headers:
   Accept: application/json

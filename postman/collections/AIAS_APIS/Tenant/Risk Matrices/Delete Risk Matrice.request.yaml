@@ -1,7 +1,9 @@
 $kind: http-request
 name: Delete Risk Matrice
-description: Soft-delete a risk matrice.
-url: '{{tenant_base_url}}/risk-matrices/{{risk_matrix_id}}'
+description: Soft-delete a risk matrice record. The record is not permanently removed.
+  Restore it with the corresponding `POST /risk-matrices/{{risk_matrix_id}}/restore`
+  request.
+url: '{{tenant_base_url}}/v1/risk-matrices/{{risk_matrix_id}}'
 method: DELETE
 headers:
   Accept: application/json

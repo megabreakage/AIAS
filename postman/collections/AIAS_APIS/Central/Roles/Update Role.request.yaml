@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Role
-description: Update an existing role.
-url: '{{base_url}}/roles/{{role_id}}'
+description: 'Update an existing role record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{role_id}}` with the identifier of the record to update.'
+url: '{{base_url}}/v1/roles/{{role_id}}'
 method: PUT
 headers:
   Accept: application/json

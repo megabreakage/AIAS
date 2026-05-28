@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Checklist
-description: Create a new checklist.
-url: '{{tenant_base_url}}/checklists'
+description: 'Create a new checklist record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{checklist_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/checklists'
 method: POST
 headers:
   Accept: application/json

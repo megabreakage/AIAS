@@ -1,7 +1,11 @@
 $kind: http-request
 name: Create Regulation Framework
-description: Create a new regulation framework.
-url: '{{base_url}}/regulation-frameworks'
+description: 'Create a new regulation framework record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{regulation_framework_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/regulation-frameworks'
 method: POST
 headers:
   Accept: application/json

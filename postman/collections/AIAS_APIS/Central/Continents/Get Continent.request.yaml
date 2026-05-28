@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Continent
-description: Retrieve a single continent by ID.
-url: '{{base_url}}/continents/{{continent_id}}'
+description: 'Retrieve a single continent by its `identifier` string.
+
+
+  Replace `{{continent_id}}` with the identifier saved after creation.'
+url: '{{base_url}}/v1/continents/{{continent_id}}'
 method: GET
 headers:
   Accept: application/json

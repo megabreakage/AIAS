@@ -1,7 +1,7 @@
 $kind: http-request
 name: Export Report (PDF)
 description: Export Report (PDF)
-url: '{{tenant_base_url}}/reports/{{report_id}}/export'
+url: '{{tenant_base_url}}/v1/reports/{{report_id}}/export'
 method: GET
 headers:
   Accept: application/json

@@ -18,5 +18,8 @@
    - A comprehensive backup and disaster recovery strategy to ensure that data is protected and can be recovered in case of a disaster. Use Laravel's backup features to create regular backups and ensure that they are stored securely.
 7. **[Done]** /caveman Create a completly featured *Tenant-Scoped* **ChecklistTypes** module. Refer to `docs/prompts/models/tenant/02-ChecklistTypes.md` for Model specifications.
 8. **[Done]** /caveman Create a completely featured *Tenant-Scoped* **SectionStyle** module. Refer to `docs/prompts/models/tenant/03-SectionStyle.md` for Model specifications. Create comprehensive Unit & Feature Test for **SectionStyle** module covering, its model, migration, repository, service(if exists), controller, requests & validations, and API resource & collection. Update Postman collection with endpoints for **SectionStyle** module, and ensure that all endpoints are properly documented with request and response examples.
-9. /caveman Create a completly featured *Tenant-Scoped* **Checklist** module. Refer to `docs/prompts/models/tenant/04-Checklist.md` for Model specifications.
-10. /caveman Create a completly featured *Tenant-Scoped* **Company** module. Refer to `docs/prompts/models/tenant/06-Company.md` for Model specifications.
+9. **[Done]** /caveman Create a completly featured *Tenant-Scoped* **Checklist** module. Refer to `docs/prompts/models/tenant/04-Checklist.md` for Model specifications.
+10. **[Done]** /caveman Create a completly featured *Tenant-Scoped* **Company** module. Refer to `docs/prompts/models/tenant/06-Company.md` for Model specifications.
+11. **[Done]** /caveman Create a completly featured *Tenant-Scoped* **Department** module. Refer to `docs/prompts/models/tenant/07-Department.md` for Model specifications.
+12. **[Done]** /caveman Create a completly featured *Tenant-Scoped* **PriorityLevel** module. Refer to `docs/prompts/models/tenant/08-PriorityLevel.md` for Model specifications.
+13. **[Done]** /caveman Create a completly featured *Tenant-Scoped* **Audit** module. Refer to `docs/prompts/models/tenant/09-Audit.md` for Model specifications.

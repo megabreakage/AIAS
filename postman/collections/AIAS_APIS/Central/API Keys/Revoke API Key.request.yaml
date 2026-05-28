@@ -1,7 +1,7 @@
 $kind: http-request
 name: Revoke API Key
 description: Revoke API Key
-url: '{{base_url}}/api-keys/{{id_id}}/revoke'
+url: '{{base_url}}/v1/api-keys/{{id_id}}/revoke'
 method: POST
 headers:
   Accept: application/json

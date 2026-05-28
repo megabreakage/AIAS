@@ -1,5 +1,27 @@
 $kind: collection
-description: 'Cross-tenant (central database) resources: Authentication, IAM, reference
-  data, audit standards, and regulation frameworks. Accessible without tenant context
-  — requires Bearer token only.'
+description: '## Central Resources
+
+
+  Cross-tenant (central database) resources accessible to **super-admin** users and
+  shared infrastructure services.
+
+
+  **Includes:**
+
+  - Authentication (login/logout/me for both central and tenant users)
+
+  - Tenant management (create organisations, invite owners)
+
+  - User management (register users, assign roles)
+
+  - Global reference data (Continents, Countries)
+
+  - Audit Standards and Regulation Frameworks
+
+
+  **Base URL:** `{{base_url}}` (e.g. `http://localhost:8020/api`)
+
+
+  All requests under this folder use Bearer token authentication. No `tenant_id` is
+  required for central-scope requests.'
 order: 1000

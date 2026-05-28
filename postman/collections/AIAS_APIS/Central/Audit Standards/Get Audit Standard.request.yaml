@@ -1,7 +1,10 @@
 $kind: http-request
 name: Get Audit Standard
-description: Retrieve a single audit standard by ID.
-url: '{{base_url}}/audit-standards/{{audit_standard_id}}'
+description: 'Retrieve a single audit standard by its `identifier` string.
+
+
+  Replace `{{audit_standard_id}}` with the identifier saved after creation.'
+url: '{{base_url}}/v1/audit-standards/{{audit_standard_id}}'
 method: GET
 headers:
   Accept: application/json

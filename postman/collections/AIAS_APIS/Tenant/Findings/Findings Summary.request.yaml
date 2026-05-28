@@ -1,7 +1,7 @@
 $kind: http-request
 name: Findings Summary
 description: Findings Summary
-url: '{{tenant_base_url}}/findings/summary'
+url: '{{tenant_base_url}}/v1/findings/summary'
 method: GET
 headers:
   Accept: application/json

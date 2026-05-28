@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Audit Template
-description: Update an existing audit template.
-url: '{{tenant_base_url}}/audit-templates/{{audit_template_id}}'
+description: 'Update an existing audit template record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{audit_template_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/audit-templates/{{audit_template_id}}'
 method: PUT
 headers:
   Accept: application/json

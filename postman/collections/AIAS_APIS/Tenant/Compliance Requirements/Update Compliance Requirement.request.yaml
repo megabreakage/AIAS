@@ -1,7 +1,11 @@
 $kind: http-request
 name: Update Compliance Requirement
-description: Update an existing compliance requirement.
-url: '{{tenant_base_url}}/compliance-requirements/{{compliance_requirement_id}}'
+description: 'Update an existing compliance requirement record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{compliance_requirement_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/compliance-requirements/{{compliance_requirement_id}}'
 method: PUT
 headers:
   Accept: application/json
