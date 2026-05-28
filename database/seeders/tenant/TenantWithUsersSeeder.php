@@ -28,11 +28,20 @@ class TenantWithUsersSeeder extends Seeder
 
         $tenantRole = Role::where('name', 'tenant')->where('guard_name', 'api')->firstOrFail();
         $adminRole = Role::where('name', 'admin')->where('guard_name', 'api')->firstOrFail();
+        $auditorRole = Role::where('name', 'auditor')->where('guard_name', 'api')->firstOrFail();
 
-        Tenant::factory(2)->create()->each(function (Tenant $tenant) use ($tenantRole): void {
+        Tenant::factory(2)->create()->each(function (Tenant $tenant) use ($tenantRole, $adminRole, $auditorRole): void {
             $tenant->refresh();
 
-            $admin = User::firstOrCreate(
+            $users = User::factory(2)->create();
+
+            $owner = $users->first();
+            $owner->assignRole($tenantRole);
+            $tenant->update(['owner_id' => $owner->id]);
+
+            $users->last()->assignRole($auditorRole);
+
+            User::firstOrCreate(
                 ['email' => env('TEST_TENANT_ADMIN_EMAIL', 'admin@tenant.test')],
                 [
                     'identifier' => (string) Str::uuid(),
@@ -44,17 +53,9 @@ class TenantWithUsersSeeder extends Seeder
                     'is_active' => true,
                     'country_code' => '+254',
                 ],
-            );
+            )->assignRole($adminRole);
 
-            $users = User::factory(2)->create();
-
-            $owner = $users->first();
-            $owner->assignRole($tenantRole);
-            $tenant->update(['owner_id' => $owner->id]);
-
-            $users->last()->assignRole('auditor');
-
-            $this->command->info("Created tenant {$tenant->getTenantKey()} with 2 users.");
+            $this->command->info("Created tenant {$tenant->getTenantKey()} with 3 users.");
 
             $tenant->run(function () {
                 $seeder = new TenantDatabaseSeeder;
