@@ -121,4 +121,20 @@ final class User extends Authenticatable implements AuditableContract
     {
         return $this->belongsTo(self::class, 'updated_by');
     }
+
+    /**
+     * Scope to get records created by a specific user.
+     */
+    public function scopeCreatedBy($query, $userId)
+    {
+        return $query->where('created_by', $userId);
+    }
+
+    /**
+     * Scope to get records updated by a specific user.
+     */
+    public function scopeUpdatedBy($query, $userId)
+    {
+        return $query->where('updated_by', $userId);
+    }
 }

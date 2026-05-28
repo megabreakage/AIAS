@@ -42,8 +42,8 @@ class UserResource extends BaseResource
                 'name' => trim(($this->creator?->first_name ?? '').' '.($this->creator?->last_name ?? '')),
             ]),
             'updated_by' => $this->whenLoaded('updater', fn () => [
-                'identifier' => $this->updatedBy?->identifier,
-                'name' => trim(($this->updatedBy?->first_name ?? '').' '.($this->updatedBy?->last_name ?? '')),
+                'identifier' => $this->updater?->identifier,
+                'name' => trim(($this->updater?->first_name ?? '').' '.($this->updater?->last_name ?? '')),
             ]),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
