@@ -14,6 +14,7 @@ use App\Models\Tenant\AuditStatusStage;
 use App\Models\User;
 use App\Policies\AuditPolicy;
 use App\Repositories\Tenant\AuditRepository;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -52,6 +53,14 @@ function ensureAuditsTable(): void
             '--realpath' => false,
             '--force' => true,
         ]);
+    } elseif (! Schema::hasColumn('audits', 'name')) {
+        // The owen-it/laravel-auditing package owns an 'audits' table in the central DB.
+        // Add tenant columns so Form Request unique validation does not throw a column-not-found error.
+        Schema::table('audits', function (Blueprint $table): void {
+            $table->string('name')->nullable();
+            $table->string('identifier')->nullable();
+            $table->string('tenant_id')->nullable();
+        });
     }
 
     if (! Schema::hasTable('audit_status_stages')) {
@@ -721,7 +730,10 @@ describe('Audit routes permission enforcement', function (): void {
         $user->id = 1;
 
         $this->actingAs($user, 'api')
-            ->postJson('/v1/audits', ['name' => 'Test Audit'])
+            ->postJson('/v1/audits', [
+                'name' => 'Test Audit',
+                'audit_start_date' => now()->toDateTimeString(),
+            ])
             ->assertForbidden();
     });
 });
