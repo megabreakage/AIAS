@@ -13,6 +13,15 @@ class TenantDatabaseSeeder extends Seeder
         $this->call([
             DefaultTenantRoleSeeder::class,
             DefaultTenantAdminSeeder::class,
+            PreambleSeeder::class,
+            ChecklistTypeSeeder::class,
+            SectionStyleSeeder::class,
+            CompanySeeder::class,
+            PrioritySeeder::class,
+            ChecklistSeeder::class,
+            DepartmentSeeder::class,
+            ChecklistSectionStyleSeeder::class,
+            AuditSeeder::class,
         ]);
     }
 }
