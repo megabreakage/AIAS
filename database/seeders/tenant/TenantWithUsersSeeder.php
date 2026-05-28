@@ -63,7 +63,7 @@ class TenantWithUsersSeeder extends Seeder
                 $seeder->run();
             });
 
-            $this->command->info("Seeded tenant database for {$tenant->getTenantKey()}.\n");
+            $this->command->info("Seeded tenant database for {$tenant->getTenantKey()}.\\n");
         });
     }
 }
