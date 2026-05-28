@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['checklist_id', 'section_style_id', 'sort_order']);
+            $table->unique(['checklist_id', 'section_style_id', 'sort_order'], 'css_checklist_style_sort_unique');
             $table->index('sort_order');
         });
     }

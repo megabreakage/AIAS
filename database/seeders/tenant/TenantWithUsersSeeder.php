@@ -39,6 +39,14 @@ class TenantWithUsersSeeder extends Seeder
             $users->last()->assignRole($adminRole);
 
             $this->command->info("Created tenant {$tenant->getTenantKey()} with 2 users.");
+
+            $tenant->run(function () {
+                $seeder = new TenantDatabaseSeeder;
+                $seeder->setCommand($this->command);
+                $seeder->run();
+            });
+
+            $this->command->info("Seeded tenant database for {$tenant->getTenantKey()}.\n");
         });
     }
 }
