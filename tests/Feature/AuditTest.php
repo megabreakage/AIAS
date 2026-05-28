@@ -14,9 +14,9 @@ use App\Models\Tenant\AuditStatusStage;
 use App\Models\User;
 use App\Policies\AuditPolicy;
 use App\Repositories\Tenant\AuditRepository;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
@@ -31,7 +31,7 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
  */
 function ensureAuditsTable(): void
 {
-    if (! Schema::hasTable('departments')) {
+    if (!Schema::hasTable('departments')) {
         Artisan::call('migrate', [
             '--path' => 'database/migrations/tenant/2026_05_27_000006_create_departments_table.php',
             '--realpath' => false,
@@ -39,7 +39,7 @@ function ensureAuditsTable(): void
         ]);
     }
 
-    if (! Schema::hasTable('checklists')) {
+    if (!Schema::hasTable('checklists')) {
         Artisan::call('migrate', [
             '--path' => 'database/migrations/tenant/2026_05_27_000003_create_checklists_table.php',
             '--realpath' => false,
@@ -47,23 +47,29 @@ function ensureAuditsTable(): void
         ]);
     }
 
-    if (! Schema::hasTable('audits')) {
+    if (!Schema::hasTable('audits')) {
         Artisan::call('migrate', [
             '--path' => 'database/migrations/tenant/2026_05_28_000001_create_audits_table.php',
             '--realpath' => false,
             '--force' => true,
         ]);
-    } elseif (! Schema::hasColumn('audits', 'name')) {
-        // The owen-it/laravel-auditing package owns an 'audits' table in the central DB.
-        // Add tenant columns so Form Request unique validation does not throw a column-not-found error.
-        Schema::table('audits', function (Blueprint $table): void {
-            $table->string('name')->nullable();
-            $table->string('identifier')->nullable();
-            $table->string('tenant_id')->nullable();
-        });
+    } else {
+        // The owen-it/laravel-auditing package may own an 'audits' table in the central DB.
+        // Add each tenant column individually so Form Request validation does not throw column-not-found errors.
+        if (!Schema::hasColumn('audits', 'name')) {
+            Schema::table('audits', fn (Blueprint $table) => $table->string('name')->nullable());
+        }
+
+        if (!Schema::hasColumn('audits', 'identifier')) {
+            Schema::table('audits', fn (Blueprint $table) => $table->string('identifier')->nullable());
+        }
+
+        if (!Schema::hasColumn('audits', 'tenant_id')) {
+            Schema::table('audits', fn (Blueprint $table) => $table->string('tenant_id')->nullable());
+        }
     }
 
-    if (! Schema::hasTable('audit_status_stages')) {
+    if (!Schema::hasTable('audit_status_stages')) {
         Artisan::call('migrate', [
             '--path' => 'database/migrations/tenant/2026_05_28_000002_create_audit_status_stages_table.php',
             '--realpath' => false,
