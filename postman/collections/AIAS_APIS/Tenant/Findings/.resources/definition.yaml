@@ -1,3 +1,7 @@
 $kind: collection
-description: Manage audit observations and findings.
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.
+
+
+  Manage audit observations and findings. This folder is a placeholder for future
+  implementation.'
 order: 15000

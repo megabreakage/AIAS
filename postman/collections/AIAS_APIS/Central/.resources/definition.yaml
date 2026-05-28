@@ -6,22 +6,34 @@ description: '## Central Resources
   shared infrastructure services.
 
 
-  **Includes:**
+  ### ✅ Implemented Endpoints
 
-  - Authentication (login/logout/me for both central and tenant users)
 
-  - Tenant management (create organisations, invite owners)
+  | Resource | Endpoints |
 
-  - User management (register users, assign roles)
+  |---------|---------|
 
-  - Global reference data (Continents, Countries)
+  | **Auth** | POST /login, POST /logout, GET /me (central) |
 
-  - Audit Standards and Regulation Frameworks
+  | **Tenants** | GET list, POST create, GET show, PUT update, DELETE, POST /{id}/users
+  |
+
+  | **Users** | POST create only (list/show/update/delete not yet implemented) |
+
+  | **Continents** | Full CRUD + POST restore |
+
+  | **Countries** | Full CRUD + POST restore |
+
+
+  ### ⚠️ Planned (Not Yet Implemented)
+
+  Roles, Service Users, API Keys, MFA, Audit Standards, Regulation Frameworks, Risk
+  Categories
 
 
   **Base URL:** `{{base_url}}` (e.g. `http://localhost:8020/api`)
 
 
-  All requests under this folder use Bearer token authentication. No `tenant_id` is
-  required for central-scope requests.'
+  All requests use Bearer token authentication. No `tenant_id` required for central-scope
+  requests.'
 order: 1000

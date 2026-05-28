@@ -1,3 +1,7 @@
 $kind: collection
-description: Manage audit engagements (projects) — the top-level audit entity.
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.
+
+
+  Manage audit engagements (projects) — the top-level audit entity. This folder is
+  a placeholder for future implementation.'
 order: 11000

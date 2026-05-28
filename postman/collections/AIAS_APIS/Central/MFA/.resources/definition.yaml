@@ -1,3 +1,7 @@
 $kind: collection
-description: Multi-factor authentication management (TOTP-based).
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.
+
+
+  Multi-factor authentication management (TOTP-based). This folder is a placeholder
+  for future implementation.'
 order: 9000

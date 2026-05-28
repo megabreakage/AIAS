@@ -3,10 +3,17 @@ description: 'Manage tenant departments with geocoding support, member assignmen
   and department head linkage.
 
 
-  `department_head` is the `identifier` string of the user appointed as department
-  head. `department_members` is an array of `{user_id}` objects listing department
-  member identifiers. `country_id` is an integer FK (numeric ID) to the countries
-  table. `latitude` and `longitude` are decimal geocoding coordinates (optional).
+  **⚠️ Integer FK fields** (pass numeric DB `id`, not the identifier string):
+
+  - `department_head` — numeric DB `id` of the user appointed as department head (nullable).
+
+  - `department_members.*.user_id` — numeric DB `id` of each member user (nullable).
+
+  - `country_id` — numeric DB `id` of the country record (nullable).
+
+
+  `latitude` and `longitude` are decimal geocoding coordinates (optional). `postal_code`
+  is a string up to 20 chars.
 
 
   Soft-deleted departments can be restored via `POST /departments/{identifier}/restore`.'

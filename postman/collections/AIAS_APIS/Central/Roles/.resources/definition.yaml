@@ -1,3 +1,7 @@
 $kind: collection
-description: Manage RBAC roles and permission assignments (Spatie Permission).
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.
+
+
+  Manage RBAC roles and permission assignments (Spatie Permission). This folder is
+  a placeholder for future implementation.'
 order: 6000

@@ -1,3 +1,7 @@
 $kind: collection
-description: Manage risk scoring matrices for engagements.
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.
+
+
+  Manage risk scoring matrices for engagements. This folder is a placeholder for future
+  implementation.'
 order: 18000

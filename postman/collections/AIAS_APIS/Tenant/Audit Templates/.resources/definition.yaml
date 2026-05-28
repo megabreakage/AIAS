@@ -1,3 +1,7 @@
 $kind: collection
-description: Manage reusable audit program templates.
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.
+
+
+  Manage reusable audit program templates. This folder is a placeholder for future
+  implementation.'
 order: 10000

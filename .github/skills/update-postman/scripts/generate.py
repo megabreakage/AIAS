@@ -54,51 +54,98 @@ except ModuleNotFoundError as _e:
 COLLECTION_NAME = "AIAS API"
 COLLECTION_DESCRIPTION = (
     "# AIAS — Adaptive Intelligent Audit System\n\n"
-    "A multi-tenant Laravel 13 REST API for audit engagements, compliance tracking, "
-    "risk assessments, and audit workflows.\n\n"
+    "A multi-tenant Laravel 13 REST API for quality management, audit workflows, compliance tracking, "
+    "risk assessments, and findings management.\n\n"
+    "**Version:** 1.0 | **Framework:** Laravel 13, PHP 8.4 | "
+    "**Auth:** Laravel Passport (Personal Access Tokens) | **Tenancy:** Stancl Tenancy v3\n\n"
+    "---\n\n"
+    "## ✅ Currently Implemented Endpoints\n\n"
+    "**Central API** (`{{base_url}}/v1/...`)\n"
+    "- Auth: login, logout, me\n"
+    "- Tenants: CRUD + create tenant user\n"
+    "- Users: create (POST only)\n"
+    "- Continents: full CRUD + restore\n"
+    "- Countries: full CRUD + restore\n\n"
+    "**Tenant API** (`{{tenant_base_url}}/v1/...` — requires `tenant_id`)\n"
+    "- Auth: register, login, logout, me\n"
+    "- Preambles: full CRUD + restore\n"
+    "- Users: full CRUD + restore\n"
+    "- Checklist Types: full CRUD + restore\n"
+    "- Section Styles: full CRUD + restore\n"
+    "- Checklists: full CRUD + restore\n"
+    "- Companies: full CRUD + restore\n"
+    "- Departments: full CRUD + restore\n"
+    "- Audits: full CRUD + restore\n\n"
+    "**⚠️ Planned / Not Yet Implemented:** Roles, Service Users, API Keys, MFA, Audit Standards, "
+    "Regulation Frameworks, Risk Categories, Clients, Audit Templates, Audit Engagements, "
+    "Audit Plans, Audit Procedures, Workpapers, Findings, Finding Responses, Risk Assessments, "
+    "Risk Matrices, Compliance Requirements, Compliance Evidence, Control Objectives, "
+    "Control Tests, Reports, Firm Settings.\n\n"
+    "---\n\n"
     "## Authentication\n\n"
     "All protected endpoints require a `Bearer` token in the `Authorization` header.\n\n"
-    "**Central (super-admin):** `POST {{base_url}}/v1/auth/login` — returns a token for managing "
-    "tenants, users, reference data, and global audit standards.\n\n"
-    "**Tenant user:** `POST {{tenant_base_url}}/v1/auth/login` — include `tenant_id` in the JSON body. "
-    "Returns a token scoped to that tenant's database.\n\n"
+    "**Central login:** `POST {{base_url}}/v1/auth/login` — email + password only. "
+    "Returns a token for super-admin operations (tenants, users, reference data).\n\n"
+    "**Tenant login:** `POST {{tenant_base_url}}/v1/auth/login` — requires `tenant_id` in the JSON body "
+    "alongside email and password. Returns a token scoped to that tenant's database.\n\n"
+    "After login, `access_token`, `user_id`, and `tenant_id` are auto-saved to the environment "
+    "by the test script.\n\n"
+    "---\n\n"
     "## Route Prefixes\n\n"
-    "| Scope | Base Variable | Prefix | Example |\n"
-    "|-------|--------------|--------|--------|\n"
-    "| Central | `{{base_url}}` | `/api/v1/` | `{{base_url}}/v1/tenants` |\n"
-    "| Tenant | `{{tenant_base_url}}` | `/v1/` | `{{tenant_base_url}}/v1/audits` |\n\n"
+    "| Scope | Base Variable | Example URL |\n"
+    "|-------|--------------|------------|\n"
+    "| Central | `{{base_url}}` | `{{base_url}}/v1/tenants` |\n"
+    "| Tenant | `{{tenant_base_url}}` | `{{tenant_base_url}}/v1/audits` |\n\n"
+    "- `base_url` includes `/api` (e.g. `http://localhost:8020/api`) — used for central routes.\n"
+    "- `tenant_base_url` is without `/api` (e.g. `http://localhost:8020`) — used for tenant routes.\n\n"
+    "---\n\n"
     "## Tenant Identification\n\n"
+    "Tenancy is initialised via the `tenant_id` body/query parameter "
+    "(`InitializeTenancyByBodyParam` middleware).\n\n"
     "Pass `tenant_id` (identifier string, e.g. `AT.1.1748000000`) in every tenant-scoped request:\n"
     "- **POST / PUT / PATCH** — include `tenant_id` in the JSON body\n"
     "- **GET / DELETE** — include `tenant_id` as a query parameter\n\n"
     "The `{{tenant_id}}` variable is auto-populated after login and stored in the environment.\n\n"
+    "---\n\n"
     "## Response Envelope\n\n"
-    "All responses follow a consistent envelope:\n"
+    "All responses follow a consistent `BaseResource` envelope:\n"
     "```json\n"
     "{\n"
     '  "status": "success",\n'
     '  "message": "Resource retrieved successfully",\n'
-    '  "data": { ... },\n'
-    '  "metadata": { "total": 42, "page": 1 }\n'
+    '  "data": { ... }\n'
     "}\n"
-    "```\n\n"
+    "```\n"
+    "Paginated list responses include `metadata` with `current_page`, `last_page`, `per_page`, `total`.\n\n"
+    "---\n\n"
     "## Pagination\n\n"
-    "List endpoints support: `?page=1&per_page=15&search=&sort_by=created_at&sort_order=desc`\n\n"
+    "List endpoints accept: `?page=1&per_page=15&search=&sort_by=created_at&sort_order=desc&show_deleted=0`\n\n"
+    "---\n\n"
     "## Soft Deletes\n\n"
-    "All resources support soft-delete. Use `POST /{id}/restore` to restore a soft-deleted record. "
-    "Pass `?show_deleted=1` on list endpoints to include soft-deleted records.\n\n"
+    "All resources support soft-delete. Deleted records are hidden by default. "
+    "Restore with `POST /{identifier}/restore`. Pass `?show_deleted=1` to include deleted records in lists.\n\n"
+    "---\n\n"
     "## ID / Identifier Convention\n\n"
-    "Resources use a string `identifier` (format: `AT.{n}.{timestamp}`) for route binding and references. "
-    "Numeric database `id` values are not exposed. "
-    "**Exception:** `continent_id` in country records is a numeric integer FK — not an identifier string.\n\n"
+    "Route binding uses the string `identifier` field (format: `AT.{n}.{timestamp}`), **not** the "
+    "numeric database `id`. All env vars store identifier strings (e.g. `{{preamble_id}}` = `\"AT.5.1748000000\"`).\n\n"
+    "**⚠️ Integer FK Exception:** Some relationship ID fields in request bodies accept numeric integer DB IDs "
+    "(not identifier strings). These are explicitly documented in each endpoint's description:\n"
+    "- `continent_id` in Country requests — numeric integer\n"
+    "- `department_id`, `lead_auditor_id`, `quality_manager_id`, `checklist_id`, `task_type_id` in Audit requests — numeric integer\n"
+    "- `quality_controller_id`, `preamble_id`, `checklist_type_id` in Checklist requests — numeric integer\n"
+    "- `department_head`, `department_members.*.user_id` in Department requests — numeric integer\n"
+    "- `company_contacts.*.user_id` in Company requests — numeric integer\n\n"
+    "---\n\n"
     "## Environment Variables\n\n"
-    "Key variables auto-populated by test scripts:\n"
-    "- `access_token` — Bearer token (after login)\n"
-    "- `user_id` — Authenticated user identifier\n"
-    "- `tenant_id` — Current tenant identifier\n"
-    "- `<resource>_id` — Identifier of the last created resource (e.g. `audit_engagement_id`)\n\n"
+    "Key variables auto-populated by test scripts after each Create request:\n"
+    "- `access_token` — Bearer token (set after login)\n"
+    "- `user_id` — Authenticated user identifier (set after login/me)\n"
+    "- `tenant_id` — Current tenant identifier (set after login)\n"
+    "- `<resource>_id` — Resource identifier saved after each successful Create (e.g. `preamble_id`, `audit_id`)\n\n"
+    "---\n\n"
     "## Tech Stack\n\n"
-    "Laravel 13 · PHP 8.4 · Passport OAuth2 · Stancl Tenancy v3 · Spatie Permission · MySQL"
+    "Laravel 13 · PHP 8.4 · MySQL · Passport OAuth2 (Personal Access Tokens) · "
+    "Stancl Tenancy v3 (body-param identification) · Spatie Permission v7 · Pest v4"
 )
 DEFAULT_BASE_URL = "http://localhost:8020/api"
 DEFAULT_TENANT_BASE_URL = "http://localhost:8020"
@@ -253,15 +300,16 @@ MODULES: list[dict[str, Any]] = [
         "scope": "central",
         "description": (
             "Register central platform users (super-admins and tenant owners).\n\n"
-            "**Currently implemented:** `POST /v1/users` only.\n"
-            "List / Get / Update / Delete central users are **not yet implemented** — "
+            "**✅ Implemented:** `POST /v1/users` — create a central user.\n"
+            "**⚠️ Not yet implemented:** List, Get, Update, Delete central users — "
             "user management is primarily performed through tenant-scoped endpoints.\n\n"
-            "Required: `first_name`, `last_name`, `username` (unique), `email` (unique), `password` "
-            "(min 8 chars, must contain letters and numbers).\n\n"
+            "Required: `first_name`, `last_name`, `username` (unique globally), `email` (unique globally), "
+            "`password` (min 8 chars, must contain letters and numbers).\n\n"
             "Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`, "
-            "`office_location`, `avatar`, `notes`, `is_active`.\n\n"
-            "Note: `password_confirmation` is **not** required on this endpoint. "
-            "Role assignment is handled via the tenant user management endpoints."
+            "`office_location`, `avatar`, `notes`, `is_active` (boolean, default `true`).\n\n"
+            "Note: `password_confirmation` is **not** required. "
+            "Role assignment is handled via the tenant user management endpoints. "
+            "The `identifier` of the created user is auto-saved to `{{user_id}}` in the environment."
         ),
         "sample_body": {
             "title": "Dr",
@@ -286,7 +334,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "roles",
         "param": "role",
         "scope": "central",
-        "description": "Manage RBAC roles and permission assignments (Spatie Permission).",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.\n\n"
+            "Manage RBAC roles and permission assignments (Spatie Permission). "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "name": "auditor",
             "permissions": ["view audit-engagements", "create workpapers"],
@@ -300,7 +352,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "service-users",
         "param": "id",
         "scope": "central",
-        "description": "System-level service accounts for machine-to-machine auth.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.\n\n"
+            "System-level service accounts for machine-to-machine auth. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "name": "Integration Bot",
             "email": "bot@pinnacleaudit.test",
@@ -318,7 +374,10 @@ MODULES: list[dict[str, Any]] = [
         "route": "api-keys",
         "param": "id",
         "scope": "central",
-        "description": "Manage API keys for service users.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.\n\n"
+            "Manage API keys for service users. This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "service_user_id": "{{service_user_id}}",
             "name": "Production Key",
@@ -336,7 +395,10 @@ MODULES: list[dict[str, Any]] = [
         "route": "mfa",
         "param": "mfa",
         "scope": "central",
-        "description": "Multi-factor authentication management (TOTP-based).",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.\n\n"
+            "Multi-factor authentication management (TOTP-based). This folder is a placeholder for future implementation."
+        ),
         "sample_body": {"method": "totp"},
         "extra_actions": [
             {"method": "GET",  "path": "status",       "name": "MFA Status",              "no_id": True},
@@ -355,7 +417,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "audit-standards",
         "param": "auditStandard",
         "scope": "central",
-        "description": "Global audit standards reference data (ISA, IIA, GAAS, PCAOB).",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.\n\n"
+            "Global audit standards reference data (ISA, IIA, GAAS, PCAOB). "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "name": "ISA 315",
             "code": "ISA-315",
@@ -372,7 +438,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "regulation-frameworks",
         "param": "regulationFramework",
         "scope": "central",
-        "description": "Global regulatory frameworks (SOX, GDPR, HIPAA, Basel III).",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.\n\n"
+            "Global regulatory frameworks (SOX, GDPR, HIPAA, Basel III). "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "name": "SOX",
             "code": "SOX",
@@ -389,7 +459,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "risk-categories",
         "param": "riskCategory",
         "scope": "central",
-        "description": "Global risk category definitions shared across all tenants.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.\n\n"
+            "Global risk category definitions shared across all tenants. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "name": "Financial Risk",
             "code": "FIN",
@@ -481,10 +555,13 @@ MODULES: list[dict[str, Any]] = [
         "scope": "tenant",
         "description": (
             "Manage audit checklists with quality controller assignment, preamble linkage, and type classification.\n\n"
-            "`quality_controller_id` is the `identifier` of the user responsible for quality control. "
-            "`preamble_id` links the checklist to a quality management preamble. "
-            "`checklist_type_id` classifies the checklist (e.g. Pre-Engagement, Field Work). "
-            "All three ID fields accept identifier strings or `null`.\n\n"
+            "**⚠️ Integer FK fields** (pass numeric DB `id`, not the identifier string):\n"
+            "- `quality_controller_id` — DB `id` of the user responsible for quality control.\n"
+            "- `preamble_id` — DB `id` of the preamble to link.\n"
+            "- `checklist_type_id` — DB `id` of the checklist type classification.\n\n"
+            "All three ID fields are nullable — pass `null` to leave unassigned.\n"
+            "`is_active` controls visibility in selection dropdowns. "
+            "`is_featured` pins the checklist to the top of lists.\n\n"
             "Soft-deleted checklists can be restored via `POST /checklists/{identifier}/restore`."
         ),
         "sample_body": {
@@ -507,11 +584,13 @@ MODULES: list[dict[str, Any]] = [
         "scope": "tenant",
         "description": (
             "Manage tenant-scoped user accounts within the audit firm.\n\n"
-            "Required: `first_name`, `last_name`, `username` (unique within tenant), `email` (unique within tenant), `password`.\n"
+            "Required: `first_name`, `last_name`, `username` (unique within tenant), "
+            "`email` (unique within tenant), `password` (min 8 chars, must contain letters and numbers).\n\n"
             "Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`, "
-            "`office_location`, `avatar`, `notes`, `is_active`.\n\n"
-            "Note: `role` assignment is managed separately via the Roles endpoints. "
-            "`is_active` (boolean) replaces the older `status` field.\n\n"
+            "`office_location`, `avatar`, `notes`, `is_active` (boolean).\n\n"
+            "Note: Role assignment is managed separately via `POST /api/v1/tenants/{id}/users` (central endpoint). "
+            "The `is_active` field (boolean) controls account access. "
+            "The `identifier` of the created user is auto-saved to `{{tenant_user_id}}` in the environment.\n\n"
             "Soft-deleted users can be restored via `POST /users/{identifier}/restore`."
         ),
         "sample_body": {
@@ -540,11 +619,16 @@ MODULES: list[dict[str, Any]] = [
         "scope": "tenant",
         "description": (
             "Manage tenant companies — the client organisations being audited.\n\n"
-            "`level_of_operations` values: `local`, `regional`, `international`. "
-            "`company_contacts` is an array of contact assignments; `contact_type` values: `primary`, `secondary`, `billing`, `technical`. "
-            "`country_id` is an integer FK (numeric ID) to the countries table. "
-            "`latitude` and `longitude` are decimal geocoding coordinates (optional). "
-            "`logo` is a URL or storage path to the company logo.\n\n"
+            "`level_of_operations` values: `local`, `regional`, `international`.\n\n"
+            "**⚠️ Integer FK fields** (pass numeric DB `id`, not the identifier string):\n"
+            "- `country_id` — numeric DB `id` of the country record (nullable).\n"
+            "- `company_contacts.*.user_id` — numeric DB `id` of the contact user (nullable).\n\n"
+            "`contact_type` values: `primary`, `secondary`, `billing`, `technical`.\n\n"
+            "**⚠️ Logo upload:** The `logo` field accepts a file image upload (`multipart/form-data`, max 2MB). "
+            "When sending JSON, omit `logo` or pass `null` (no file). "
+            "To upload a logo, switch the request body to `form-data` and include the file.\n\n"
+            "`latitude` / `longitude` are decimal geocoding coordinates (optional). "
+            "`postal_code` is a string up to 20 chars.\n\n"
             "Soft-deleted companies can be restored via `POST /companies/{identifier}/restore`."
         ),
         "sample_body": {
@@ -579,10 +663,12 @@ MODULES: list[dict[str, Any]] = [
         "scope": "tenant",
         "description": (
             "Manage tenant departments with geocoding support, member assignments, and department head linkage.\n\n"
-            "`department_head` is the `identifier` string of the user appointed as department head. "
-            "`department_members` is an array of `{user_id}` objects listing department member identifiers. "
-            "`country_id` is an integer FK (numeric ID) to the countries table. "
-            "`latitude` and `longitude` are decimal geocoding coordinates (optional).\n\n"
+            "**⚠️ Integer FK fields** (pass numeric DB `id`, not the identifier string):\n"
+            "- `department_head` — numeric DB `id` of the user appointed as department head (nullable).\n"
+            "- `department_members.*.user_id` — numeric DB `id` of each member user (nullable).\n"
+            "- `country_id` — numeric DB `id` of the country record (nullable).\n\n"
+            "`latitude` and `longitude` are decimal geocoding coordinates (optional). "
+            "`postal_code` is a string up to 20 chars.\n\n"
             "Soft-deleted departments can be restored via `POST /departments/{identifier}/restore`."
         ),
         "sample_body": {
@@ -614,21 +700,27 @@ MODULES: list[dict[str, Any]] = [
         "description": (
             "Manage tenant audit records — the core audit execution entity.\n\n"
             "`scope` values: `internal`, `external`, `service_provider`, `supplier`. "
-            "`checklist_id` links the audit to a quality management checklist (identifier string or null). "
-            "`department_id` is the `identifier` of the department being audited. "
-            "`lead_auditor_id` and `quality_manager_id` are user identifier strings. "
-            "`audit_start_date` and `audit_end_date` accept datetime strings (`YYYY-MM-DD HH:MM:SS`). "
-            "`add_appendix` (boolean) indicates whether to attach an appendix to the audit report.\n\n"
-            "Status progression is tracked via status stages. "
+            "`audit_start_date` is **required** (format: `YYYY-MM-DD`). "
+            "`audit_end_date` must be on or after `audit_start_date`.\n\n"
+            "**⚠️ Integer FK fields** (pass numeric DB `id`, not the identifier string):\n"
+            "- `checklist_id` — numeric DB `id` of the checklist to link (nullable).\n"
+            "- `task_type_id` — numeric DB `id` of the task type (nullable).\n"
+            "- `department_id` — numeric DB `id` of the department being audited (nullable).\n"
+            "- `lead_auditor_id` — numeric DB `id` of the lead auditor user (nullable).\n"
+            "- `quality_manager_id` — numeric DB `id` of the quality manager user (nullable).\n\n"
+            "`add_appendix` (boolean) indicates whether to attach an appendix to the audit report. "
+            "`is_featured` pins the audit to the top of lists.\n\n"
+            "Status progression is tracked via status stages loaded in the response. "
             "Soft-deleted audits can be restored via `POST /audits/{identifier}/restore`."
         ),
         "sample_body": {
             "name": "Annual Financial Compliance Audit 2026",
-            "audit_start_date": "2026-07-01 08:00:00",
-            "audit_end_date": "2026-07-31 17:00:00",
+            "audit_start_date": "2026-07-01",
+            "audit_end_date": "2026-07-31",
             "scope": "internal",
             "checklist_id": None,
-            "department_id": "{{department_id}}",
+            "task_type_id": None,
+            "department_id": None,
             "lead_auditor_id": None,
             "quality_manager_id": None,
             "add_appendix": False,
@@ -645,7 +737,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "clients",
         "param": "client",
         "scope": "tenant",
-        "description": "Manage audit client entities (organisations being audited).",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage audit client entities (organisations being audited). "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "name": "Apex Manufacturing Ltd",
             "registration_number": "PVT-20220001",
@@ -667,7 +763,10 @@ MODULES: list[dict[str, Any]] = [
         "route": "audit-templates",
         "param": "auditTemplate",
         "scope": "tenant",
-        "description": "Manage reusable audit program templates.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage reusable audit program templates. This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "name": "Financial Statement Audit Template",
             "audit_standard_id": "{{audit_standard_id}}",
@@ -686,7 +785,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "audit-engagements",
         "param": "auditEngagement",
         "scope": "tenant",
-        "description": "Manage audit engagements (projects) — the top-level audit entity.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage audit engagements (projects) — the top-level audit entity. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "title": "FY2025 Financial Statement Audit — Apex Manufacturing",
             "client_id": "{{client_id}}",
@@ -712,7 +815,10 @@ MODULES: list[dict[str, Any]] = [
         "route": "audit-plans",
         "param": "auditPlan",
         "scope": "tenant",
-        "description": "Manage detailed audit plans for engagements.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage detailed audit plans for engagements. This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "audit_engagement_id": "{{audit_engagement_id}}",
             "title": "Risk Assessment Phase Plan",
@@ -731,7 +837,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "audit-procedures",
         "param": "auditProcedure",
         "scope": "tenant",
-        "description": "Manage individual audit steps and procedures within a plan.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage individual audit steps and procedures within a plan. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "audit_plan_id": "{{audit_plan_id}}",
             "title": "Agree revenue per ledger to source documents",
@@ -751,7 +861,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "workpapers",
         "param": "workpaper",
         "scope": "tenant",
-        "description": "Manage audit evidence and working paper documentation.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage audit evidence and working paper documentation. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "audit_engagement_id": "{{audit_engagement_id}}",
             "audit_procedure_id": "{{audit_procedure_id}}",
@@ -772,7 +886,10 @@ MODULES: list[dict[str, Any]] = [
         "route": "findings",
         "param": "finding",
         "scope": "tenant",
-        "description": "Manage audit observations and findings.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage audit observations and findings. This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "audit_engagement_id": "{{audit_engagement_id}}",
             "workpaper_id": "{{workpaper_id}}",
@@ -795,7 +912,10 @@ MODULES: list[dict[str, Any]] = [
         "route": "finding-responses",
         "param": "findingResponse",
         "scope": "tenant",
-        "description": "Manage management responses to audit findings.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage management responses to audit findings. This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "finding_id": "{{finding_id}}",
             "response": "Management accepts the finding. A formal revenue recognition policy will be developed and staff trained by Q2 2026.",
@@ -816,7 +936,10 @@ MODULES: list[dict[str, Any]] = [
         "route": "risk-assessments",
         "param": "riskAssessment",
         "scope": "tenant",
-        "description": "Manage entity and process risk assessments.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage entity and process risk assessments. This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "audit_engagement_id": "{{audit_engagement_id}}",
             "risk_category_id": "{{risk_category_id}}",
@@ -838,7 +961,10 @@ MODULES: list[dict[str, Any]] = [
         "route": "risk-matrices",
         "param": "riskMatrix",
         "scope": "tenant",
-        "description": "Manage risk scoring matrices for engagements.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage risk scoring matrices for engagements. This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "audit_engagement_id": "{{audit_engagement_id}}",
             "name": "FY2025 Risk Matrix",
@@ -856,7 +982,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "compliance-requirements",
         "param": "complianceRequirement",
         "scope": "tenant",
-        "description": "Manage compliance tracking items against regulation frameworks.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage compliance tracking items against regulation frameworks. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "audit_engagement_id": "{{audit_engagement_id}}",
             "regulation_framework_id": "{{regulation_framework_id}}",
@@ -876,7 +1006,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "compliance-evidence",
         "param": "complianceEvidence",
         "scope": "tenant",
-        "description": "Manage evidence records for compliance requirements.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage evidence records for compliance requirements. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "compliance_requirement_id": "{{compliance_requirement_id}}",
             "title": "Signed CEO Certification Letter",
@@ -896,7 +1030,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "control-objectives",
         "param": "controlObjective",
         "scope": "tenant",
-        "description": "Manage internal control objective definitions.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage internal control objective definitions. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "audit_engagement_id": "{{audit_engagement_id}}",
             "title": "Revenue Authorisation Control",
@@ -914,7 +1052,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "control-tests",
         "param": "controlTest",
         "scope": "tenant",
-        "description": "Manage tests of controls linked to control objectives.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage tests of controls linked to control objectives. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "control_objective_id": "{{control_objective_id}}",
             "title": "Test revenue authorisation approvals",
@@ -936,7 +1078,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "reports",
         "param": "report",
         "scope": "tenant",
-        "description": "Generate and manage audit reports (draft, final, management letter).",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Generate and manage audit reports (draft, final, management letter). "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "audit_engagement_id": "{{audit_engagement_id}}",
             "report_type": "audit_report",
@@ -959,7 +1105,11 @@ MODULES: list[dict[str, Any]] = [
         "route": "firm-settings",
         "param": "firmSettings",
         "scope": "tenant",
-        "description": "Manage tenant firm profile and AIAS configuration settings.",
+        "description": (
+            "⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.\n\n"
+            "Manage tenant firm profile and AIAS configuration settings. "
+            "This folder is a placeholder for future implementation."
+        ),
         "sample_body": {
             "firm_name": "Pinnacle Audit Partners LLP",
             "registration_number": "LLP-2020-001",
@@ -1579,15 +1729,18 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
             "## Central Resources\n\n"
             "Cross-tenant (central database) resources accessible to **super-admin** users "
             "and shared infrastructure services.\n\n"
-            "**Includes:**\n"
-            "- Authentication (login/logout/me for both central and tenant users)\n"
-            "- Tenant management (create organisations, invite owners)\n"
-            "- User management (register users, assign roles)\n"
-            "- Global reference data (Continents, Countries)\n"
-            "- Audit Standards and Regulation Frameworks\n\n"
+            "### ✅ Implemented Endpoints\n\n"
+            "| Resource | Endpoints |\n"
+            "|---------|---------|\n"
+            "| **Auth** | POST /login, POST /logout, GET /me (central) |\n"
+            "| **Tenants** | GET list, POST create, GET show, PUT update, DELETE, POST /{id}/users |\n"
+            "| **Users** | POST create only (list/show/update/delete not yet implemented) |\n"
+            "| **Continents** | Full CRUD + POST restore |\n"
+            "| **Countries** | Full CRUD + POST restore |\n\n"
+            "### ⚠️ Planned (Not Yet Implemented)\n"
+            "Roles, Service Users, API Keys, MFA, Audit Standards, Regulation Frameworks, Risk Categories\n\n"
             "**Base URL:** `{{base_url}}` (e.g. `http://localhost:8020/api`)\n\n"
-            "All requests under this folder use Bearer token authentication. "
-            "No `tenant_id` is required for central-scope requests."
+            "All requests use Bearer token authentication. No `tenant_id` required for central-scope requests."
         ),
         "order": 1000,
     })
@@ -1597,14 +1750,21 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
         "description": (
             "## Authentication\n\n"
             "Authentication endpoints for both central and tenant users.\n\n"
-            "**Workflow:**\n"
+            "### Workflow\n\n"
             "1. Call **Health Check** to verify the server is running.\n"
-            "2. Call **Login (Central / Super-Admin)** to get a Bearer token for central operations.\n"
-            "3. Call **Login (Tenant User)** (with `tenant_id`) to get a Bearer token for tenant operations.\n"
-            "4. The test scripts auto-save `access_token`, `user_id`, and `tenant_id` to the environment.\n"
-            "5. All subsequent requests use `{{access_token}}` via Bearer auth.\n\n"
-            "**Central login:** `POST {{base_url}}/v1/auth/login` — no `tenant_id` needed.\n"
-            "**Tenant login:** `POST {{tenant_base_url}}/v1/auth/login` — requires `tenant_id` in body."
+            "2. Call **Login (Central / Super-Admin)** to get a Bearer token for central operations. "
+            "No `tenant_id` needed.\n"
+            "3. Call **Login (Tenant User)** with `tenant_id` in the JSON body to authenticate "
+            "as a tenant user.\n"
+            "4. Test scripts auto-save `access_token`, `user_id`, and `tenant_id` to the environment.\n"
+            "5. All subsequent protected requests use `{{access_token}}` via Bearer auth.\n\n"
+            "### Tenant Identification\n\n"
+            "Tenancy uses `InitializeTenancyByBodyParam` middleware — pass `tenant_id` as a body param "
+            "(POST requests) or query param (GET requests). "
+            "Central login does **not** require `tenant_id`.\n\n"
+            "**Central login URL:** `{{base_url}}/v1/auth/login`\n"
+            "**Tenant login URL:** `{{tenant_base_url}}/v1/auth/login`\n"
+            "**Tenant register URL:** `{{tenant_base_url}}/v1/auth/register` (public endpoint)"
         ),
         "order": 1000,
     })
@@ -1628,16 +1788,29 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
         "description": (
             "## Tenant Resources\n\n"
             "Resources isolated per organisation (tenant) — each tenant has its own MySQL database.\n\n"
-            "**How to scope requests:**\n"
-            "- `POST`/`PUT`/`PATCH` requests: include `tenant_id` in the JSON body.\n"
-            "- `GET`/`DELETE` requests: pass `tenant_id` as a query parameter.\n"
-            "- `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`).\n\n"
+            "### How to Scope Requests\n\n"
+            "- **POST / PUT / PATCH:** include `tenant_id` in the JSON body.\n"
+            "- **GET / DELETE:** pass `tenant_id` as a query parameter.\n"
+            "- `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`), "
+            "auto-saved to `{{tenant_id}}` after login.\n\n"
             "**Base URL:** `{{tenant_base_url}}` (e.g. `http://localhost:8020`)\n\n"
-            "**Includes:**\n"
-            "- Users, Companies, Departments\n"
-            "- Quality Management: Preambles, Checklist Types, Section Styles, Checklists\n"
-            "- Audit Management: Audits\n"
-            "- (Future) Engagements, Findings, Risk Assessments, Workpapers, Reports\n\n"
+            "### ✅ Implemented Endpoints\n\n"
+            "| Resource | Endpoints |\n"
+            "|---------|---------|\n"
+            "| **Auth (Tenant)** | POST register, POST login, POST logout, GET me |\n"
+            "| **Preambles** | Full CRUD + POST restore |\n"
+            "| **Users** | Full CRUD + POST restore |\n"
+            "| **Checklist Types** | Full CRUD + POST restore |\n"
+            "| **Section Styles** | Full CRUD + POST restore |\n"
+            "| **Checklists** | Full CRUD + POST restore |\n"
+            "| **Companies** | Full CRUD + POST restore |\n"
+            "| **Departments** | Full CRUD + POST restore |\n"
+            "| **Audits** | Full CRUD + POST restore |\n\n"
+            "### ⚠️ Planned (Not Yet Implemented)\n"
+            "Clients, Audit Templates, Audit Engagements, Audit Plans, Audit Procedures, "
+            "Workpapers, Findings, Finding Responses, Risk Assessments, Risk Matrices, "
+            "Compliance Requirements, Compliance Evidence, Control Objectives, Control Tests, "
+            "Reports, Firm Settings.\n\n"
             "All soft-deleted records can be restored via `POST /{resource}/{identifier}/restore`."
         ),
         "order": 2000,

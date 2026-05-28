@@ -5,27 +5,51 @@ description: '## Tenant Resources
   Resources isolated per organisation (tenant) — each tenant has its own MySQL database.
 
 
-  **How to scope requests:**
+  ### How to Scope Requests
 
-  - `POST`/`PUT`/`PATCH` requests: include `tenant_id` in the JSON body.
 
-  - `GET`/`DELETE` requests: pass `tenant_id` as a query parameter.
+  - **POST / PUT / PATCH:** include `tenant_id` in the JSON body.
 
-  - `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`).
+  - **GET / DELETE:** pass `tenant_id` as a query parameter.
+
+  - `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`), auto-saved
+  to `{{tenant_id}}` after login.
 
 
   **Base URL:** `{{tenant_base_url}}` (e.g. `http://localhost:8020`)
 
 
-  **Includes:**
+  ### ✅ Implemented Endpoints
 
-  - Users, Companies, Departments
 
-  - Quality Management: Preambles, Checklist Types, Section Styles, Checklists
+  | Resource | Endpoints |
 
-  - Audit Management: Audits
+  |---------|---------|
 
-  - (Future) Engagements, Findings, Risk Assessments, Workpapers, Reports
+  | **Auth (Tenant)** | POST register, POST login, POST logout, GET me |
+
+  | **Preambles** | Full CRUD + POST restore |
+
+  | **Users** | Full CRUD + POST restore |
+
+  | **Checklist Types** | Full CRUD + POST restore |
+
+  | **Section Styles** | Full CRUD + POST restore |
+
+  | **Checklists** | Full CRUD + POST restore |
+
+  | **Companies** | Full CRUD + POST restore |
+
+  | **Departments** | Full CRUD + POST restore |
+
+  | **Audits** | Full CRUD + POST restore |
+
+
+  ### ⚠️ Planned (Not Yet Implemented)
+
+  Clients, Audit Templates, Audit Engagements, Audit Plans, Audit Procedures, Workpapers,
+  Findings, Finding Responses, Risk Assessments, Risk Matrices, Compliance Requirements,
+  Compliance Evidence, Control Objectives, Control Tests, Reports, Firm Settings.
 
 
   All soft-deleted records can be restored via `POST /{resource}/{identifier}/restore`.'

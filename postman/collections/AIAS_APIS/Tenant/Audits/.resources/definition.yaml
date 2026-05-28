@@ -2,14 +2,27 @@ $kind: collection
 description: 'Manage tenant audit records — the core audit execution entity.
 
 
-  `scope` values: `internal`, `external`, `service_provider`, `supplier`. `checklist_id`
-  links the audit to a quality management checklist (identifier string or null). `department_id`
-  is the `identifier` of the department being audited. `lead_auditor_id` and `quality_manager_id`
-  are user identifier strings. `audit_start_date` and `audit_end_date` accept datetime
-  strings (`YYYY-MM-DD HH:MM:SS`). `add_appendix` (boolean) indicates whether to attach
-  an appendix to the audit report.
+  `scope` values: `internal`, `external`, `service_provider`, `supplier`. `audit_start_date`
+  is **required** (format: `YYYY-MM-DD`). `audit_end_date` must be on or after `audit_start_date`.
 
 
-  Status progression is tracked via status stages. Soft-deleted audits can be restored
-  via `POST /audits/{identifier}/restore`.'
+  **⚠️ Integer FK fields** (pass numeric DB `id`, not the identifier string):
+
+  - `checklist_id` — numeric DB `id` of the checklist to link (nullable).
+
+  - `task_type_id` — numeric DB `id` of the task type (nullable).
+
+  - `department_id` — numeric DB `id` of the department being audited (nullable).
+
+  - `lead_auditor_id` — numeric DB `id` of the lead auditor user (nullable).
+
+  - `quality_manager_id` — numeric DB `id` of the quality manager user (nullable).
+
+
+  `add_appendix` (boolean) indicates whether to attach an appendix to the audit report.
+  `is_featured` pins the audit to the top of lists.
+
+
+  Status progression is tracked via status stages loaded in the response. Soft-deleted
+  audits can be restored via `POST /audits/{identifier}/restore`.'
 order: 8000

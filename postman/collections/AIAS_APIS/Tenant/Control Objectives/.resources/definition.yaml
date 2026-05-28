@@ -1,3 +1,7 @@
 $kind: collection
-description: Manage internal control objective definitions.
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.
+
+
+  Manage internal control objective definitions. This folder is a placeholder for
+  future implementation.'
 order: 21000

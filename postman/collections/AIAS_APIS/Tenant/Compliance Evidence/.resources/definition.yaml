@@ -1,3 +1,7 @@
 $kind: collection
-description: Manage evidence records for compliance requirements.
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.
+
+
+  Manage evidence records for compliance requirements. This folder is a placeholder
+  for future implementation.'
 order: 20000

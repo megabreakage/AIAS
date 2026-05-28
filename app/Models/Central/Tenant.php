@@ -77,7 +77,7 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
             if (empty($tenant->identifier)) {
                 // Get the initials from the first letter of each word on the from $tenant->name
                 $initials = strtoupper(implode('', array_map(fn ($word) => $word[0], explode(' ', $tenant->name))));
-                $tenant->identifier = $initials.'_'.time();
+                $tenant->identifier = "{$initials}_".time();
             }
 
             if (auth()->check()) {

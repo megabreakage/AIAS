@@ -1,3 +1,7 @@
 $kind: collection
-description: System-level service accounts for machine-to-machine auth.
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.
+
+
+  System-level service accounts for machine-to-machine auth. This folder is a placeholder
+  for future implementation.'
 order: 7000

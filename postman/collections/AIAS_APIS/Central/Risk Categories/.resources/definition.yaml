@@ -1,3 +1,7 @@
 $kind: collection
-description: Global risk category definitions shared across all tenants.
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.
+
+
+  Global risk category definitions shared across all tenants. This folder is a placeholder
+  for future implementation.'
 order: 12000

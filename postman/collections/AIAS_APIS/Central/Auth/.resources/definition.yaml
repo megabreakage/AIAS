@@ -5,23 +5,33 @@ description: '## Authentication
   Authentication endpoints for both central and tenant users.
 
 
-  **Workflow:**
+  ### Workflow
+
 
   1. Call **Health Check** to verify the server is running.
 
   2. Call **Login (Central / Super-Admin)** to get a Bearer token for central operations.
+  No `tenant_id` needed.
 
-  3. Call **Login (Tenant User)** (with `tenant_id`) to get a Bearer token for tenant
-  operations.
+  3. Call **Login (Tenant User)** with `tenant_id` in the JSON body to authenticate
+  as a tenant user.
 
-  4. The test scripts auto-save `access_token`, `user_id`, and `tenant_id` to the
-  environment.
+  4. Test scripts auto-save `access_token`, `user_id`, and `tenant_id` to the environment.
 
-  5. All subsequent requests use `{{access_token}}` via Bearer auth.
+  5. All subsequent protected requests use `{{access_token}}` via Bearer auth.
 
 
-  **Central login:** `POST {{base_url}}/v1/auth/login` — no `tenant_id` needed.
+  ### Tenant Identification
 
-  **Tenant login:** `POST {{tenant_base_url}}/v1/auth/login` — requires `tenant_id`
-  in body.'
+
+  Tenancy uses `InitializeTenancyByBodyParam` middleware — pass `tenant_id` as a body
+  param (POST requests) or query param (GET requests). Central login does **not**
+  require `tenant_id`.
+
+
+  **Central login URL:** `{{base_url}}/v1/auth/login`
+
+  **Tenant login URL:** `{{tenant_base_url}}/v1/auth/login`
+
+  **Tenant register URL:** `{{tenant_base_url}}/v1/auth/register` (public endpoint)'
 order: 1000

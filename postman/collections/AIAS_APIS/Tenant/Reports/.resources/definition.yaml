@@ -1,3 +1,7 @@
 $kind: collection
-description: Generate and manage audit reports (draft, final, management letter).
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.
+
+
+  Generate and manage audit reports (draft, final, management letter). This folder
+  is a placeholder for future implementation.'
 order: 23000

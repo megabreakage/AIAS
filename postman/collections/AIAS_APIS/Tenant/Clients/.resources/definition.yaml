@@ -1,3 +1,7 @@
 $kind: collection
-description: Manage audit client entities (organisations being audited).
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.
+
+
+  Manage audit client entities (organisations being audited). This folder is a placeholder
+  for future implementation.'
 order: 9000
