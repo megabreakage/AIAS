@@ -1,0 +1,46 @@
+$kind: http-request
+name: Create Audit
+description: Create a new audit.
+url: '{{tenant_base_url}}/audits'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Annual Financial Compliance Audit 2026",
+      "audit_start_date": "2026-07-01 08:00:00",
+      "audit_end_date": "2026-07-31 17:00:00",
+      "scope": "internal",
+      "checklist_id": null,
+      "task_type_id": null,
+      "department_id": "{{department_id}}",
+      "lead_auditor_id": null,
+      "quality_manager_id": null,
+      "add_appendix": false,
+      "description": "Annual internal audit covering financial compliance and controls.",
+      "is_featured": false
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Status code is 201', () => { pm.response.to.have.status(201); });
+    pm.test('Response envelope valid', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status');
+        pm.expect(j).to.have.property('data');
+    });
+    if (pm.response.code === 201) {
+        const j = pm.response.json();
+        // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+        const resourceId = j.data && (j.data.identifier || j.data.id);
+        if (resourceId) {
+            pm.environment.set('audit_id', String(resourceId));
+            console.log('Saved audit_id:', resourceId);
+        }
+    }
+  language: text/javascript
+order: 2000

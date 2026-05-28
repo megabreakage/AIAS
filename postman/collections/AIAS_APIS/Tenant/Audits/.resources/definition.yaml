@@ -1,0 +1,4 @@
+$kind: collection
+description: Manage tenant audit records with scope, status stages, and reference
+  numbers.
+order: 9000

@@ -419,6 +419,30 @@ MODULES: list[dict[str, Any]] = [
         ],
     },
     {
+        "name": "Audits",
+        "route": "audits",
+        "param": "audit",
+        "scope": "tenant",
+        "description": "Manage tenant audit records with scope, status stages, and reference numbers.",
+        "sample_body": {
+            "name": "Annual Financial Compliance Audit 2026",
+            "audit_start_date": "2026-07-01 08:00:00",
+            "audit_end_date": "2026-07-31 17:00:00",
+            "scope": "internal",
+            "checklist_id": None,
+            "task_type_id": None,
+            "department_id": "{{department_id}}",
+            "lead_auditor_id": None,
+            "quality_manager_id": None,
+            "add_appendix": False,
+            "description": "Annual internal audit covering financial compliance and controls.",
+            "is_featured": False,
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore Audit"},
+        ],
+    },
+    {
         "name": "Clients",
         "route": "clients",
         "param": "client",
@@ -815,6 +839,7 @@ RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
     ("api_key_id",                  "", "API Key identifier string"),
     # --- Tenant Reference ---
     ("department_id",               "", "Department identifier string"),
+    ("audit_id",                    "", "Audit identifier string"),
     ("group_id",                    "", "Group identifier string"),
     ("preamble_id",                 "", "Preamble identifier string"),
     ("client_id",                   "", "Client identifier string"),
