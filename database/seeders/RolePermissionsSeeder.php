@@ -32,6 +32,12 @@ class RolePermissionsSeeder extends Seeder
                 'guard_name' => 'api',
             ],
             [
+                'name' => 'auditor',
+                'display_name' => 'Auditor',
+                'description' => 'Has access to Audit user features',
+                'guard_name' => 'api',
+            ],
+            [
                 'name' => 'user',
                 'display_name' => 'User',
                 'description' => 'Has access to standard user features',
