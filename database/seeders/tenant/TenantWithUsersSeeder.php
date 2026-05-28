@@ -29,10 +29,10 @@ class TenantWithUsersSeeder extends Seeder
         $tenantRole = Role::where('name', 'tenant')->where('guard_name', 'api')->firstOrFail();
         $adminRole = Role::where('name', 'admin')->where('guard_name', 'api')->firstOrFail();
 
-        Tenant::factory(2)->create()->each(function (Tenant $tenant) use ($tenantRole, $adminRole): void {
+        Tenant::factory(2)->create()->each(function (Tenant $tenant) use ($tenantRole): void {
             $tenant->refresh();
 
-            $tenantUser = User::firstOrCreate(
+            $admin = User::firstOrCreate(
                 ['email' => env('TEST_TENANT_ADMIN_EMAIL', 'admin@tenant.test')],
                 [
                     'identifier' => (string) Str::uuid(),
@@ -52,7 +52,7 @@ class TenantWithUsersSeeder extends Seeder
             $owner->assignRole($tenantRole);
             $tenant->update(['owner_id' => $owner->id]);
 
-            $users->last()->assignRole($adminRole);
+            $users->last()->assignRole('auditor');
 
             $this->command->info("Created tenant {$tenant->getTenantKey()} with 2 users.");
 
