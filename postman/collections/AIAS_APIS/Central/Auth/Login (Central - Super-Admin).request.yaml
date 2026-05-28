@@ -1,12 +1,10 @@
 $kind: http-request
 name: Login (Central / Super-Admin)
-description: 'Authenticate as a central super-admin user.
+description: |-
+  Authenticate as a central super-admin user.
 
-
-  Returns a Bearer `access_token` in `data.token`. The test script automatically saves
-  `access_token`, `user_id`, and `tenant_id` to the active environment. Use `{{base_url}}/v1/auth/login`
-  — no `tenant_id` is required for central login.'
-url: '{{base_url}}/v1/auth/login'
+  Returns a Bearer `access_token` in `data.token`. The test script automatically saves `access_token`, `user_id`, and `tenant_id` to the active environment. Use `{{base_url}}/v1/auth/login` — no `tenant_id` is required for central login.
+url: "{{base_url}}/v1/auth/login"
 method: POST
 headers:
   Accept: application/json
@@ -18,31 +16,35 @@ body:
       "email": "{{user_email}}",
       "password": "{{user_password}}"
     }
+auth:
+  type: inherit
+  credentials:
+    id: cba390d9-dacd-4cef-8639-728436a27ea3
 scripts:
-- type: afterResponse
-  code: |-
-    pm.test('Login successful', () => {
-        pm.response.to.have.status(200);
-        const j = pm.response.json();
-        pm.expect(j).to.have.property('data');
-        pm.expect(j.data).to.have.property('token');
-    });
-    if (pm.response.code === 200) {
-        const j = pm.response.json();
-        if (j.data && j.data.token) {
-            pm.environment.set('access_token', j.data.token);
-            console.log('Token saved:', j.data.token.substring(0, 20) + '...');
-        }
-        if (j.data && j.data.user) {
-            // Resources use 'identifier' string, not numeric 'id'
-            const userId = j.data.user.identifier || j.data.user.id;
-            pm.environment.set('user_id', String(userId));
-            console.log('User ID saved:', userId);
-            if (j.data.user.tenant_id) {
-                pm.environment.set('tenant_id', j.data.user.tenant_id);
-                console.log('Tenant ID saved:', j.data.user.tenant_id);
-            }
-        }
-    }
-  language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('Login successful', () => {
+          pm.response.to.have.status(200);
+          const j = pm.response.json();
+          pm.expect(j).to.have.property('data');
+          pm.expect(j.data).to.have.property('token');
+      });
+      if (pm.response.code === 200) {
+          const j = pm.response.json();
+          if (j.data && j.data.token) {
+              pm.environment.set('access_token', j.data.token);
+              console.log('Token saved:', j.data.token.substring(0, 20) + '...');
+          }
+          if (j.data && j.data.user) {
+              // Resources use 'identifier' string, not numeric 'id'
+              const userId = j.data.user.identifier || j.data.user.id;
+              pm.environment.set('user_id', String(userId));
+              console.log('User ID saved:', userId);
+              if (j.data.user.tenant_id) {
+                  pm.environment.set('tenant_id', j.data.user.tenant_id);
+                  console.log('Tenant ID saved:', j.data.user.tenant_id);
+              }
+          }
+      }
+    language: text/javascript
 order: 2000
