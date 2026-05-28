@@ -22,7 +22,7 @@ final class EnsureTokenMatchesTenant
             return $next($request);
         }
 
-        if ($token->tenant_id !== $currentTenant->id) {
+        if ((string) $token->tenant_id !== (string) $currentTenant->id) {
             throw new TenantMismatchException('Token does not match the current tenant.');
         }
 
