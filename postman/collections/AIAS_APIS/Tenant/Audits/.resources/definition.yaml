@@ -2,12 +2,12 @@ $kind: collection
 description: 'Manage tenant audit records — the core audit execution entity.
 
 
-  `scope` values: `internal`, `external`, `compliance`, `operational`, `financial`.
-  `checklist_id` links the audit to a quality management checklist (identifier string
-  or null). `department_id` is the `identifier` of the department being audited. `lead_auditor_id`
-  and `quality_manager_id` are user identifier strings. `audit_start_date` and `audit_end_date`
-  accept datetime strings (`YYYY-MM-DD HH:MM:SS`). `add_appendix` (boolean) indicates
-  whether to attach an appendix to the audit report.
+  `scope` values: `internal`, `external`, `service_provider`, `supplier`. `checklist_id`
+  links the audit to a quality management checklist (identifier string or null). `department_id`
+  is the `identifier` of the department being audited. `lead_auditor_id` and `quality_manager_id`
+  are user identifier strings. `audit_start_date` and `audit_end_date` accept datetime
+  strings (`YYYY-MM-DD HH:MM:SS`). `add_appendix` (boolean) indicates whether to attach
+  an appendix to the audit report.
 
 
   Status progression is tracked via status stages. Soft-deleted audits can be restored

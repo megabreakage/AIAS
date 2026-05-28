@@ -1,17 +1,21 @@
 $kind: collection
-description: 'Create central platform users (super-admins and tenant owners).
+description: 'Register central platform users (super-admins and tenant owners).
 
 
-  Only `POST /v1/users` is currently implemented — full CRUD management is handled
-  through tenant-scoped user management.
+  **Currently implemented:** `POST /v1/users` only.
+
+  List / Get / Update / Delete central users are **not yet implemented** — user management
+  is primarily performed through tenant-scoped endpoints.
 
 
-  Required: `first_name`, `last_name`, `username` (unique), `email` (unique), `password`.
+  Required: `first_name`, `last_name`, `username` (unique), `email` (unique), `password`
+  (min 8 chars, must contain letters and numbers).
+
 
   Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`,
   `office_location`, `avatar`, `notes`, `is_active`.
 
 
-  Note: `password_confirmation` is not required. `role` and `status` fields do not
-  exist in the request — use tenant user management for role assignment.'
+  Note: `password_confirmation` is **not** required on this endpoint. Role assignment
+  is handled via the tenant user management endpoints.'
 order: 5000

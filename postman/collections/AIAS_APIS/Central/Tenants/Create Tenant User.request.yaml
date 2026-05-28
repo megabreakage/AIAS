@@ -1,8 +1,22 @@
 $kind: http-request
 name: Create Tenant User
-description: 'Create a new central user account and assign them to this tenant. The
-  user is created in the central database and linked to the tenant via `owner_id`.
-  Required fields: `first_name`, `last_name`, `username`, `email`, `password`.'
+description: 'Create a new user account scoped to this tenant and assign them a role.
+
+
+  The user is created in the tenant''s isolated database. `role` is **required** and
+  must be one of: `tenant`, `auditor`, `client`, `viewer`.
+
+
+  Required fields: `first_name`, `last_name`, `username` (unique within tenant), `email`
+  (unique within tenant), `password` (min 8 chars, letters + numbers), `role`.
+
+
+  Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`,
+  `office_location`, `avatar`, `notes`, `is_active`.
+
+
+  On success the user `identifier` is saved to `{{tenant_user_id}}` in the active
+  environment.'
 url: '{{base_url}}/v1/tenants/{{tenant_id}}/users'
 method: POST
 headers:
@@ -23,15 +37,26 @@ body:
       "password": "Password123!",
       "preferred_timezone": "Africa/Nairobi",
       "office_location": "Nairobi, Kenya",
-      "is_active": true
+      "is_active": true,
+      "role": "auditor"
     }
 scripts:
 - type: afterResponse
   code: |-
-    pm.test('Response is JSON', () => { pm.response.to.be.json; });
-    pm.test('Status is success', () => {
+    pm.test('Status code is 201', () => { pm.response.to.have.status(201); });
+    pm.test('Response envelope valid', () => {
         const j = pm.response.json();
-        pm.expect(j).to.have.property('status', 'success');
+        pm.expect(j).to.have.property('status');
+        pm.expect(j).to.have.property('data');
     });
+    if (pm.response.code === 201) {
+        const j = pm.response.json();
+        // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+        const resourceId = j.data && (j.data.identifier || j.data.id);
+        if (resourceId) {
+            pm.environment.set('tenant_user_id', String(resourceId));
+            console.log('Saved tenant_user_id:', resourceId);
+        }
+    }
   language: text/javascript
 order: 6000

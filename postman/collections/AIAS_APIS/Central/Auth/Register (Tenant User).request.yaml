@@ -1,11 +1,22 @@
 $kind: http-request
 name: Register (Tenant User)
-description: 'Register a new user within a tenant context.
+description: 'Register a new user account within a tenant context (public endpoint
+  — no auth required).
 
 
-  `tenant_id` is required. `username` must be unique within the tenant. `password_confirmation`
-  must match `password`. `preferred_timezone` should be a valid IANA timezone string
-  (e.g. `Africa/Nairobi`). `is_active` defaults to `true` if omitted.'
+  This endpoint is the self-service registration route for tenant users. It only accepts
+  the minimal user identity fields — role assignment is done separately via the tenant
+  user management endpoints.
+
+
+  Required fields: `first_name`, `last_name`, `email` (unique within tenant), `password`
+  (min 8 chars, must include both letters and numbers), `password_confirmation` (must
+  match `password`).
+
+
+  Note: `tenant_id`, `username`, `phone`, `title`, and other profile fields are **not
+  accepted** by this endpoint. Use the Create Tenant User endpoint for full profile
+  creation.'
 url: '{{tenant_base_url}}/v1/auth/register'
 method: POST
 headers:
@@ -15,20 +26,11 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
-      "title": "Mr",
       "first_name": "Jane",
-      "middle_name": null,
       "last_name": "Auditor",
-      "username": "jane.auditor",
       "email": "jane.auditor@example.test",
-      "country_code": "+254",
-      "phone": "712345678",
       "password": "Password123!",
-      "password_confirmation": "Password123!",
-      "preferred_timezone": "Africa/Nairobi",
-      "office_location": "Nairobi, Kenya",
-      "is_active": true
+      "password_confirmation": "Password123!"
     }
 scripts:
 - type: afterResponse
