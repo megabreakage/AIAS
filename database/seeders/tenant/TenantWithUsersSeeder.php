@@ -22,13 +22,27 @@ class TenantWithUsersSeeder extends Seeder
             return;
         }
 
-        $this->command->info('Creating 2 tenants with users...');
+        $this->command->info('Creating 2 tenants with users...\\n');
 
         $tenantRole = Role::where('name', 'tenant')->where('guard_name', 'api')->firstOrFail();
         $adminRole = Role::where('name', 'admin')->where('guard_name', 'api')->firstOrFail();
 
         Tenant::factory(2)->create()->each(function (Tenant $tenant) use ($tenantRole, $adminRole): void {
             $tenant->refresh();
+
+            $tenantUser = User::firstOrCreate(
+                ['email' => env('TEST_TENANT_ADMIN_EMAIL', 'admin@tenant.test')],
+                [
+                    'identifier' => (string) Str::uuid(),
+                    'first_name' => 'Admin',
+                    'last_name' => 'User',
+                    'username' => \Illuminate\Support\Str::slug('admin-'.Str::random(4)),
+                    'password' => Hash::make(env('TEST_TENANT_ADMIN_PASSWORD', 'password')),
+                    'email_verified_at' => now(),
+                    'is_active' => true,
+                    'country_code' => '+254',
+                ],
+            );
 
             $users = User::factory(2)->create();
 
