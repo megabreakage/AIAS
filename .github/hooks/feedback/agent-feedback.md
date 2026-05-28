@@ -1,7 +1,7 @@
 # Agent Feedback Memory
 
-Last updated: 2026-05-28T13:53:08.205Z
-Hook event: Stop
+Last updated: 2026-05-28T17:11:35.520Z
+Hook event: PreCompact
 
 ## Corrections User Made
 - none captured
