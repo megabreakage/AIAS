@@ -1,72 +1,134 @@
 $kind: collection
 id: aias-a1b2c3d4-e5f6-7890-abcd-ef1234567890
 name: AIAS API
-description: "# AIAS — Adaptive Intelligent Audit System\n\nA multi-tenant Laravel\
-  \ 13 REST API for quality management, audit workflows, compliance tracking, risk\
-  \ assessments, and findings management.\n\n**Version:** 1.0 | **Framework:** Laravel\
-  \ 13, PHP 8.4 | **Auth:** Laravel Passport (Personal Access Tokens) | **Tenancy:**\
-  \ Stancl Tenancy v3\n\n---\n\n## ✅ Currently Implemented Endpoints\n\n**Central\
-  \ API** (`{{base_url}}/v1/...`)\n- Auth: login, logout, me\n- Tenants: CRUD + create\
-  \ tenant user\n- Users: create (POST only)\n- Continents: full CRUD + restore\n\
-  - Countries: full CRUD + restore\n\n**Tenant API** (`{{tenant_base_url}}/v1/...`\
-  \ — requires `tenant_id`)\n- Auth: register, login, logout, me\n- Preambles: full\
-  \ CRUD + restore\n- Users: full CRUD + restore\n- Checklist Types: full CRUD + restore\n\
-  - Section Styles: full CRUD + restore\n- Checklists: full CRUD + restore\n- Companies:\
-  \ full CRUD + restore\n- Departments: full CRUD + restore\n- Audits: full CRUD +\
-  \ restore\n\n**⚠️ Planned / Not Yet Implemented:** Roles, Service Users, API Keys,\
-  \ MFA, Audit Standards, Regulation Frameworks, Risk Categories, Clients, Audit Templates,\
-  \ Audit Engagements, Audit Plans, Audit Procedures, Workpapers, Findings, Finding\
-  \ Responses, Risk Assessments, Risk Matrices, Compliance Requirements, Compliance\
-  \ Evidence, Control Objectives, Control Tests, Reports, Firm Settings.\n\n---\n\n\
-  ## Authentication\n\nAll protected endpoints require a `Bearer` token in the `Authorization`\
-  \ header.\n\n**Central login:** `POST {{base_url}}/v1/auth/login` — email + password\
-  \ only. Returns a token for super-admin operations (tenants, users, reference data).\n\
-  \n**Tenant login:** `POST {{tenant_base_url}}/v1/auth/login` — requires `tenant_id`\
-  \ in the JSON body alongside email and password. Returns a token scoped to that\
-  \ tenant's database.\n\nAfter login, `access_token`, `user_id`, and `tenant_id`\
-  \ are auto-saved to the environment by the test script.\n\n---\n\n## Route Prefixes\n\
-  \n| Scope | Base Variable | Example URL |\n|-------|--------------|------------|\n\
-  | Central | `{{base_url}}` | `{{base_url}}/v1/tenants` |\n| Tenant | `{{tenant_base_url}}`\
-  \ | `{{tenant_base_url}}/v1/audits` |\n\n- `base_url` includes `/api` (e.g. `http://localhost:8020/api`)\
-  \ — used for central routes.\n- `tenant_base_url` is without `/api` (e.g. `http://localhost:8020`)\
-  \ — used for tenant routes.\n\n---\n\n## Tenant Identification\n\nTenancy is initialised\
-  \ via the `tenant_id` body/query parameter (`InitializeTenancyByBodyParam` middleware).\n\
-  \nPass `tenant_id` (identifier string, e.g. `AT.1.1748000000`) in every tenant-scoped\
-  \ request:\n- **POST / PUT / PATCH** — include `tenant_id` in the JSON body\n- **GET\
-  \ / DELETE** — include `tenant_id` as a query parameter\n\nThe `{{tenant_id}}` variable\
-  \ is auto-populated after login and stored in the environment.\n\n---\n\n## Response\
-  \ Envelope\n\nAll responses follow a consistent `BaseResource` envelope:\n```json\n\
-  {\n  \"status\": \"success\",\n  \"message\": \"Resource retrieved successfully\"\
-  ,\n  \"data\": { ... }\n}\n```\nPaginated list responses include `metadata` with\
-  \ `current_page`, `last_page`, `per_page`, `total`.\n\n---\n\n## Pagination\n\n\
-  List endpoints accept: `?page=1&per_page=15&search=&sort_by=created_at&sort_order=desc&show_deleted=0`\n\
-  \n---\n\n## Soft Deletes\n\nAll resources support soft-delete. Deleted records are\
-  \ hidden by default. Restore with `POST /{identifier}/restore`. Pass `?show_deleted=1`\
-  \ to include deleted records in lists.\n\n---\n\n## ID / Identifier Convention\n\
-  \nRoute binding uses the string `identifier` field (format: `AT.{n}.{timestamp}`),\
-  \ **not** the numeric database `id`. All env vars store identifier strings (e.g.\
-  \ `{{preamble_id}}` = `\"AT.5.1748000000\"`).\n\n**⚠️ Integer FK Exception:** Some\
-  \ relationship ID fields in request bodies accept numeric integer DB IDs (not identifier\
-  \ strings). These are explicitly documented in each endpoint's description:\n- `continent_id`\
-  \ in Country requests — numeric integer\n- `department_id`, `lead_auditor_id`, `quality_manager_id`,\
-  \ `checklist_id`, `task_type_id` in Audit requests — numeric integer\n- `quality_controller_id`,\
-  \ `preamble_id`, `checklist_type_id` in Checklist requests — numeric integer\n-\
-  \ `department_head`, `department_members.*.user_id` in Department requests — numeric\
-  \ integer\n- `company_contacts.*.user_id` in Company requests — numeric integer\n\
-  \n---\n\n## Environment Variables\n\nKey variables auto-populated by test scripts\
-  \ after each Create request:\n- `access_token` — Bearer token (set after login)\n\
-  - `user_id` — Authenticated user identifier (set after login/me)\n- `tenant_id`\
-  \ — Current tenant identifier (set after login)\n- `<resource>_id` — Resource identifier\
-  \ saved after each successful Create (e.g. `preamble_id`, `audit_id`)\n\n---\n\n\
-  ## Tech Stack\n\nLaravel 13 · PHP 8.4 · MySQL · Passport OAuth2 (Personal Access\
-  \ Tokens) · Stancl Tenancy v3 (body-param identification) · Spatie Permission v7\
-  \ · Pest v4"
+description: |-
+  # AIAS — Adaptive Intelligent Audit System
+
+  A multi-tenant Laravel 13 REST API for quality management, audit workflows, compliance tracking, risk assessments, and findings management.
+
+  **Version:** 1.0 | **Framework:** Laravel 13, PHP 8.4 | **Auth:** Laravel Passport (Personal Access Tokens) | **Tenancy:** Stancl Tenancy v3
+
+  ---
+
+  ## ✅ Currently Implemented Endpoints
+
+  **Central API** (`{{base_url}}/v1/...`)
+  - Auth: login, logout, me
+  - Tenants: CRUD + create tenant user
+  - Users: create (POST only)
+  - Continents: full CRUD + restore
+  - Countries: full CRUD + restore
+
+  **Tenant API** (`{{tenant_base_url}}/v1/...` — requires `tenant_id`)
+  - Auth: register, login, logout, me
+  - Preambles: full CRUD + restore
+  - Users: full CRUD + restore
+  - Checklist Types: full CRUD + restore
+  - Section Styles: full CRUD + restore
+  - Checklists: full CRUD + restore
+  - Companies: full CRUD + restore
+  - Departments: full CRUD + restore
+  - Audits: full CRUD + restore
+
+  **⚠️ Planned / Not Yet Implemented:** Roles, Service Users, API Keys, MFA, Audit Standards, Regulation Frameworks, Risk Categories, Clients, Audit Templates, Audit Engagements, Audit Plans, Audit Procedures, Workpapers, Findings, Finding Responses, Risk Assessments, Risk Matrices, Compliance Requirements, Compliance Evidence, Control Objectives, Control Tests, Reports, Firm Settings.
+
+  ---
+
+  ## Authentication
+
+  All protected endpoints require a `Bearer` token in the `Authorization` header.
+
+  **Central login:** `POST {{base_url}}/v1/auth/login` — email + password only. Returns a token for super-admin operations (tenants, users, reference data).
+
+  **Tenant login:** `POST {{tenant_base_url}}/v1/auth/login` — requires `tenant_id` in the JSON body alongside email and password. Returns a token scoped to that tenant's database.
+
+  After login, `access_token`, `user_id`, and `tenant_id` are auto-saved to the environment by the test script.
+
+  ---
+
+  ## Route Prefixes
+
+  | Scope | Base Variable | Example URL |
+  |-------|--------------|------------|
+  | Central | `{{base_url}}` | `{{base_url}}/v1/tenants` |
+  | Tenant | `{{tenant_base_url}}` | `{{tenant_base_url}}/v1/audits` |
+
+  - `base_url` includes `/api` (e.g. `http://localhost:8020/api`) — used for central routes.
+  - `tenant_base_url` is without `/api` (e.g. `http://localhost:8020`) — used for tenant routes.
+
+  ---
+
+  ## Tenant Identification
+
+  Tenancy is initialised via the `tenant_id` body/query parameter (`InitializeTenancyByBodyParam` middleware).
+
+  Pass `tenant_id` (identifier string, e.g. `AT.1.1748000000`) in every tenant-scoped request:
+  - **POST / PUT / PATCH** — include `tenant_id` in the JSON body
+  - **GET / DELETE** — include `tenant_id` as a query parameter
+
+  The `{{tenant_id}}` variable is auto-populated after login and stored in the environment.
+
+  ---
+
+  ## Response Envelope
+
+  All responses follow a consistent `BaseResource` envelope:
+  ```json
+  {
+    "status": "success",
+    "message": "Resource retrieved successfully",
+    "data": { ... }
+  }
+  ```
+  Paginated list responses include `metadata` with `current_page`, `last_page`, `per_page`, `total`.
+
+  ---
+
+  ## Pagination
+
+  List endpoints accept: `?page=1&per_page=15&search=&sort_by=created_at&sort_order=desc&show_deleted=0`
+
+  ---
+
+  ## Soft Deletes
+
+  All resources support soft-delete. Deleted records are hidden by default. Restore with `POST /{identifier}/restore`. Pass `?show_deleted=1` to include deleted records in lists.
+
+  ---
+
+  ## ID / Identifier Convention
+
+  Route binding uses the string `identifier` field (format: `AT.{n}.{timestamp}`), **not** the numeric database `id`. All env vars store identifier strings (e.g. `{{preamble_id}}` = `"AT.5.1748000000"`).
+
+  **⚠️ Integer FK Exception:** Some relationship ID fields in request bodies accept numeric integer DB IDs (not identifier strings). These are explicitly documented in each endpoint's description:
+  - `continent_id` in Country requests — numeric integer
+  - `department_id`, `lead_auditor_id`, `quality_manager_id`, `checklist_id`, `task_type_id` in Audit requests — numeric integer
+  - `quality_controller_id`, `preamble_id`, `checklist_type_id` in Checklist requests — numeric integer
+  - `department_head`, `department_members.*.user_id` in Department requests — numeric integer
+  - `company_contacts.*.user_id` in Company requests — numeric integer
+
+  ---
+
+  ## Environment Variables
+
+  Key variables auto-populated by test scripts after each Create request:
+  - `access_token` — Bearer token (set after login)
+  - `user_id` — Authenticated user identifier (set after login/me)
+  - `tenant_id` — Current tenant identifier (set after login)
+  - `<resource>_id` — Resource identifier saved after each successful Create (e.g. `preamble_id`, `audit_id`)
+
+  ---
+
+  ## Tech Stack
+
+  Laravel 13 · PHP 8.4 · MySQL · Passport OAuth2 (Personal Access Tokens) · Stancl Tenancy v3 (body-param identification) · Spatie Permission v7 · Pest v4
 variables:
   base_url: http://localhost:8020/api
   tenant_base_url: http://localhost:8020
+  access_token: ""
 auth:
-- id: cba390d9-dacd-4cef-8639-728436a27ea3
-  type: bearer
-  name: bearer auth
-  credentials:
-    token: '{{access_token}}'
+  - id: cba390d9-dacd-4cef-8639-728436a27ea3
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{access_token}}"
