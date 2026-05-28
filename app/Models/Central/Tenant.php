@@ -75,7 +75,9 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
     {
         self::creating(function (Tenant $tenant): void {
             if (empty($tenant->identifier)) {
-                $tenant->identifier = "{$tenant->id}_".time();
+            // Get the initials from the first letter of each word on the from $tenant->name
+            $initials = implode('', array_map(fn ($word) => $word[0], explode(' ', $tenant->name)));
+                $tenant->identifier = time()."_db";
             }
 
             if (auth()->check()) {
@@ -86,7 +88,7 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
 
         self::created(function (Tenant $tenant): void {
             if (empty($tenant->reference_number)) {
-                $tenant->reference_number = "aias_{$tenant->id}_".time();
+                $tenant->reference_number = "AT_{$tenant->id}_".time();
                 $tenant->saveQuietly();
             }
         });
