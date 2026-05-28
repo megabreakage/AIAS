@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Tenant\AuditController;
 use App\Http\Controllers\Api\V1\Tenant\ChecklistController;
 use App\Http\Controllers\Api\V1\Tenant\ChecklistTypeController;
 use App\Http\Controllers\Api\V1\Tenant\CompanyController;
@@ -102,5 +103,13 @@ Route::prefix('v1')->group(function () {
         Route::put('/departments/{identifier}', [DepartmentController::class, 'update']);
         Route::delete('/departments/{identifier}', [DepartmentController::class, 'destroy']);
         Route::post('/departments/{identifier}/restore', [DepartmentController::class, 'restore']);
+
+        // Audit routes
+        Route::get('/audits', [AuditController::class, 'index']);
+        Route::post('/audits', [AuditController::class, 'store']);
+        Route::get('/audits/{identifier}', [AuditController::class, 'show']);
+        Route::put('/audits/{identifier}', [AuditController::class, 'update']);
+        Route::delete('/audits/{identifier}', [AuditController::class, 'destroy']);
+        Route::post('/audits/{identifier}/restore', [AuditController::class, 'restore']);
     });
 });

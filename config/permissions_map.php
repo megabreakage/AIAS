@@ -171,6 +171,8 @@ return [
 
         'departments' => ['view', 'create', 'update', 'delete', 'restore'],
 
+        'audits' => ['view', 'create', 'update', 'delete', 'restore'],
+
     ],
 
 ];

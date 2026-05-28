@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\Central\Continent;
 use App\Models\Central\Country;
 use App\Models\Central\Tenant;
+use App\Models\Tenant\Audit;
 use App\Models\Tenant\Checklist;
 use App\Models\Tenant\ChecklistType;
 use App\Models\Tenant\Company;
@@ -14,6 +15,7 @@ use App\Models\Tenant\Department;
 use App\Models\Tenant\Preamble;
 use App\Models\Tenant\SectionStyle;
 use App\Models\User;
+use App\Policies\AuditPolicy;
 use App\Policies\ChecklistPolicy;
 use App\Policies\ChecklistTypePolicy;
 use App\Policies\CompanyPolicy;
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Gate::policy(Audit::class, AuditPolicy::class);
         Gate::policy(Checklist::class, ChecklistPolicy::class);
         Gate::policy(ChecklistType::class, ChecklistTypePolicy::class);
         Gate::policy(Company::class, CompanyPolicy::class);
