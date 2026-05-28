@@ -31,6 +31,12 @@ final class CentralUserRepository extends BaseRepository
         return $this->query()->create($data);
     }
 
+    public function findByEmail(string $email): ?User
+    {
+        /** @var User|null */
+        return $this->query()->where('email', $email)->first();
+    }
+
     public function emailExists(string $email): bool
     {
         return $this->query()->where('email', $email)->exists();

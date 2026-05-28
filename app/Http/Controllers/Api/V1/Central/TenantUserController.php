@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Central;
 
+use App\Exceptions\ApiException;
 use App\Http\Controllers\Api\V1\BaseApiController;
 use App\Http\Requests\Central\User\CreateTenantUserRequest;
 use App\Http\Resources\Tenant\User\UserResource;
@@ -52,50 +53,42 @@ final class TenantUserController extends BaseApiController
         ]);
 
         try {
-            /** @var array{user?: User, error?: string, message?: string, status?: int} $result */
-            $result = $tenant->run(function () use ($data, $role): array {
+            $user = $tenant->run(function () use ($data, $role): User {
                 if ($this->repository->emailExists($data['email'])) {
-                    return [
-                        'error' => 'EMAIL_TAKEN',
-                        'message' => 'A user with this email already exists in this tenant.',
-                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    ];
+                    throw new ApiException(
+                        'A user with this email already exists in this tenant.',
+                        Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'EMAIL_TAKEN',
+                    );
                 }
 
                 if ($this->repository->usernameExists($data['username'])) {
-                    return [
-                        'error' => 'USERNAME_TAKEN',
-                        'message' => 'This username is already taken in this tenant.',
-                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    ];
+                    throw new ApiException(
+                        'This username is already taken in this tenant.',
+                        Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'USERNAME_TAKEN',
+                    );
                 }
 
                 $tenantRole = $this->repository->findRoleByName($role);
 
                 if (!$tenantRole) {
-                    return [
-                        'error' => 'ROLE_NOT_FOUND',
-                        'message' => "Role '{$role}' is not configured for this tenant.",
-                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    ];
+                    throw new ApiException(
+                        "Role '{$role}' is not configured for this tenant.",
+                        Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'ROLE_NOT_FOUND',
+                    );
                 }
 
                 $user = DB::transaction(function () use ($data, $tenantRole): User {
-                    $user = $this->repository->createUser($data);
-                    $user->assignRole($tenantRole);
+                    $newUser = $this->repository->createUser($data);
+                    $newUser->assignRole($tenantRole);
 
-                    return $user;
+                    return $newUser;
                 });
 
-                return ['user' => $user->load(['roles'])];
+                return $user->load(['roles']);
             });
-
-            if (isset($result['error'])) {
-                return $this->error($result['error'], $result['message'], $result['status']);
-            }
-
-            /** @var User $user */
-            $user = $result['user'];
 
             Log::info('Tenant user created', [
                 'identifier' => $user->identifier,
@@ -105,6 +98,8 @@ final class TenantUserController extends BaseApiController
 
             return $this->success(UserResource::make($user)->resolve(), Response::HTTP_CREATED);
 
+        } catch (ApiException $e) {
+            throw $e;
         } catch (\Throwable $e) {
             Log::error('Failed to create tenant user', [
                 'tenant' => $id,

@@ -160,9 +160,14 @@ MODULES: list[dict[str, Any]] = [
                 "path": "users",
                 "name": "Create Tenant User",
                 "description": (
-                    "Create a new central user account and assign them to this tenant. "
-                    "The user is created in the central database and linked to the tenant via `owner_id`. "
-                    "Required fields: `first_name`, `last_name`, `username`, `email`, `password`."
+                    "Create a new user account scoped to this tenant and assign them a role.\n\n"
+                    "The user is created in the tenant's isolated database. "
+                    "`role` is **required** and must be one of: `tenant`, `auditor`, `client`, `viewer`.\n\n"
+                    "Required fields: `first_name`, `last_name`, `username` (unique within tenant), "
+                    "`email` (unique within tenant), `password` (min 8 chars, letters + numbers), `role`.\n\n"
+                    "Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`, "
+                    "`office_location`, `avatar`, `notes`, `is_active`.\n\n"
+                    "On success the user `identifier` is saved to `{{tenant_user_id}}` in the active environment."
                 ),
                 "body": {
                     "title": "Ms",
@@ -177,7 +182,9 @@ MODULES: list[dict[str, Any]] = [
                     "preferred_timezone": "Africa/Nairobi",
                     "office_location": "Nairobi, Kenya",
                     "is_active": True,
+                    "role": "auditor",
                 },
+                "save_var": "tenant_user_id",
             },
         ],
     },
@@ -245,14 +252,16 @@ MODULES: list[dict[str, Any]] = [
         "param": "user",
         "scope": "central",
         "description": (
-            "Create central platform users (super-admins and tenant owners).\n\n"
-            "Only `POST /v1/users` is currently implemented — full CRUD management is handled "
-            "through tenant-scoped user management.\n\n"
-            "Required: `first_name`, `last_name`, `username` (unique), `email` (unique), `password`.\n"
+            "Register central platform users (super-admins and tenant owners).\n\n"
+            "**Currently implemented:** `POST /v1/users` only.\n"
+            "List / Get / Update / Delete central users are **not yet implemented** — "
+            "user management is primarily performed through tenant-scoped endpoints.\n\n"
+            "Required: `first_name`, `last_name`, `username` (unique), `email` (unique), `password` "
+            "(min 8 chars, must contain letters and numbers).\n\n"
             "Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`, "
             "`office_location`, `avatar`, `notes`, `is_active`.\n\n"
-            "Note: `password_confirmation` is not required. `role` and `status` fields do not exist "
-            "in the request — use tenant user management for role assignment."
+            "Note: `password_confirmation` is **not** required on this endpoint. "
+            "Role assignment is handled via the tenant user management endpoints."
         ),
         "sample_body": {
             "title": "Dr",
@@ -270,6 +279,7 @@ MODULES: list[dict[str, Any]] = [
         },
         "extra_actions": [],
         "skip_crud": False,
+        "unimplemented_crud": ["index", "show", "update", "destroy"],
     },
     {
         "name": "Roles",
@@ -530,7 +540,7 @@ MODULES: list[dict[str, Any]] = [
         "scope": "tenant",
         "description": (
             "Manage tenant companies — the client organisations being audited.\n\n"
-            "`level_of_operations` values: `local`, `regional`, `national`, `international`, `multinational`. "
+            "`level_of_operations` values: `local`, `regional`, `international`. "
             "`company_contacts` is an array of contact assignments; `contact_type` values: `primary`, `secondary`, `billing`, `technical`. "
             "`country_id` is an integer FK (numeric ID) to the countries table. "
             "`latitude` and `longitude` are decimal geocoding coordinates (optional). "
@@ -603,7 +613,7 @@ MODULES: list[dict[str, Any]] = [
         "scope": "tenant",
         "description": (
             "Manage tenant audit records — the core audit execution entity.\n\n"
-            "`scope` values: `internal`, `external`, `compliance`, `operational`, `financial`. "
+            "`scope` values: `internal`, `external`, `service_provider`, `supplier`. "
             "`checklist_id` links the audit to a quality management checklist (identifier string or null). "
             "`department_id` is the `identifier` of the department being audited. "
             "`lead_auditor_id` and `quality_manager_id` are user identifier strings. "
@@ -1462,28 +1472,22 @@ def build_auth_requests() -> list[tuple[str, dict]]:
         _make_request(
             name="Register (Tenant User)",
             description=(
-                "Register a new user within a tenant context.\n\n"
-                "`tenant_id` is required. `username` must be unique within the tenant. "
-                "`password_confirmation` must match `password`. "
-                "`preferred_timezone` should be a valid IANA timezone string (e.g. `Africa/Nairobi`). "
-                "`is_active` defaults to `true` if omitted."
+                "Register a new user account within a tenant context (public endpoint — no auth required).\n\n"
+                "This endpoint is the self-service registration route for tenant users. "
+                "It only accepts the minimal user identity fields — role assignment is done separately "
+                "via the tenant user management endpoints.\n\n"
+                "Required fields: `first_name`, `last_name`, `email` (unique within tenant), "
+                "`password` (min 8 chars, must include both letters and numbers), `password_confirmation` (must match `password`).\n\n"
+                "Note: `tenant_id`, `username`, `phone`, `title`, and other profile fields are **not accepted** "
+                "by this endpoint. Use the Create Tenant User endpoint for full profile creation."
             ),
             url="{{tenant_base_url}}/v1/auth/register", method="POST",
             body=_json_body({
-                "tenant_id": "{{tenant_id}}",
-                "title": "Mr",
                 "first_name": "Jane",
-                "middle_name": None,
                 "last_name": "Auditor",
-                "username": "jane.auditor",
                 "email": "jane.auditor@example.test",
-                "country_code": "+254",
-                "phone": "712345678",
                 "password": "Password123!",
                 "password_confirmation": "Password123!",
-                "preferred_timezone": "Africa/Nairobi",
-                "office_location": "Nairobi, Kenya",
-                "is_active": True,
             }),
             exec_lines=GENERIC_TEST_SCRIPT, order=4000,
         ),
