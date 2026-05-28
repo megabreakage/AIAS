@@ -11,6 +11,8 @@ use Spatie\Permission\PermissionRegistrar;
 use Stancl\Tenancy\Events\TenancyBootstrapped;
 use Stancl\Tenancy\Events\RevertedToCentralContext;
 use App\Models\Central\SuperAdmin;
+use App\Models\PriorityLevel;
+use App\Policies\PriorityLevelPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,9 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(RevertedToCentralContext::class, function (): void {
             app(PermissionRegistrar::class)->forgetCachedPermissions();
         });
+
+        // Register model policies
+        Gate::policy(PriorityLevel::class, PriorityLevelPolicy::class);
 
         // Super admin bypasses all gate checks
         Gate::before(function (SuperAdmin $superAdmin, string $ability): ?bool {

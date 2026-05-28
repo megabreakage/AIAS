@@ -1,0 +1,463 @@
+openapi: 3.1.0
+info:
+  title: AIAS Priority Levels API
+  description: |
+    Tenant-scoped Priority Levels module.
+    Priority Levels allow each tenant to define their own priority scale
+    (e.g. Critical → High → Medium → Low) for use across audit findings,
+    risks, tasks, and other tenant resources.
+
+    All endpoints require a valid Passport bearer token issued to a tenant user.
+    The token must belong to the same tenant as the resource being accessed.
+  version: 1.0.0
+
+servers:
+  - url: http://{tenant}.localhost/v1
+    description: Tenant domain (production)
+    variables:
+      tenant:
+        default: acme
+  - url: http://localhost/api/v1
+    description: Central domain (development / testing)
+
+tags:
+  - name: Priority Levels
+    description: Manage tenant priority level definitions
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    PriorityLevel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Public identifier (UUID)
+          example: "9c8b4f3e-1a2b-4c5d-8e9f-0a1b2c3d4e5f"
+        name:
+          type: string
+          description: Display name for the priority level
+          example: "Critical"
+        description:
+          type: string
+          nullable: true
+          description: Optional description
+          example: "Requires immediate action within 24 hours"
+        level:
+          type: integer
+          description: Numeric rank (lower number = higher priority, e.g. 1 = highest)
+          minimum: 1
+          example: 1
+        color:
+          type: string
+          nullable: true
+          description: Hex colour code for UI display
+          example: "#FF0000"
+        is_active:
+          type: boolean
+          description: Whether this level is available for selection
+          example: true
+        created_by:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+              nullable: true
+        updated_by:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+              nullable: true
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    CreatePriorityLevelRequest:
+      type: object
+      required:
+        - name
+        - level
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Critical"
+        description:
+          type: string
+          nullable: true
+          example: "Requires immediate action within 24 hours"
+        level:
+          type: integer
+          minimum: 1
+          example: 1
+        color:
+          type: string
+          nullable: true
+          maxLength: 255
+          example: "#FF0000"
+        is_active:
+          type: boolean
+          default: true
+          example: true
+
+    UpdatePriorityLevelRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Critical"
+        description:
+          type: string
+          nullable: true
+          example: "Requires immediate action"
+        level:
+          type: integer
+          minimum: 1
+          example: 1
+        color:
+          type: string
+          nullable: true
+          maxLength: 255
+          example: "#FF0000"
+        is_active:
+          type: boolean
+          example: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Resource not found"
+        data:
+          nullable: true
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "VALIDATION_FAILED"
+            message:
+              type: string
+              example: "The given data was invalid."
+            details:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+
+security:
+  - BearerAuth: []
+
+paths:
+  /priority-levels:
+    get:
+      tags:
+        - Priority Levels
+      summary: List priority levels
+      description: |
+        Returns a paginated list of priority levels for the current tenant.
+        Supports search and active-status filtering.
+
+        **Required permission:** `priority-levels.view`
+      operationId: listPriorityLevels
+      parameters:
+        - name: search
+          in: query
+          description: Search by name or description
+          required: false
+          schema:
+            type: string
+          example: "Critical"
+        - name: is_active
+          in: query
+          description: Filter by active status (1 = active, 0 = inactive)
+          required: false
+          schema:
+            type: integer
+            enum: [0, 1]
+        - name: page
+          in: query
+          description: Page number (default 1)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          description: Items per page (default 15, max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 15
+      responses:
+        "200":
+          description: Priority levels retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PriorityLevel"
+                  message:
+                    type: string
+                    example: "Priority Levels retrieved successfully"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden — missing `priority-levels.view` permission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      tags:
+        - Priority Levels
+      summary: Create a priority level
+      description: |
+        Creates a new priority level for the current tenant.
+
+        **Required permission:** `priority-levels.create`
+
+        The `name` must be unique within the tenant.
+      operationId: createPriorityLevel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePriorityLevelRequest"
+            example:
+              name: "Critical"
+              description: "Requires immediate action within 24 hours"
+              level: 1
+              color: "#FF0000"
+              is_active: true
+      responses:
+        "201":
+          description: Priority level created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/PriorityLevel"
+                  message:
+                    type: string
+                    example: "Priority Level created successfully"
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden — missing `priority-levels.create` permission
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /priority-levels/{identifier}:
+    parameters:
+      - name: identifier
+        in: path
+        required: true
+        description: Priority level UUID identifier
+        schema:
+          type: string
+          format: uuid
+        example: "9c8b4f3e-1a2b-4c5d-8e9f-0a1b2c3d4e5f"
+
+    get:
+      tags:
+        - Priority Levels
+      summary: Get a priority level
+      description: |
+        Retrieves a single priority level by its UUID identifier.
+
+        **Required permission:** `priority-levels.view`
+
+        Returns 404 if the priority level does not exist or belongs to a different tenant.
+      operationId: getPriorityLevel
+      responses:
+        "200":
+          description: Priority level retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/PriorityLevel"
+                  message:
+                    type: string
+                    example: "Priority Level retrieved successfully"
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden
+        "404":
+          description: Priority level not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      tags:
+        - Priority Levels
+      summary: Update a priority level
+      description: |
+        Updates an existing priority level.
+
+        **Required permission:** `priority-levels.edit`
+
+        All fields are optional (PATCH semantics). The `name` uniqueness check
+        excludes the current record.
+      operationId: updatePriorityLevel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePriorityLevelRequest"
+            example:
+              name: "High"
+              level: 2
+              color: "#FFA500"
+      responses:
+        "200":
+          description: Priority level updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/PriorityLevel"
+                  message:
+                    type: string
+                    example: "Priority Level updated successfully"
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden
+        "404":
+          description: Priority level not found
+        "422":
+          description: Validation error
+
+    delete:
+      tags:
+        - Priority Levels
+      summary: Soft-delete a priority level
+      description: |
+        Soft-deletes a priority level. The record is retained in the database
+        and can be restored via `POST /priority-levels/{identifier}/restore`.
+
+        **Required permission:** `priority-levels.delete`
+      operationId: deletePriorityLevel
+      responses:
+        "200":
+          description: Priority level deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Priority Level deleted successfully"
+                  data:
+                    nullable: true
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden
+        "404":
+          description: Priority level not found
+
+  /priority-levels/{identifier}/restore:
+    post:
+      tags:
+        - Priority Levels
+      summary: Restore a soft-deleted priority level
+      description: |
+        Restores a previously soft-deleted priority level.
+
+        **Required permission:** `priority-levels.delete`
+      operationId: restorePriorityLevel
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          description: Priority level UUID identifier
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Priority level restored successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/PriorityLevel"
+                  message:
+                    type: string
+                    example: "Priority Level restored successfully"
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden
+        "404":
+          description: Priority level not found
