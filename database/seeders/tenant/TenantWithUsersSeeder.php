@@ -7,6 +7,8 @@ namespace Database\Seeders\Tenant;
 use App\Models\Central\Tenant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class TenantWithUsersSeeder extends Seeder
@@ -36,7 +38,7 @@ class TenantWithUsersSeeder extends Seeder
                     'identifier' => (string) Str::uuid(),
                     'first_name' => 'Admin',
                     'last_name' => 'User',
-                    'username' => \Illuminate\Support\Str::slug('admin-'.Str::random(4)),
+                    'username' => Str::slug('admin-'.Str::random(4)),
                     'password' => Hash::make(env('TEST_TENANT_ADMIN_PASSWORD', 'password')),
                     'email_verified_at' => now(),
                     'is_active' => true,
