@@ -12,173 +12,105 @@ values:
     value: ''
   - key: tenant_id
     value: ''
-    description:
-      content: Current tenant identifier string (auto-populated after login)
-      type: text/plain
+    description: Current tenant identifier string (auto-populated after login)
   - key: user_id
     value: ''
-    description:
-      content: Authenticated user identifier (auto-populated after login)
-      type: text/plain
+    description: Authenticated user identifier (auto-populated after login)
   - key: continent_id
     value: ''
-    description:
-      content: Continent identifier string (auto-populated after Create Continent)
-      type: text/plain
+    description: Continent identifier string (auto-populated after Create Continent)
   - key: country_id
     value: ''
-    description:
-      content: Country identifier string (auto-populated after Create Country)
-      type: text/plain
+    description: Country identifier string (auto-populated after Create Country)
   - key: audit_standard_id
     value: ''
-    description:
-      content: Audit Standard identifier string
-      type: text/plain
+    description: Audit Standard identifier string
   - key: regulation_framework_id
     value: ''
-    description:
-      content: Regulation Framework identifier string
-      type: text/plain
+    description: Regulation Framework identifier string
   - key: risk_category_id
     value: ''
-    description:
-      content: Risk Category identifier string
-      type: text/plain
+    description: Risk Category identifier string
   - key: role_id
     value: ''
-    description:
-      content: Role identifier string
-      type: text/plain
+    description: Role identifier string
   - key: service_user_id
     value: ''
-    description:
-      content: Service User identifier string
-      type: text/plain
+    description: Service User identifier string
   - key: api_key_id
     value: ''
-    description:
-      content: API Key identifier string
-      type: text/plain
+    description: API Key identifier string
   - key: preamble_id
     value: ''
-    description:
-      content: Preamble identifier string
-      type: text/plain
+    description: Preamble identifier string
   - key: checklist_type_id
     value: ''
-    description:
-      content: Checklist Type identifier string
-      type: text/plain
+    description: Checklist Type identifier string
   - key: section_style_id
     value: ''
-    description:
-      content: Section Style identifier string
-      type: text/plain
+    description: Section Style identifier string
   - key: checklist_id
     value: ''
-    description:
-      content: Checklist identifier string
-      type: text/plain
+    description: Checklist identifier string
   - key: tenant_user_id
     value: ''
-    description:
-      content: Tenant User identifier string (auto-populated after Create User in tenant scope)
-      type: text/plain
+    description: Tenant User identifier string (auto-populated after Create User in tenant scope)
   - key: company_id
     value: ''
-    description:
-      content: Company identifier string
-      type: text/plain
+    description: Company identifier string
   - key: department_id
     value: ''
-    description:
-      content: Department identifier string
-      type: text/plain
+    description: Department identifier string
   - key: audit_id
     value: ''
-    description:
-      content: Audit identifier string
-      type: text/plain
+    description: Audit identifier string
   - key: client_id
     value: ''
-    description:
-      content: Client identifier string
-      type: text/plain
+    description: Client identifier string
   - key: group_id
     value: ''
-    description:
-      content: Group identifier string
-      type: text/plain
+    description: Group identifier string
   - key: audit_template_id
     value: ''
-    description:
-      content: Audit Template identifier string
-      type: text/plain
+    description: Audit Template identifier string
   - key: audit_engagement_id
     value: ''
-    description:
-      content: Audit Engagement identifier string
-      type: text/plain
+    description: Audit Engagement identifier string
   - key: audit_plan_id
     value: ''
-    description:
-      content: Audit Plan identifier string
-      type: text/plain
+    description: Audit Plan identifier string
   - key: audit_procedure_id
     value: ''
-    description:
-      content: Audit Procedure identifier string
-      type: text/plain
+    description: Audit Procedure identifier string
   - key: workpaper_id
     value: ''
-    description:
-      content: Workpaper identifier string
-      type: text/plain
+    description: Workpaper identifier string
   - key: finding_id
     value: ''
-    description:
-      content: Finding identifier string
-      type: text/plain
+    description: Finding identifier string
   - key: finding_response_id
     value: ''
-    description:
-      content: Finding Response identifier string
-      type: text/plain
+    description: Finding Response identifier string
   - key: risk_assessment_id
     value: ''
-    description:
-      content: Risk Assessment identifier string
-      type: text/plain
+    description: Risk Assessment identifier string
   - key: risk_matrix_id
     value: ''
-    description:
-      content: Risk Matrix identifier string
-      type: text/plain
+    description: Risk Matrix identifier string
   - key: compliance_requirement_id
     value: ''
-    description:
-      content: Compliance Requirement identifier string
-      type: text/plain
+    description: Compliance Requirement identifier string
   - key: compliance_evidence_id
     value: ''
-    description:
-      content: Compliance Evidence identifier string
-      type: text/plain
+    description: Compliance Evidence identifier string
   - key: control_objective_id
     value: ''
-    description:
-      content: Control Objective identifier string
-      type: text/plain
+    description: Control Objective identifier string
   - key: control_test_id
     value: ''
-    description:
-      content: Control Test identifier string
-      type: text/plain
+    description: Control Test identifier string
   - key: report_id
     value: ''
-    description:
-      content: Report identifier string
-      type: text/plain
+    description: Report identifier string
   - key: user_name
     value: ''
