@@ -24,7 +24,8 @@ class TenantWithUsersSeeder extends Seeder
             return;
         }
 
-        $this->command->info('Creating 2 tenants with users...\\n');
+        $this->command->info('Creating 2 tenants with users.');
+        $this->command->info('...');
 
         $tenantRole = Role::where('name', 'tenant')->where('guard_name', 'api')->firstOrFail();
         $adminRole = Role::where('name', 'admin')->where('guard_name', 'api')->firstOrFail();
@@ -63,7 +64,8 @@ class TenantWithUsersSeeder extends Seeder
                 $seeder->run();
             });
 
-            $this->command->info("Seeded tenant database for {$tenant->getTenantKey()}.\\n");
+            $this->command->info("Seeded tenant database for {$tenant->getTenantKey()}.");
+            $this->command->info(' ');
         });
     }
 }
