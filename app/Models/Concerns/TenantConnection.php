@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Models\Concerns;
 
 /**
- * Marker trait for tenant-scoped models.
+ * Trait for tenant-scoped models.
  *
- * Stancl/Tenancy v3 handles connection switching automatically.
- * Models extending BaseModel in a tenant migration will use the
- * correct tenant database connection without explicit configuration.
+ * Explicitly sets the connection to 'tenant' so queries always
+ * target the tenant database, even when the default connection
+ * has not been switched by the tenancy bootstrapper.
  */
 trait TenantConnection
 {
-    //
+    public function getConnectionName(): ?string
+    {
+        return 'tenant';
+    }
 }
