@@ -9,7 +9,6 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
@@ -76,7 +75,7 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
     {
         self::creating(function (Tenant $tenant): void {
             if (empty($tenant->identifier)) {
-                $tenant->identifier = (string) Str::uuid();
+                $tenant->identifier = "{$tenant->id}_".time();
             }
 
             if (auth()->check()) {
@@ -87,7 +86,7 @@ final class Tenant extends BaseTenant implements AuditableContract, TenantWithDa
 
         self::created(function (Tenant $tenant): void {
             if (empty($tenant->reference_number)) {
-                $tenant->reference_number = 'AT_'.$tenant->id.'_'.time();
+                $tenant->reference_number = "aias_{$tenant->id}_".time();
                 $tenant->saveQuietly();
             }
         });
