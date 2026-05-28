@@ -60,7 +60,7 @@ return [
          * prefix + tenant_id + suffix.
          */
         'prefix' => env('DB_TENANT_PREFIX', 'aias_tenant_'),
-        'suffix' => '',
+        'suffix' => '_db',
 
         /**
          * TenantDatabaseManagers are classes that handle the creation & deletion of tenant databases.
