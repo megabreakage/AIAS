@@ -12,6 +12,15 @@ class TenantDatabaseSeeder extends Seeder
     {
         $this->call([
             TenantRolePermissionsSeeder::class,
+            PreambleSeeder::class,
+            ChecklistTypeSeeder::class,
+            SectionStyleSeeder::class,
+            ChecklistSeeder::class,
+            ChecklistSectionStyle::class,
+            CompanySeeder::class,
+            DepartmentSeeder::class,
+            PriorityLevelSeeder::class,
+            AuditSeeder::class,
         ]);
     }
 }

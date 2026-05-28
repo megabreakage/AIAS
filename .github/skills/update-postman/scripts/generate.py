@@ -1403,11 +1403,19 @@ def build_extra_action_request(mod: dict, action: dict, order: int = 6000) -> tu
 
     description = action.get("description", action["name"])
 
+    # Allow action to supply custom exec_lines or a save_var shortcut
+    if "exec_lines" in action:
+        action_exec_lines = action["exec_lines"]
+    elif "save_var" in action:
+        action_exec_lines = CREATE_TEST_SCRIPT_TEMPLATE.format(var_name=action["save_var"]).splitlines()
+    else:
+        action_exec_lines = GENERIC_TEST_SCRIPT
+
     return _make_request(
         name=action["name"],
         description=description,
         url=url, method=method, query_params=qp, body=body,
-        exec_lines=GENERIC_TEST_SCRIPT, order=order,
+        exec_lines=action_exec_lines, order=order,
     )
 
 
