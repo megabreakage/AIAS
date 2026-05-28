@@ -171,7 +171,12 @@ class MigrateAllDatabases extends Command
 
             try {
                 $tenant->run(function () use ($tenantId, &$failedTenants) {
-                    $result = $this->call('migrate:fresh', ['--force' => true]);
+                    $result = $this->call('migrate:fresh', [
+                        '--database' => 'tenant',
+                        '--path' => [database_path('migrations/tenant')],
+                        '--realpath' => true,
+                        '--force' => true,
+                    ]);
 
                     if ($result !== self::SUCCESS) {
                         $failedTenants[] = $tenantId;
@@ -216,6 +221,7 @@ class MigrateAllDatabases extends Command
         $this->newLine();
 
         $migrateOptions = [
+            '--database' => 'tenant',
             '--path' => [database_path('migrations/tenant')],
             '--realpath' => true,
         ];
