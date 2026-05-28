@@ -2,6 +2,36 @@
 
 Purpose: Enable agents to contribute productively to this Laravel 13, multi-tenant API (Stancl Tenancy, Passport, Spatie Permission with teams, Auditing) using the project's established patterns.
 
+## Engineer Profile Alignment
+
+Default contributor profile for this repository:
+
+- Senior full-stack engineer workflows
+- Backend-first default: Laravel/PHP
+- Secondary backend: Node.js for real-time/event-driven services
+- Frontend default (when requested): React.js + TypeScript
+- Mobile default (when requested): Kotlin + Jetpack Compose
+- Database default: MySQL
+- Standards priority: SOLID, DRY, Clean Architecture, testability, security, scalability
+
+For project architecture and implementation conventions, link and follow:
+
+- `README.md`
+- `CLAUDE.md`
+- `docs/architecture/ARCH_CHECKLIST.md`
+- `docs/architecture/TENANT_MODEL.md`
+- `docs/architecture/CENTRAL_MODEL.md`
+
+## Communication Contract
+
+When responding in chat for this workspace:
+
+- Use direct, concise statements
+- Prefer short sentences where practical
+- Remove filler and generic narration
+- Execute tools first when verification required
+- Report concrete outcomes, then stop
+
 ## CRITICAL: DRY Principles Enforcement
 
 **Before writing ANY code**, review and follow the DRY (Don't Repeat Yourself) principles hook:
