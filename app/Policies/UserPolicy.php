@@ -22,36 +22,36 @@ final class UserPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('user.view');
+        return $user->hasPermissionTo('users.view');
     }
 
     public function view(User $user, User $target): bool
     {
-        return $user->hasPermissionTo('user.view')
+        return $user->hasPermissionTo('users.view')
             && $user->tenant_id === $target->tenant_id;
     }
 
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('user.create');
+        return $user->hasPermissionTo('users.create');
     }
 
     public function update(User $user, User $target): bool
     {
-        return $user->hasPermissionTo('user.edit')
+        return $user->hasPermissionTo('users.edit')
             && $user->tenant_id === $target->tenant_id;
     }
 
     public function delete(User $user, User $target): bool
     {
-        return $user->hasPermissionTo('user.delete')
+        return $user->hasPermissionTo('users.delete')
             && $user->tenant_id === $target->tenant_id
             && $user->id !== $target->id;
     }
 
     public function restore(User $user, User $target): bool
     {
-        return $user->hasPermissionTo('user.restore')
+        return $user->hasPermissionTo('users.restore')
             && $user->tenant_id === $target->tenant_id;
     }
 }

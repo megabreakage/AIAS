@@ -175,6 +175,8 @@ return [
 
         'preambles' => ['view', 'create', 'update', 'delete', 'restore'],
 
+        'users' => ['view', 'create', 'update', 'delete', 'restore'],
+
     ],
 
 ];
