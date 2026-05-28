@@ -24,9 +24,9 @@ final class UserFactory extends Factory
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'username' => fake()->unique()->userName(),
-            'email' => fake()->unique()->safeEmail(),
+            'email' => 'user@company'.rand(1, 9).'.test',
             'email_verified_at' => now(),
-            'password' => self::$password ??= Hash::make('password'),
+            'password' => Hash::make('password'),
             'is_active' => true,
             'country_code' => '+1',
         ];
