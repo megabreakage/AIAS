@@ -1,0 +1,114 @@
+name: AIAS Development
+values:
+  - key: base_url
+    value: 'https://dev.aias.app/api'
+  - key: tenant_base_url
+    value: 'https://dev.aias.app'
+  - key: user_email
+    value: dev@aias.app
+  - key: user_password
+    value: ''
+  - key: access_token
+    value: ''
+  - key: tenant_id
+    value: ''
+    description: Current tenant identifier string (auto-populated after login)
+  - key: user_id
+    value: ''
+    description: Authenticated user identifier (auto-populated after login)
+  - key: continent_id
+    value: ''
+    description: Continent identifier string (auto-populated after Create Continent)
+  - key: country_id
+    value: ''
+    description: Country identifier string (auto-populated after Create Country)
+  - key: audit_standard_id
+    value: ''
+    description: Audit Standard identifier string
+  - key: regulation_framework_id
+    value: ''
+    description: Regulation Framework identifier string
+  - key: risk_category_id
+    value: ''
+    description: Risk Category identifier string
+  - key: role_id
+    value: ''
+    description: Role identifier string
+  - key: service_user_id
+    value: ''
+    description: Service User identifier string
+  - key: api_key_id
+    value: ''
+    description: API Key identifier string
+  - key: preamble_id
+    value: ''
+    description: Preamble identifier string
+  - key: checklist_type_id
+    value: ''
+    description: Checklist Type identifier string
+  - key: section_style_id
+    value: ''
+    description: Section Style identifier string
+  - key: checklist_id
+    value: ''
+    description: Checklist identifier string
+  - key: tenant_user_id
+    value: ''
+    description: Tenant User identifier string (auto-populated after Create User in tenant scope)
+  - key: company_id
+    value: ''
+    description: Company identifier string
+  - key: department_id
+    value: ''
+    description: Department identifier string
+  - key: audit_id
+    value: ''
+    description: Audit identifier string
+  - key: client_id
+    value: ''
+    description: Client identifier string
+  - key: group_id
+    value: ''
+    description: Group identifier string
+  - key: audit_template_id
+    value: ''
+    description: Audit Template identifier string
+  - key: audit_engagement_id
+    value: ''
+    description: Audit Engagement identifier string
+  - key: audit_plan_id
+    value: ''
+    description: Audit Plan identifier string
+  - key: audit_procedure_id
+    value: ''
+    description: Audit Procedure identifier string
+  - key: workpaper_id
+    value: ''
+    description: Workpaper identifier string
+  - key: finding_id
+    value: ''
+    description: Finding identifier string
+  - key: finding_response_id
+    value: ''
+    description: Finding Response identifier string
+  - key: risk_assessment_id
+    value: ''
+    description: Risk Assessment identifier string
+  - key: risk_matrix_id
+    value: ''
+    description: Risk Matrix identifier string
+  - key: compliance_requirement_id
+    value: ''
+    description: Compliance Requirement identifier string
+  - key: compliance_evidence_id
+    value: ''
+    description: Compliance Evidence identifier string
+  - key: control_objective_id
+    value: ''
+    description: Control Objective identifier string
+  - key: control_test_id
+    value: ''
+    description: Control Test identifier string
+  - key: report_id
+    value: ''
+    description: Report identifier string
