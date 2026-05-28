@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use App\Exceptions\AccountDisabledException;
+use App\Exceptions\AuthenticationException;
 use App\Http\Controllers\Api\V1\BaseApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -15,7 +17,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Laravel\Passport\Exceptions\AuthenticationException;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends BaseApiController
@@ -53,11 +54,11 @@ final class AuthController extends BaseApiController
         $user = $this->repository->findByEmail($data['email']);
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            throw new AuthenticationException('Invalid credentials.', 401);
+            throw new AuthenticationException;
         }
 
         if (!$user->is_active) {
-            throw new AuthenticationException('Account is disabled.', 403);
+            throw new AccountDisabledException;
         }
 
         $token = $user->createToken('api-token')->accessToken;
