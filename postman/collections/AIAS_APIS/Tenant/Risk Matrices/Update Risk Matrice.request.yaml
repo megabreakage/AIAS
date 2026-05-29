@@ -1,0 +1,31 @@
+$kind: http-request
+name: Update Risk Matrice
+description: 'Update an existing risk matrice record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{risk_matrix_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/risk-matrices/{{risk_matrix_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "name": "FY2025 Risk Matrix",
+      "likelihood_scale": 5,
+      "impact_scale": 5
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

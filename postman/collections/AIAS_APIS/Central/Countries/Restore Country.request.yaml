@@ -1,0 +1,22 @@
+$kind: http-request
+name: Restore Country
+description: Restore a soft-deleted country record.
+url: '{{base_url}}/v1/countries/{{country_id}}/restore'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {}
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 6000

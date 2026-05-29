@@ -1,0 +1,19 @@
+$kind: http-request
+name: Delete Role
+description: Soft-delete a role record. The record is not permanently removed. Restore
+  it with the corresponding `POST /roles/{{role_id}}/restore` request.
+url: '{{base_url}}/v1/roles/{{role_id}}'
+method: DELETE
+headers:
+  Accept: application/json
+  Content-Type: application/json
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 5000

@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Factories;
+
+use App\Models\Tenant\Checklist;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Checklist>
+ */
+class ChecklistFactory extends Factory
+{
+    protected $model = Checklist::class;
+
+    public function definition(): array
+    {
+        return [
+            'tenant_id' => fake()->slug(2),
+            'name' => fake()->unique()->words(4, true),
+            'quality_controller_id' => null,
+            'preamble_id' => null,
+            'checklist_type_id' => null,
+            'is_active' => true,
+            'is_featured' => fake()->boolean(20),
+            'created_by' => null,
+            'updated_by' => null,
+        ];
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(['is_active' => false]);
+    }
+
+    public function active(): static
+    {
+        return $this->state(['is_active' => true]);
+    }
+
+    public function featured(): static
+    {
+        return $this->state(['is_featured' => true]);
+    }
+}

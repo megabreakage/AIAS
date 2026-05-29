@@ -1,0 +1,25 @@
+$kind: http-request
+name: Logout (Central)
+description: 'Revoke the current Bearer access token for a central / super-admin user.
+
+
+  No `tenant_id` required. After logout the `access_token` is invalidated.'
+url: '{{base_url}}/v1/auth/logout'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {}
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 8000

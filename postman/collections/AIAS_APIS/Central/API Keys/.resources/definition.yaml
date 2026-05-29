@@ -1,0 +1,6 @@
+$kind: collection
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.
+
+
+  Manage API keys for service users. This folder is a placeholder for future implementation.'
+order: 8000

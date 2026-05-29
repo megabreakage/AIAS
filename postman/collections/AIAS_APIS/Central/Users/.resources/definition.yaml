@@ -1,0 +1,22 @@
+$kind: collection
+description: 'Register central platform users (super-admins and tenant owners).
+
+
+  **✅ Implemented:** `POST /v1/users` — create a central user.
+
+  **⚠️ Not yet implemented:** List, Get, Update, Delete central users — user management
+  is primarily performed through tenant-scoped endpoints.
+
+
+  Required: `first_name`, `last_name`, `username` (unique globally), `email` (unique
+  globally), `password` (min 8 chars, must contain letters and numbers).
+
+
+  Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`,
+  `office_location`, `avatar`, `notes`, `is_active` (boolean, default `true`).
+
+
+  Note: `password_confirmation` is **not** required. Role assignment is handled via
+  the tenant user management endpoints. The `identifier` of the created user is auto-saved
+  to `{{user_id}}` in the environment.'
+order: 5000

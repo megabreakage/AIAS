@@ -1,0 +1,54 @@
+$kind: collection
+description: '## Tenant Resources
+
+
+  Resources isolated per organisation (tenant) — each tenant has its own MySQL database.
+
+
+  ### How Tenant Scoping Works
+
+
+  Tenancy is resolved automatically from the authenticated user''s `tenant_id` column
+  in the central Users table. No `tenant_id` body or query parameter is required.
+  Simply authenticate via **Login (Tenant User)** and all subsequent requests are
+  automatically scoped to the user''s tenant.
+
+
+  **Base URL:** `{{tenant_base_url}}` (e.g. `http://localhost:8020`)
+
+
+  ### ✅ Implemented Endpoints
+
+
+  | Resource | Endpoints |
+
+  |---------|---------|
+
+  | **Auth (Tenant)** | POST register, POST login, POST logout, GET me |
+
+  | **Preambles** | Full CRUD + POST restore |
+
+  | **Users** | Full CRUD + POST restore |
+
+  | **Checklist Types** | Full CRUD + POST restore |
+
+  | **Section Styles** | Full CRUD + POST restore |
+
+  | **Checklists** | Full CRUD + POST restore |
+
+  | **Companies** | Full CRUD + POST restore |
+
+  | **Departments** | Full CRUD + POST restore |
+
+  | **Audits** | Full CRUD + POST restore |
+
+
+  ### ⚠️ Planned (Not Yet Implemented)
+
+  Clients, Audit Templates, Audit Engagements, Audit Plans, Audit Procedures, Workpapers,
+  Findings, Finding Responses, Risk Assessments, Risk Matrices, Compliance Requirements,
+  Compliance Evidence, Control Objectives, Control Tests, Reports, Firm Settings.
+
+
+  All soft-deleted records can be restored via `POST /{resource}/{identifier}/restore`.'
+order: 2000

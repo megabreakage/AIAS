@@ -1,0 +1,23 @@
+$kind: http-request
+name: Sign Off Workpaper
+description: Sign Off Workpaper
+url: '{{tenant_base_url}}/v1/workpapers/{{workpaper_id}}/sign-off'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 8000

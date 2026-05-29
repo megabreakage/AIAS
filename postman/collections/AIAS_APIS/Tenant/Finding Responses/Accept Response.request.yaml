@@ -1,0 +1,23 @@
+$kind: http-request
+name: Accept Response
+description: Accept Response
+url: '{{tenant_base_url}}/v1/finding-responses/{{finding_response_id}}/accept'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 7000

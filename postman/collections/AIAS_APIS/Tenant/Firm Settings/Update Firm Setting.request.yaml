@@ -1,0 +1,34 @@
+$kind: http-request
+name: Update Firm Setting
+description: 'Update an existing firm setting record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{firm_settings_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/firm-settings/{{firm_settings_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "firm_name": "Pinnacle Audit Partners LLP",
+      "registration_number": "LLP-2020-001",
+      "address": "Upper Hill, Nairobi",
+      "phone": "+254700000000",
+      "email": "info@pinnacleaudit.test",
+      "country_id": "{{country_id}}",
+      "default_audit_standard_id": "{{audit_standard_id}}"
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

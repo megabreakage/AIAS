@@ -1,0 +1,23 @@
+$kind: http-request
+name: Get Control Objective
+description: 'Retrieve a single control objective by its `identifier` string.
+
+
+  Replace `{{control_objective_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/control-objectives/{{control_objective_id}}'
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+queryParams:
+  description: Tenant identifier string (required)
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 3000

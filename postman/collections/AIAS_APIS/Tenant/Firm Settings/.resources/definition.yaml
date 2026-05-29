@@ -1,0 +1,7 @@
+$kind: collection
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/tenant.php`.
+
+
+  Manage tenant firm profile and AIAS configuration settings. This folder is a placeholder
+  for future implementation.'
+order: 24000

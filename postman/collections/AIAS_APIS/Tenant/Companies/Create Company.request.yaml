@@ -1,0 +1,58 @@
+$kind: http-request
+name: Create Company
+description: 'Create a new company record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{company_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/companies'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Apex Holdings Ltd",
+      "address": "123 Business Park, Westlands",
+      "office_location": "Nairobi, Kenya",
+      "latitude": -1.2921,
+      "longitude": 36.8219,
+      "postal_code": "00100",
+      "country_id": null,
+      "level_of_operations": "local",
+      "trading_name": "Apex",
+      "website": "https://apexholdings.test",
+      "email": "info@apexholdings.test",
+      "phone": "+254712345678",
+      "description": "Leading investment and holding company.",
+      "is_active": true,
+      "is_featured": false,
+      "company_contacts": [
+        {
+          "user_id": null,
+          "contact_type": "primary"
+        }
+      ]
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Status code is 201', () => { pm.response.to.have.status(201); });
+    pm.test('Response envelope valid', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status');
+        pm.expect(j).to.have.property('data');
+    });
+    if (pm.response.code === 201) {
+        const j = pm.response.json();
+        // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+        const resourceId = j.data && (j.data.identifier || j.data.id);
+        if (resourceId) {
+            pm.environment.set('company_id', String(resourceId));
+            console.log('Saved company_id:', resourceId);
+        }
+    }
+  language: text/javascript
+order: 2000

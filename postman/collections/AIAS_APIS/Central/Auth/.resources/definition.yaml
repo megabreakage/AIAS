@@ -1,0 +1,37 @@
+$kind: collection
+description: '## Authentication
+
+
+  Authentication endpoints for both central and tenant users.
+
+
+  ### Workflow
+
+
+  1. Call **Health Check** to verify the server is running.
+
+  2. Call **Login (Central / Super-Admin)** to get a Bearer token for central operations.
+  No `tenant_id` needed.
+
+  3. Call **Login (Tenant User)** with email and password only — the system resolves
+  the tenant automatically from the user''s `tenant_id` in the central database.
+
+  4. Test scripts auto-save `access_token`, `user_id`, and `tenant_id` to the environment.
+
+  5. All subsequent protected requests use `{{access_token}}` via Bearer auth.
+
+
+  ### Tenant Identification
+
+
+  Tenancy is resolved automatically from the authenticated user''s `tenant_id` column
+  in the central Users table. No `tenant_id` body or query parameter is required for
+  any tenant-scoped request.
+
+
+  **Central login URL:** `{{base_url}}/v1/auth/login`
+
+  **Tenant login URL:** `{{tenant_base_url}}/v1/auth/login`
+
+  **Tenant register URL:** `{{tenant_base_url}}/v1/auth/register` (public endpoint)'
+order: 1000

@@ -1,0 +1,32 @@
+$kind: http-request
+name: Update Finding Respons
+description: 'Update an existing finding respons record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{finding_response_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/finding-responses/{{finding_response_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "finding_id": "{{finding_id}}",
+      "response": "Management accepts the finding. A formal revenue recognition policy will be developed and staff trained by Q2 2026.",
+      "action_plan": "Engage external consultant to develop policy",
+      "target_date": "2026-06-30",
+      "responsible_person": "CFO"
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

@@ -1,0 +1,22 @@
+$kind: collection
+description: 'Manage audit checklists with quality controller assignment, preamble
+  linkage, and type classification.
+
+
+  **⚠️ Integer FK fields** (pass numeric DB `id`, not the identifier string):
+
+  - `quality_controller_id` — DB `id` of the user responsible for quality control.
+
+  - `preamble_id` — DB `id` of the preamble to link.
+
+  - `checklist_type_id` — DB `id` of the checklist type classification.
+
+
+  All three ID fields are nullable — pass `null` to leave unassigned.
+
+  `is_active` controls visibility in selection dropdowns. `is_featured` pins the checklist
+  to the top of lists.
+
+
+  Soft-deleted checklists can be restored via `POST /checklists/{identifier}/restore`.'
+order: 4000

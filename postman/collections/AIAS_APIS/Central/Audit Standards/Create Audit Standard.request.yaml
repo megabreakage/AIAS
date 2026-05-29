@@ -1,0 +1,42 @@
+$kind: http-request
+name: Create Audit Standard
+description: 'Create a new audit standard record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{audit_standard_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/audit-standards'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "ISA 315",
+      "code": "ISA-315",
+      "description": "Identifying and Assessing Risks of Material Misstatement",
+      "issuing_body": "IAASB",
+      "status": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Status code is 201', () => { pm.response.to.have.status(201); });
+    pm.test('Response envelope valid', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status');
+        pm.expect(j).to.have.property('data');
+    });
+    if (pm.response.code === 201) {
+        const j = pm.response.json();
+        // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+        const resourceId = j.data && (j.data.identifier || j.data.id);
+        if (resourceId) {
+            pm.environment.set('audit_standard_id', String(resourceId));
+            console.log('Saved audit_standard_id:', resourceId);
+        }
+    }
+  language: text/javascript
+order: 2000

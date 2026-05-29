@@ -1,0 +1,11 @@
+$kind: collection
+description: 'Manage checklist type definitions used across audit engagements.
+
+
+  Checklist types categorise the nature of checklists (e.g. Pre-Engagement, Field
+  Work, Closing). `is_active` controls visibility in checklist selection dropdowns.
+  `is_featured` pins the type to the top of lists.
+
+
+  Soft-deleted types can be restored via `POST /checklist-types/{identifier}/restore`.'
+order: 2000

@@ -4,15 +4,34 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Central\Continent;
+use App\Models\Central\Country;
+use App\Models\Central\Tenant;
+use App\Models\Tenant\Audit;
+use App\Models\Tenant\Checklist;
+use App\Models\Tenant\ChecklistType;
+use App\Models\Tenant\Company;
+use App\Models\Tenant\Department;
+use App\Models\Tenant\Preamble;
+use App\Models\Tenant\SectionStyle;
+use App\Models\User;
+use App\Policies\AuditPolicy;
+use App\Policies\ChecklistPolicy;
+use App\Policies\ChecklistTypePolicy;
+use App\Policies\CompanyPolicy;
+use App\Policies\ContinentPolicy;
+use App\Policies\DepartmentPolicy;
+use App\Policies\CountryPolicy;
+use App\Policies\PreamblePolicy;
+use App\Policies\SectionStylePolicy;
+use App\Policies\TenantPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\PermissionRegistrar;
-use Stancl\Tenancy\Events\TenancyBootstrapped;
 use Stancl\Tenancy\Events\RevertedToCentralContext;
-use App\Models\Central\SuperAdmin;
-use App\Models\PriorityLevel;
-use App\Policies\PriorityLevelPolicy;
+use Stancl\Tenancy\Events\TenancyBootstrapped;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,7 +39,18 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Reset Spatie permission cache when switching tenant context
+        Gate::policy(Audit::class, AuditPolicy::class);
+        Gate::policy(Checklist::class, ChecklistPolicy::class);
+        Gate::policy(ChecklistType::class, ChecklistTypePolicy::class);
+        Gate::policy(Company::class, CompanyPolicy::class);
+        Gate::policy(Continent::class, ContinentPolicy::class);
+        Gate::policy(Department::class, DepartmentPolicy::class);
+        Gate::policy(Country::class, CountryPolicy::class);
+        Gate::policy(Preamble::class, PreamblePolicy::class);
+        Gate::policy(SectionStyle::class, SectionStylePolicy::class);
+        Gate::policy(Tenant::class, TenantPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
+
         Event::listen(TenancyBootstrapped::class, function (): void {
             app(PermissionRegistrar::class)->forgetCachedPermissions();
         });
@@ -29,14 +59,11 @@ class AppServiceProvider extends ServiceProvider
             app(PermissionRegistrar::class)->forgetCachedPermissions();
         });
 
-        // Register model policies
-        Gate::policy(PriorityLevel::class, PriorityLevelPolicy::class);
-
-        // Super admin bypasses all gate checks
-        Gate::before(function (SuperAdmin $superAdmin, string $ability): ?bool {
-            if ($superAdmin->hasRole('super-admin')) {
+        Gate::before(function (mixed $user, string $ability): ?bool {
+            if ($user instanceof User && $user->hasRole('super-admin')) {
                 return true;
             }
+
             return null;
         });
     }

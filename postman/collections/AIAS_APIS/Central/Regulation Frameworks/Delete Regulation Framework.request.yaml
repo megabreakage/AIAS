@@ -1,0 +1,20 @@
+$kind: http-request
+name: Delete Regulation Framework
+description: Soft-delete a regulation framework record. The record is not permanently
+  removed. Restore it with the corresponding `POST /regulation-frameworks/{{regulation_framework_id}}/restore`
+  request.
+url: '{{base_url}}/v1/regulation-frameworks/{{regulation_framework_id}}'
+method: DELETE
+headers:
+  Accept: application/json
+  Content-Type: application/json
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 5000

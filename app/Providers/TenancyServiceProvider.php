@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -21,7 +22,7 @@ class TenancyServiceProvider extends ServiceProvider
     {
         return [
             Events\CreatingTenant::class => [],
-            Events\TenantCreated::class  => [
+            Events\TenantCreated::class => [
                 JobPipeline::make([
                     Jobs\CreateDatabase::class,
                     Jobs\MigrateDatabase::class,
@@ -30,12 +31,12 @@ class TenancyServiceProvider extends ServiceProvider
                     return $event->tenant;
                 })->shouldBeQueued(false),
             ],
-            Events\SavingTenant::class   => [],
-            Events\TenantSaved::class    => [],
+            Events\SavingTenant::class => [],
+            Events\TenantSaved::class => [],
             Events\UpdatingTenant::class => [],
-            Events\TenantUpdated::class  => [],
+            Events\TenantUpdated::class => [],
             Events\DeletingTenant::class => [],
-            Events\TenantDeleted::class  => [
+            Events\TenantDeleted::class => [
                 JobPipeline::make([
                     Jobs\DeleteDatabase::class,
                 ])->send(function (Events\TenantDeleted $event) {
@@ -44,34 +45,34 @@ class TenancyServiceProvider extends ServiceProvider
             ],
 
             Events\CreatingDomain::class => [],
-            Events\DomainCreated::class  => [],
-            Events\SavingDomain::class   => [],
-            Events\DomainSaved::class    => [],
+            Events\DomainCreated::class => [],
+            Events\SavingDomain::class => [],
+            Events\DomainSaved::class => [],
             Events\UpdatingDomain::class => [],
-            Events\DomainUpdated::class  => [],
+            Events\DomainUpdated::class => [],
             Events\DeletingDomain::class => [],
-            Events\DomainDeleted::class  => [],
+            Events\DomainDeleted::class => [],
 
-            Events\DatabaseCreated::class    => [],
-            Events\DatabaseMigrated::class   => [],
-            Events\DatabaseSeeded::class     => [],
+            Events\DatabaseCreated::class => [],
+            Events\DatabaseMigrated::class => [],
+            Events\DatabaseSeeded::class => [],
             Events\DatabaseRolledBack::class => [],
-            Events\DatabaseDeleted::class    => [],
+            Events\DatabaseDeleted::class => [],
 
             Events\InitializingTenancy::class => [],
-            Events\TenancyInitialized::class  => [
+            Events\TenancyInitialized::class => [
                 Listeners\BootstrapTenancy::class,
             ],
 
-            Events\EndingTenancy::class  => [],
-            Events\TenancyEnded::class   => [
+            Events\EndingTenancy::class => [],
+            Events\TenancyEnded::class => [
                 Listeners\RevertToCentralContext::class,
             ],
 
-            Events\BootstrappingTenancy::class    => [],
-            Events\TenancyBootstrapped::class     => [],
+            Events\BootstrappingTenancy::class => [],
+            Events\TenancyBootstrapped::class => [],
             Events\RevertingToCentralContext::class => [],
-            Events\RevertedToCentralContext::class  => [],
+            Events\RevertedToCentralContext::class => [],
 
             Events\SyncedResourceSaved::class => [
                 Listeners\UpdateSyncedResource::class,
@@ -107,8 +108,6 @@ class TenancyServiceProvider extends ServiceProvider
         if (file_exists(base_path('routes/tenant.php'))) {
             Route::middleware([
                 'api',
-                Middleware\InitializeTenancyByDomain::class,
-                Middleware\PreventAccessFromCentralDomains::class,
             ])->group(base_path('routes/tenant.php'));
         }
     }
@@ -124,7 +123,7 @@ class TenancyServiceProvider extends ServiceProvider
         ];
 
         foreach (array_reverse($tenancyMiddleware) as $middleware) {
-            $this->app[\Illuminate\Contracts\Http\Kernel::class]->prependToMiddlewarePriority($middleware);
+            $this->app[Kernel::class]->prependToMiddlewarePriority($middleware);
         }
     }
 }

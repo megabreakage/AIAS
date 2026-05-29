@@ -1,0 +1,42 @@
+$kind: http-request
+name: Create Preamble
+description: 'Create a new preamble record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{preamble_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/preambles'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Quality Management Framework Preamble",
+      "description": "Establishes the scope and objectives of the quality management framework.",
+      "status": "draft",
+      "effective_date": "2026-01-01",
+      "is_featured": false
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Status code is 201', () => { pm.response.to.have.status(201); });
+    pm.test('Response envelope valid', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status');
+        pm.expect(j).to.have.property('data');
+    });
+    if (pm.response.code === 201) {
+        const j = pm.response.json();
+        // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+        const resourceId = j.data && (j.data.identifier || j.data.id);
+        if (resourceId) {
+            pm.environment.set('preamble_id', String(resourceId));
+            console.log('Saved preamble_id:', resourceId);
+        }
+    }
+  language: text/javascript
+order: 2000

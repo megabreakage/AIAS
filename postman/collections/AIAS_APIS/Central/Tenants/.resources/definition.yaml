@@ -1,0 +1,14 @@
+$kind: collection
+description: 'Manage tenants (organisations / audit firms). Super-admin access only
+  for create and delete operations.
+
+
+  A tenant represents an isolated audit firm with its own database. `owner_id` must
+  be the `identifier` string of an existing central user who becomes the firm owner.
+  `data_center` specifies the cloud region for tenant DB provisioning (e.g. `us-east-1`).
+  `status` values: `active`, `inactive`, `suspended`, `pending_setup`.
+
+
+  **Note:** There is no restore endpoint for tenants — deletion is permanent (soft-delete
+  only).'
+order: 2000

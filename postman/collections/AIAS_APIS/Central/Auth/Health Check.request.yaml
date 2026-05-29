@@ -1,0 +1,23 @@
+$kind: http-request
+name: Health Check
+description: 'Verify the API server is running and reachable.
+
+
+  No authentication required. Returns `200 OK` with a status message when the server
+  is healthy. Both central (`{{base_url}}/v1/health`) and tenant (`{{tenant_base_url}}/v1/health`)
+  health endpoints are available.'
+url: '{{base_url}}/v1/health'
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 1000

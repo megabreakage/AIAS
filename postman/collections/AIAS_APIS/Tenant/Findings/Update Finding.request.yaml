@@ -1,0 +1,34 @@
+$kind: http-request
+name: Update Finding
+description: 'Update an existing finding record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{finding_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/findings/{{finding_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "workpaper_id": "{{workpaper_id}}",
+      "title": "Revenue recognition policy not consistently applied",
+      "description": "Management has not consistently applied IFRS 15 revenue recognition criteria",
+      "severity": "high",
+      "risk_category_id": "{{risk_category_id}}",
+      "recommendation": "Implement documented revenue recognition policy and staff training"
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

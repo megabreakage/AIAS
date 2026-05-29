@@ -1,0 +1,49 @@
+$kind: http-request
+name: Create User
+description: 'Create a new user record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{user_id}}`
+  in the active environment via the post-response test script.'
+url: '{{base_url}}/v1/users'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Dr",
+      "first_name": "Jane",
+      "middle_name": "",
+      "last_name": "Auditor",
+      "username": "jane.auditor",
+      "email": "jane.auditor@pinnacleaudit.test",
+      "country_code": "+254",
+      "phone": "0712345678",
+      "password": "Password123!",
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": "Nairobi, Kenya",
+      "is_active": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Status code is 201', () => { pm.response.to.have.status(201); });
+    pm.test('Response envelope valid', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status');
+        pm.expect(j).to.have.property('data');
+    });
+    if (pm.response.code === 201) {
+        const j = pm.response.json();
+        // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+        const resourceId = j.data && (j.data.identifier || j.data.id);
+        if (resourceId) {
+            pm.environment.set('user_id', String(resourceId));
+            console.log('Saved user_id:', resourceId);
+        }
+    }
+  language: text/javascript
+order: 2000

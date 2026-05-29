@@ -1,0 +1,32 @@
+$kind: http-request
+name: Update Continent
+description: 'Update an existing continent record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{continent_id}}` with the identifier of the record to update.'
+url: '{{base_url}}/v1/continents/{{continent_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Africa",
+      "slug": "africa",
+      "short_code": "AF",
+      "iso_code": "AF",
+      "status": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

@@ -1,0 +1,39 @@
+$kind: collection
+description: '## Central Resources
+
+
+  Cross-tenant (central database) resources accessible to **super-admin** users and
+  shared infrastructure services.
+
+
+  ### ✅ Implemented Endpoints
+
+
+  | Resource | Endpoints |
+
+  |---------|---------|
+
+  | **Auth** | POST /login, POST /logout, GET /me (central) |
+
+  | **Tenants** | GET list, POST create, GET show, PUT update, DELETE, POST /{id}/users
+  |
+
+  | **Users** | POST create only (list/show/update/delete not yet implemented) |
+
+  | **Continents** | Full CRUD + POST restore |
+
+  | **Countries** | Full CRUD + POST restore |
+
+
+  ### ⚠️ Planned (Not Yet Implemented)
+
+  Roles, Service Users, API Keys, MFA, Audit Standards, Regulation Frameworks, Risk
+  Categories
+
+
+  **Base URL:** `{{base_url}}` (e.g. `http://localhost:8020/api`)
+
+
+  All requests use Bearer token authentication. No `tenant_id` required for central-scope
+  requests.'
+order: 1000

@@ -1,0 +1,7 @@
+$kind: collection
+description: '⚠️ **Not yet implemented** — routes not yet defined in `routes/api.php`.
+
+
+  Global audit standards reference data (ISA, IIA, GAAS, PCAOB). This folder is a
+  placeholder for future implementation.'
+order: 10000

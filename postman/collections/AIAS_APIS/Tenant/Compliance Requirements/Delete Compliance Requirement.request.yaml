@@ -1,0 +1,22 @@
+$kind: http-request
+name: Delete Compliance Requirement
+description: Soft-delete a compliance requirement record. The record is not permanently
+  removed. Restore it with the corresponding `POST /compliance-requirements/{{compliance_requirement_id}}/restore`
+  request.
+url: '{{tenant_base_url}}/v1/compliance-requirements/{{compliance_requirement_id}}'
+method: DELETE
+headers:
+  Accept: application/json
+  Content-Type: application/json
+queryParams:
+  description: Tenant identifier string (required)
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 5000

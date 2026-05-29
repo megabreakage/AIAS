@@ -1,0 +1,41 @@
+$kind: http-request
+name: Create Checklist Type
+description: 'Create a new checklist type record.
+
+
+  On success the `identifier` of the new record is automatically saved to `{{checklist_type_id}}`
+  in the active environment via the post-response test script.'
+url: '{{tenant_base_url}}/v1/checklist-types'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Pre-Engagement Checklist",
+      "description": "Checklist items to complete before commencing an audit engagement.",
+      "is_active": true,
+      "is_featured": false
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Status code is 201', () => { pm.response.to.have.status(201); });
+    pm.test('Response envelope valid', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status');
+        pm.expect(j).to.have.property('data');
+    });
+    if (pm.response.code === 201) {
+        const j = pm.response.json();
+        // Save the identifier string (e.g. AT.1.1234567890) — NOT the numeric id
+        const resourceId = j.data && (j.data.identifier || j.data.id);
+        if (resourceId) {
+            pm.environment.set('checklist_type_id', String(resourceId));
+            console.log('Saved checklist_type_id:', resourceId);
+        }
+    }
+  language: text/javascript
+order: 2000

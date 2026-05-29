@@ -1,0 +1,21 @@
+$kind: http-request
+name: Delete User
+description: Soft-delete a user record. The record is not permanently removed. Restore
+  it with the corresponding `POST /users/{{tenant_user_id}}/restore` request.
+url: '{{tenant_base_url}}/v1/users/{{tenant_user_id}}'
+method: DELETE
+headers:
+  Accept: application/json
+  Content-Type: application/json
+queryParams:
+  description: Tenant identifier string (required)
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 5000

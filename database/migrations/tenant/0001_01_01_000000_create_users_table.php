@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('username')->unique()->index();
             $table->string('email')->unique()->index();
+            $table->unsignedBigInteger('country_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('country_code')->default('+254');
             $table->string('phone')->nullable();
@@ -29,8 +30,8 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->text('notes')->nullable();
             $table->timestamp('last_login_at')->nullable();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

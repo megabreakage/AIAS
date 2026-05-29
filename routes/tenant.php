@@ -3,21 +3,29 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
-use App\Http\Controllers\PriorityLevelController;
+use App\Http\Controllers\Api\V1\Tenant\AuditController;
+use App\Http\Controllers\Api\V1\Tenant\ChecklistController;
+use App\Http\Controllers\Api\V1\Tenant\ChecklistTypeController;
+use App\Http\Controllers\Api\V1\Tenant\CompanyController;
+use App\Http\Controllers\Api\V1\Tenant\DepartmentController;
+use App\Http\Controllers\Api\V1\Tenant\PreambleController;
+use App\Http\Controllers\Api\V1\Tenant\SectionStyleController;
+use App\Http\Controllers\Api\V1\Tenant\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
 | Tenant API Routes
 |--------------------------------------------------------------------------
-| These routes are scoped to a specific tenant context and are accessible
-| from tenant domains (e.g., acme.localhost).
+| These routes are scoped to a specific tenant context. Tenant is resolved
+| automatically from the authenticated user's tenant_id — no need to pass
+| tenant_id in request bodies or query parameters.
 |
 */
 
 Route::prefix('v1')->group(function () {
-    // Health check (per-tenant)
-    Route::get('/health', function () {
+    // Health check (per-tenant, requires auth to resolve tenant)
+    Route::middleware(['auth:api', 'tenant.auth'])->get('/health', function () {
         return response()->json([
             'data' => [
                 'status' => 'ok',
@@ -27,23 +35,82 @@ Route::prefix('v1')->group(function () {
         ]);
     });
 
-    // Tenant user authentication (public)
+    // Tenant user authentication (public — tenancy auto-resolved from user's tenant_id)
     Route::prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login'])
             ->middleware('throttle:10,1');
 
-        Route::middleware(['auth:api', 'tenant.token'])->group(function () {
+        Route::middleware(['auth:api', 'tenant.auth'])->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);
             Route::get('/me', [AuthController::class, 'me']);
         });
     });
 
-    // Protected tenant routes
-    Route::middleware(['auth:api', 'tenant.token'])->group(function () {
-        // Priority Levels
-        Route::apiResource('priority-levels', PriorityLevelController::class);
-        Route::post('priority-levels/{id}/restore', [PriorityLevelController::class, 'restore'])
-            ->name('priority_levels.restore');
+    // Protected tenant routes — tenancy auto-resolved from authenticated user
+    Route::middleware(['auth:api', 'tenant.auth'])->group(function () {
+        // Preamble routes
+        Route::get('/preambles', [PreambleController::class, 'index']);
+        Route::post('/preambles', [PreambleController::class, 'store']);
+        Route::get('/preambles/{identifier}', [PreambleController::class, 'show']);
+        Route::put('/preambles/{identifier}', [PreambleController::class, 'update']);
+        Route::delete('/preambles/{identifier}', [PreambleController::class, 'destroy']);
+        Route::post('/preambles/{identifier}/restore', [PreambleController::class, 'restore']);
+
+        // User management routes
+        Route::get('/users', [UserController::class, 'index']);
+        Route::post('/users', [UserController::class, 'store']);
+        Route::get('/users/{identifier}', [UserController::class, 'show']);
+        Route::put('/users/{identifier}', [UserController::class, 'update']);
+        Route::delete('/users/{identifier}', [UserController::class, 'destroy']);
+        Route::post('/users/{identifier}/restore', [UserController::class, 'restore']);
+
+        // Checklist type routes
+        Route::get('/checklist-types', [ChecklistTypeController::class, 'index']);
+        Route::post('/checklist-types', [ChecklistTypeController::class, 'store']);
+        Route::get('/checklist-types/{identifier}', [ChecklistTypeController::class, 'show']);
+        Route::put('/checklist-types/{identifier}', [ChecklistTypeController::class, 'update']);
+        Route::delete('/checklist-types/{identifier}', [ChecklistTypeController::class, 'destroy']);
+        Route::post('/checklist-types/{identifier}/restore', [ChecklistTypeController::class, 'restore']);
+
+        // Section style routes
+        Route::get('/section-styles', [SectionStyleController::class, 'index']);
+        Route::post('/section-styles', [SectionStyleController::class, 'store']);
+        Route::get('/section-styles/{identifier}', [SectionStyleController::class, 'show']);
+        Route::put('/section-styles/{identifier}', [SectionStyleController::class, 'update']);
+        Route::delete('/section-styles/{identifier}', [SectionStyleController::class, 'destroy']);
+        Route::post('/section-styles/{identifier}/restore', [SectionStyleController::class, 'restore']);
+
+        // Checklist routes
+        Route::get('/checklists', [ChecklistController::class, 'index']);
+        Route::post('/checklists', [ChecklistController::class, 'store']);
+        Route::get('/checklists/{identifier}', [ChecklistController::class, 'show']);
+        Route::put('/checklists/{identifier}', [ChecklistController::class, 'update']);
+        Route::delete('/checklists/{identifier}', [ChecklistController::class, 'destroy']);
+        Route::post('/checklists/{identifier}/restore', [ChecklistController::class, 'restore']);
+
+        // Company routes
+        Route::get('/companies', [CompanyController::class, 'index']);
+        Route::post('/companies', [CompanyController::class, 'store']);
+        Route::get('/companies/{identifier}', [CompanyController::class, 'show']);
+        Route::put('/companies/{identifier}', [CompanyController::class, 'update']);
+        Route::delete('/companies/{identifier}', [CompanyController::class, 'destroy']);
+        Route::post('/companies/{identifier}/restore', [CompanyController::class, 'restore']);
+
+        // Department routes
+        Route::get('/departments', [DepartmentController::class, 'index']);
+        Route::post('/departments', [DepartmentController::class, 'store']);
+        Route::get('/departments/{identifier}', [DepartmentController::class, 'show']);
+        Route::put('/departments/{identifier}', [DepartmentController::class, 'update']);
+        Route::delete('/departments/{identifier}', [DepartmentController::class, 'destroy']);
+        Route::post('/departments/{identifier}/restore', [DepartmentController::class, 'restore']);
+
+        // Audit routes
+        Route::get('/audits', [AuditController::class, 'index']);
+        Route::post('/audits', [AuditController::class, 'store']);
+        Route::get('/audits/{identifier}', [AuditController::class, 'show']);
+        Route::put('/audits/{identifier}', [AuditController::class, 'update']);
+        Route::delete('/audits/{identifier}', [AuditController::class, 'destroy']);
+        Route::post('/audits/{identifier}/restore', [AuditController::class, 'restore']);
     });
 });

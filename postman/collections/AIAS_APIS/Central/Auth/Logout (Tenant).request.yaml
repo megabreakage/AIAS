@@ -1,0 +1,25 @@
+$kind: http-request
+name: Logout (Tenant)
+description: 'Revoke the current Bearer access token for a tenant user.
+
+
+  After logout the `access_token` is invalidated. Tenant context is resolved automatically
+  from the authenticated user.'
+url: '{{tenant_base_url}}/v1/auth/logout'
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: '{}'
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 7000

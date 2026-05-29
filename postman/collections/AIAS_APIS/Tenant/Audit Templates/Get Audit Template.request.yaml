@@ -1,0 +1,23 @@
+$kind: http-request
+name: Get Audit Template
+description: 'Retrieve a single audit template by its `identifier` string.
+
+
+  Replace `{{audit_template_id}}` with the identifier saved after creation.'
+url: '{{tenant_base_url}}/v1/audit-templates/{{audit_template_id}}'
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+queryParams:
+  description: Tenant identifier string (required)
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 3000

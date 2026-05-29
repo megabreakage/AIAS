@@ -1,0 +1,32 @@
+$kind: http-request
+name: Update Compliance Evidence
+description: 'Update an existing compliance evidence record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{compliance_evidence_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/compliance-evidence/{{compliance_evidence_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "compliance_requirement_id": "{{compliance_requirement_id}}",
+      "title": "Signed CEO Certification Letter",
+      "description": "CEO certification signed and filed with SEC",
+      "evidence_date": "2026-03-25",
+      "collected_by": "{{user_id}}"
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

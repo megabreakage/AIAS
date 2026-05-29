@@ -4,85 +4,90 @@ declare(strict_types=1);
 
 namespace Tests\Traits;
 
-use App\Models\Central\Tenant;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Support\Facades\Artisan;
 
 /**
- * Trait RefreshDatabaseWithTenancy
+ * Custom RefreshDatabase trait that properly handles multi-tenant testing.
  *
- * Extends the standard RefreshDatabase behaviour to also set up a tenant
- * context before each test and tear it down afterwards.
+ * This trait extends Laravel's RefreshDatabase to:
+ * 1. Run both central and tenant migrations
+ * 2. Avoid SQLite VACUUM issues within transactions
+ * 3. Properly reset the database state between tests
  *
- * Usage (Pest):
- *   uses(Tests\Traits\RefreshDatabaseWithTenancy::class);
- *
- * The trait:
- *   1. Refreshes the central database (roles, permissions, OAuth tables).
- *   2. Creates a test tenant and initialises Stancl Tenancy.
- *   3. Runs all tenant-scope migrations inside the test tenant's database.
- *   4. Ends tenancy after each test to restore the central connection.
+ * Use this trait instead of RefreshDatabase in test classes that
+ * interact with tenant data.
  */
 trait RefreshDatabaseWithTenancy
 {
-    use RefreshDatabase;
-
-    /** The tenant used throughout this test. */
-    protected ?Tenant $testTenant = null;
-
-    /**
-     * Hook called by Pest/PHPUnit before every test method.
-     * Because this trait uses `setUp`, Pest automatically calls it when the
-     * trait is applied via `uses()`.
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->setUpTenancy();
+    use RefreshDatabase {
+        refreshDatabase as parentRefreshDatabase;
     }
 
     /**
-     * Hook called by Pest/PHPUnit after every test method.
+     * Refresh the test database.
      */
-    protected function tearDown(): void
+    protected function refreshInMemoryDatabase(): void
     {
-        $this->tearDownTenancy();
-
-        parent::tearDown();
-    }
-
-    /**
-     * Create a throwaway test tenant and initialise tenancy for this test.
-     */
-    protected function setUpTenancy(): void
-    {
-        // Create a deterministic tenant for the test run
-        $this->testTenant = Tenant::create([
-            'id'     => 'test-tenant-' . uniqid(),
-            'name'   => 'Test Tenant',
-            'plan'   => 'starter',
-            'status' => 'active',
-        ]);
-
-        // Switch the active DB connection to the tenant's database
-        tenancy()->initialize($this->testTenant);
-
-        // Run all tenant-scope migrations inside the tenant's database
+        // Run central migrations
         Artisan::call('migrate', [
-            '--path'     => 'database/migrations/tenant',
-            '--force'    => true,
-            '--realpath' => false,
+            '--force' => true,
         ]);
+
+        // Run tenant migrations on the same connection
+        Artisan::call('migrate', [
+            '--path' => 'database/migrations/tenant',
+            '--realpath' => false,
+            '--force' => true,
+        ]);
+
+        $this->app[Kernel::class]->setArtisan(null);
     }
 
     /**
-     * End the tenant session and restore the central DB connection.
+     * Refresh a conventional test database.
      */
-    protected function tearDownTenancy(): void
+    protected function refreshTestDatabase(): void
     {
-        if (tenancy()->initialized) {
-            tenancy()->end();
+        if (!RefreshDatabaseState::$migrated) {
+            $this->artisan('migrate:fresh', $this->migrateFreshUsing());
+
+            // Run tenant migrations after fresh migration
+            $this->artisan('migrate', [
+                '--path' => 'database/migrations/tenant',
+                '--realpath' => false,
+                '--force' => true,
+            ]);
+
+            // Seed permissions outside of transaction to avoid deadlocks
+            $this->artisan('db:seed', [
+                '--class' => 'RolePermissionsSeeder',
+                '--force' => true,
+            ]);
+
+            $this->app[Kernel::class]->setArtisan(null);
+
+            RefreshDatabaseState::$migrated = true;
         }
+
+        // Configure database for better concurrency (no-op for MySQL)
+        if (method_exists($this, 'configureSqliteConcurrency')) {
+            $this->configureSqliteConcurrency();
+        }
+
+        $this->beginDatabaseTransaction();
+    }
+
+    /**
+     * Determine if an in-memory database is being used.
+     */
+    protected function usingInMemoryDatabase(): bool
+    {
+        $connection = config('database.default');
+        $driver = config("database.connections.{$connection}.driver");
+
+        return $driver === 'sqlite' && config("database.connections.{$connection}.database") === ':memory:';
     }
 }

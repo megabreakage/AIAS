@@ -1,0 +1,33 @@
+$kind: http-request
+name: Update Workpaper
+description: 'Update an existing workpaper record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{workpaper_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/workpapers/{{workpaper_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "audit_procedure_id": "{{audit_procedure_id}}",
+      "title": "Revenue Substantive Testing \u2014 Q4 2025",
+      "reference": "WP-REV-001",
+      "description": "Revenue sampling and vouching procedures",
+      "status": "draft"
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

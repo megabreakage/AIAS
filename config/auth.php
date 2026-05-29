@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Models\Central\SuperAdmin;
 use App\Models\User;
 
 return [
@@ -49,10 +48,7 @@ return [
             'driver'   => 'passport',
             'provider' => 'users',
         ],
-        'super_admin' => [
-            'driver'   => 'passport',
-            'provider' => 'super_admins',
-        ],
+    
     ],
 
     /*
@@ -77,10 +73,7 @@ return [
             'driver' => 'eloquent',
             'model'  => User::class,
         ],
-        'super_admins' => [
-            'driver' => 'eloquent',
-            'model'  => SuperAdmin::class,
-        ],
+    
     ],
 
     /*

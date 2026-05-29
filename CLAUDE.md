@@ -17,10 +17,14 @@ composer dev                         # Start all services
 php artisan migrate --seed           # Central DB
 php artisan tenants:migrate          # All tenant DBs
 
-# Testing (ALWAYS use ./test.sh - prevents MySQL locks)
-./test.sh                           # All tests
-./test.sh tests/Feature/AuditEngagementTest.php # Specific file
-./test.sh --filter=testMethodName   # Specific test
+# Testing (ALWAYS use docs/scripts/test.sh - prevents MySQL locks)
+docs/scripts/test.sh                           # All tests
+docs/scripts/test.sh tests/Feature/AuditEngagementTest.php # Specific file
+docs/scripts/test.sh --filter=testMethodName   # Specific test
+
+# Code Quality
+vendor/bin/pint --dirty             # Format changed PHP files
+composer analyse                    # Enforce layer boundaries
 ```
 
 ## CRITICAL: DRY Principles - MANDATORY
@@ -67,6 +71,12 @@ public function __construct(protected AuditEngagementRepository $repository) {}
 // Usage with tenant filtering built-in
 $engagements = $this->repository->browseEngagements($filters, $page, $perPage);
 ```
+
+**Repository rules:**
+
+- Non-super-admin: always add `where('tenant_id', auth()->user()->tenant_id)`
+- Load relationships on every read/create/update: `->load(['creator', 'updater'])`
+- Inject other repositories (DRY) — never duplicate logic
 
 ### Transaction Pattern (CRITICAL)
 
@@ -326,6 +336,8 @@ public function index(Request $request): JsonResponse
 
 API responses use custom `BaseResource` (extends Laravel's `JsonResource`):
 
+**STRICTLY DEFAULT** envelope — never deviate:
+
 ```php
 return AuditEngagementResource::make($engagement)
     ->setMessage('Engagement retrieved successfully')
@@ -337,7 +349,9 @@ Wraps responses with:
 - `status` - HTTP status code
 - `message` - Human-readable message
 - `data` - Resource data
-- `metadata` - Additional context
+- `metadata` - Additional context (optional)
+
+Always call `->setMessage()` before returning. Use `->addMetadata()` for additional context.
 
 ### Request Validation
 
@@ -415,13 +429,15 @@ Authorization checks in `authorize()` method.
    - **Use dependency injection** to access existing repositories and their methods
    - **Before writing new code**, search for existing implementations to reuse
    - **Refactor immediately** if copying code from another file
-3. **Tenant filtering mandatory** for non-super-admin users — see repository patterns
-4. **Permission checks** must use Gate/Policy, not manual role checks
-5. **All API responses** must use Resource classes (extend `BaseResource`)
-6. **Request validation** must use Form Request classes, not inline `$request->validate()`
-7. **Dispatch events** from repositories for significant operations (create/update/delete)
-8. **New tenant migrations** go in `/database/migrations/tenant/`
-9. **NEVER create foreign key constraints** from tenant tables to central database tables
+3. **Model conventions** — tenant models **ALWAYS** extend `BaseModel` (**NEVER** `Model`); traits: `HasFactory`, `SoftDeletes`, `TenantConnection`; casts in `casts()` **method** not `$casts` property; route binding via `identifier`
+4. **Tenant filtering mandatory** for non-super-admin users — see repository patterns
+5. **Permission checks** must use Gate/Policy, not manual role checks
+6. **All API responses** must use Resource classes (extend `BaseResource`) with **STRICTLY DEFAULT** envelope
+7. **Request validation** must use Form Request classes, not inline `$request->validate()`
+8. **Dispatch events** from repositories for significant operations (create/update/delete)
+9. **New tenant migrations** go in `/database/migrations/tenant/`
+10. **NEVER create foreign key constraints** from tenant tables to central database tables
+11. **Layer boundaries**: run `composer analyse` to verify no direct model queries in production layers
 
 ### Security Boundaries
 
@@ -446,23 +462,23 @@ Authorization checks in `authorize()` method.
 
 ## Testing
 
-**Always use `./test.sh`** to run tests. Creates unique MySQL test databases per run, ensuring isolation and preventing conflicts.
+**Always use `docs/scripts/test.sh`** to run tests. Creates unique MySQL test databases per run, ensuring isolation and preventing conflicts.
 
 ```bash
 # Run all tests
-./test.sh
+docs/scripts/test.sh
 
 # Run specific test
-./test.sh --filter=test_can_create_audit_engagement
+docs/scripts/test.sh --filter=test_can_create_audit_engagement
 
 # Run specific test file
-./test.sh tests/Feature/AuditEngagementTest.php
+docs/scripts/test.sh tests/Feature/AuditEngagementTest.php
 
 # Run tests in parallel (requires paratest)
-./test.sh --parallel
+docs/scripts/test.sh --parallel
 ```
 
-**Why `./test.sh`?**
+**Why `docs/scripts/test.sh`?**
 
 - Creates unique MySQL database per run to avoid conflicts
 - Ensures complete isolation between test runs
@@ -492,7 +508,7 @@ class MyTest extends TestCase
 2. **Create OpenAPI Documentation** - `storage/api-docs/{feature-name}.openapi.yaml`
 3. **Create Feature Documentation** - `docs/features/{feature-name}.md`
 4. **Update Features Index** - Add to `docs/features/README.md`
-5. **Update Permissions** - Add to `config/role-permission-map.php` if applicable
+5. **Update Permissions** - Add to `config/permissions_map.php` if applicable
 6. **Write Comprehensive Tests** - Unit, feature, edge cases, integration tests
 7. **Update Postman Collection** - Add endpoints to collection
 8. **Document Breaking Changes** - API changes, permissions, database, config
@@ -504,27 +520,30 @@ class MyTest extends TestCase
 - [ ] Feature documentation created/updated
 - [ ] Features README.md updated
 - [ ] Permissions added/updated in config
-- [ ] Tests written and passing (using MySQL via `./test.sh`)
+- [ ] Tests written and passing (using MySQL via `docs/scripts/test.sh`)
 - [ ] Tests use `RefreshDatabaseWithTenancy` trait (not `RefreshDatabase`)
+- [ ] Tenant resources created inside `$this->tenant->run(fn)` in test setup
+- [ ] Tests cover: happy paths, failure paths, tenant isolation (cross-tenant leakage)
 - [ ] Postman collection updated
 - [ ] Breaking changes documented
 - [ ] Code formatted: `vendor/bin/pint --dirty`
-- [ ] All tests passing: `./test.sh`
+- [ ] Layer boundaries verified: `composer analyse`
+- [ ] All tests passing: `docs/scripts/test.sh`
 
 ## Common Scenarios
 
 ### Adding New Tenant-Scoped Resource
 
-1. Create migration in `/database/migrations/tenant/`
-2. Create model with `tenant_id` field + `TenantConnection` trait + `SoftDeletes` (NO `Auditable`)
-3. Create repository extending `BaseRepository` with tenant filtering
-4. Create form requests for validation
-5. Create resource/collection for responses
-6. Create policy for authorization
-7. Create controller using repository pattern
+1. Create migration in `/database/migrations/tenant/` — required fields: `id`, `string identifier` (unique), `string tenant_id` (references `tenants.identifier` — format `AT.{n}.{time}`, indexed, no FK), `created_by`/`updated_by` (`unsignedBigInteger()->nullable()`, no FK), `timestamps`, `softDeletes`
+2. Create model in `app/Models/Tenant/` — extends `BaseModel`, traits: `HasFactory`, `SoftDeletes`, `TenantConnection`, NO `Auditable`; casts in `casts()` method; route binding via `identifier`
+3. Create repository extending `BaseRepository` with tenant filtering; load `['creator', 'updater']`
+4. Create form requests with unique rules scoped to tenant
+5. Create resource/collection extending `BaseResource`
+6. Create policy with `before()` super-admin bypass + `tenant_id` boundary check
+7. Create controller using repository injection; `Gate::authorize()` BEFORE `DB::transaction()`
 8. Register policy in `AppServiceProvider`
-9. Add permissions to `config/role-permission-map.php`
-10. Add routes to `/routes/api.php`
+9. Add permissions to `config/permissions_map.php`
+10. Add routes to `/routes/api.php` named `api.{resource}.{action}`
 
 ### Adding New Central Resource
 
@@ -539,7 +558,7 @@ class MyTest extends TestCase
 
 ### Adding New Permission
 
-1. Add to relevant module in `/config/role-permission-map.php`
+1. Add to relevant module in `/config/permissions_map.php`
 2. Update role assignments if needed
 3. Run `php artisan cache:clear` to clear permission cache
 4. Update policies to check new permission
@@ -564,7 +583,7 @@ class MyTest extends TestCase
 
 **Authorization**:
 
-- `config/role-permission-map.php` - All permissions and role assignments
+- `config/permissions_map.php` - All permissions and role assignments
 - `app/Http/Middleware/SetSpatieTeamFromTenant.php` - Permission scoping
 - `app/Policies/` - Authorization logic
 

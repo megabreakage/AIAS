@@ -1,0 +1,28 @@
+$kind: collection
+description: 'Manage tenant companies — the client organisations being audited.
+
+
+  `level_of_operations` values: `local`, `regional`, `international`.
+
+
+  **⚠️ Integer FK fields** (pass numeric DB `id`, not the identifier string):
+
+  - `country_id` — numeric DB `id` of the country record (nullable).
+
+  - `company_contacts.*.user_id` — numeric DB `id` of the contact user (nullable).
+
+
+  `contact_type` values: `primary`, `secondary`, `billing`, `technical`.
+
+
+  **⚠️ Logo upload:** The `logo` field accepts a file image upload (`multipart/form-data`,
+  max 2MB). When sending JSON, omit `logo` or pass `null` (no file). To upload a logo,
+  switch the request body to `form-data` and include the file.
+
+
+  `latitude` / `longitude` are decimal geocoding coordinates (optional). `postal_code`
+  is a string up to 20 chars.
+
+
+  Soft-deleted companies can be restored via `POST /companies/{identifier}/restore`.'
+order: 6000

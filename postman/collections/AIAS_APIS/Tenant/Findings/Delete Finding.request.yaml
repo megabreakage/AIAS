@@ -1,0 +1,21 @@
+$kind: http-request
+name: Delete Finding
+description: Soft-delete a finding record. The record is not permanently removed.
+  Restore it with the corresponding `POST /findings/{{finding_id}}/restore` request.
+url: '{{tenant_base_url}}/v1/findings/{{finding_id}}'
+method: DELETE
+headers:
+  Accept: application/json
+  Content-Type: application/json
+queryParams:
+  description: Tenant identifier string (required)
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 5000

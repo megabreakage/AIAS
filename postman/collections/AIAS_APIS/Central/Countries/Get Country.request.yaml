@@ -1,0 +1,21 @@
+$kind: http-request
+name: Get Country
+description: 'Retrieve a single country by its `identifier` string.
+
+
+  Replace `{{country_id}}` with the identifier saved after creation.'
+url: '{{base_url}}/v1/countries/{{country_id}}'
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 3000
