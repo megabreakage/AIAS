@@ -88,7 +88,7 @@ for sha in "${COMMITS[@]}"; do
 
     files=$(git --no-pager diff-tree --no-commit-id --name-only -r "$sha")
     stat=$(git --no-pager show --stat --format="" "$sha")
-    body=$(git --no-pager show --format="" --no-color "$sha" | head -c "$DIFF_LIMIT")
+    body=$(git --no-pager show --format="" --no-color "$sha" 2>/dev/null | head -c "$DIFF_LIMIT" || true)
 
     prompt=$(cat <<PROMPT
 You are generating a single git commit message in Conventional Commits format.
