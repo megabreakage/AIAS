@@ -4,17 +4,13 @@ description: 'Retrieve the currently authenticated tenant user with their roles,
   and tenant context.
 
 
-  The test script saves `user_id` (identifier string) and `tenant_id` to the active
-  environment. Pass `tenant_id` as a query parameter to scope the request.'
+  Tenant is resolved automatically from the authenticated user. The test script saves
+  `user_id` (identifier string) and `tenant_id` to the active environment.'
 url: '{{tenant_base_url}}/v1/auth/me'
 method: GET
 headers:
   Accept: application/json
   Content-Type: application/json
-queryParams:
-- key: tenant_id
-  value: '{{tenant_id}}'
-  description: Tenant identifier string
 scripts:
 - type: afterResponse
   code: |-

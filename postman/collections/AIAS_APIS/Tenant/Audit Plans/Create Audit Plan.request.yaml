@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "audit_engagement_id": "{{audit_engagement_id}}",
       "title": "Risk Assessment Phase Plan",
       "objectives": "Assess material misstatement risks across all financial statement areas",

@@ -31,10 +31,19 @@ class TenantWithUsersSeeder extends Seeder
         $adminRole = Role::where('name', 'admin')->where('guard_name', 'api')->firstOrFail();
         $auditorRole = Role::where('name', 'auditor')->where('guard_name', 'api')->firstOrFail();
 
-        Tenant::factory(2)->create()->each(function (Tenant $tenant) use ($tenantRole, $adminRole, $auditorRole): void {
+        $isFirstTenant = true;
+
+        Tenant::factory(2)->create()->each(function (Tenant $tenant) use ($tenantRole, $adminRole, $auditorRole, &$isFirstTenant): void {
             $tenant->refresh();
 
-            $users = User::factory(2)->create();
+            $tenantKey = $tenant->getTenantKey();
+
+            // Update the auto-created owner's tenant_id
+            if ($tenant->owner_id) {
+                User::where('id', $tenant->owner_id)->update(['tenant_id' => $tenantKey]);
+            }
+
+            $users = User::factory(2)->create(['tenant_id' => $tenantKey]);
 
             $owner = $users->first();
             $owner->assignRole($tenantRole);
@@ -42,10 +51,15 @@ class TenantWithUsersSeeder extends Seeder
 
             $users->last()->assignRole($auditorRole);
 
+            $adminEmail = $isFirstTenant
+                ? env('TEST_TENANT_ADMIN_EMAIL', 'admin@tenant.test')
+                : 'admin-'.Str::random(4).'@tenant.test';
+
             User::firstOrCreate(
-                ['email' => env('TEST_TENANT_ADMIN_EMAIL', 'admin@tenant.test')],
+                ['email' => $adminEmail],
                 [
                     'identifier' => (string) Str::uuid(),
+                    'tenant_id' => $tenantKey,
                     'first_name' => 'Admin',
                     'last_name' => 'User',
                     'username' => Str::slug('admin-'.Str::random(4)),
@@ -55,6 +69,8 @@ class TenantWithUsersSeeder extends Seeder
                     'country_code' => '+254',
                 ],
             )->assignRole($adminRole);
+
+            $isFirstTenant = false;
 
             $this->command->info("Created tenant {$tenant->getTenantKey()} with 3 users.");
 

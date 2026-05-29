@@ -44,9 +44,8 @@ final class PreambleController extends BaseApiController
         Gate::authorize('create', Preamble::class);
 
         $data = $request->validated();
-        $data['tenant_id'] = tenant()?->id;
 
-        Log::info('Creating preamble', ['name' => $data['name'], 'tenant_id' => $data['tenant_id']]);
+        Log::info('Creating preamble', ['name' => $data['name'], 'tenant_id' => tenant()?->getTenantKey()]);
 
         $preamble = DB::transaction(function () use ($data): Preamble {
             return $this->repository->createPreamble($data);

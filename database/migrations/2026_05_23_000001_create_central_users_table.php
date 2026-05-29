@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::connection('central')->create('users', function (Blueprint $table): void {
             $table->id();
             $table->uuid('identifier')->unique()->index();
+            $table->string('tenant_id')->nullable()->index();
             $table->string('title')->nullable();
             $table->string('first_name');
             $table->string('middle_name')->nullable();

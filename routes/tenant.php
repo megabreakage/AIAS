@@ -17,14 +17,15 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Tenant API Routes
 |--------------------------------------------------------------------------
-| These routes are scoped to a specific tenant context. Tenant is identified
-| via the `tenant_id` body/query parameter (the tenant's UUID identifier).
+| These routes are scoped to a specific tenant context. Tenant is resolved
+| automatically from the authenticated user's tenant_id — no need to pass
+| tenant_id in request bodies or query parameters.
 |
 */
 
 Route::prefix('v1')->group(function () {
-    // Health check (per-tenant)
-    Route::get('/health', function () {
+    // Health check (per-tenant, requires auth to resolve tenant)
+    Route::middleware(['auth:api', 'tenant.auth'])->get('/health', function () {
         return response()->json([
             'data' => [
                 'status' => 'ok',
@@ -34,20 +35,20 @@ Route::prefix('v1')->group(function () {
         ]);
     });
 
-    // Tenant user authentication (public)
+    // Tenant user authentication (public — tenancy auto-resolved from user's tenant_id)
     Route::prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login'])
             ->middleware('throttle:10,1');
 
-        Route::middleware(['auth:api', 'tenant.token'])->group(function () {
+        Route::middleware(['auth:api', 'tenant.auth'])->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);
             Route::get('/me', [AuthController::class, 'me']);
         });
     });
 
-    // Protected tenant routes
-    Route::middleware(['auth:api', 'tenant.token'])->group(function () {
+    // Protected tenant routes — tenancy auto-resolved from authenticated user
+    Route::middleware(['auth:api', 'tenant.auth'])->group(function () {
         // Preamble routes
         Route::get('/preambles', [PreambleController::class, 'index']);
         Route::post('/preambles', [PreambleController::class, 'store']);

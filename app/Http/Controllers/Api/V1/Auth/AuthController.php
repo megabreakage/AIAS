@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\BaseApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\Central\User\UserResource;
+use App\Models\Central\Tenant;
 use App\Models\User;
 use App\Repositories\Central\CentralUserRepository;
 use Illuminate\Http\JsonResponse;
@@ -17,11 +18,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Stancl\Tenancy\Tenancy;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends BaseApiController
 {
-    public function __construct(protected CentralUserRepository $repository) {}
+    public function __construct(
+        protected CentralUserRepository $repository,
+        protected Tenancy $tenancy,
+    ) {}
 
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -59,6 +64,15 @@ final class AuthController extends BaseApiController
 
         if (!$user->is_active) {
             throw new AccountDisabledException;
+        }
+
+        // Auto-initialize tenancy for tenant users
+        if ($user->tenant_id && !tenant()) {
+            $tenant = Tenant::where('identifier', $user->tenant_id)->first();
+
+            if ($tenant) {
+                $this->tenancy->initialize($tenant);
+            }
         }
 
         $token = $user->createToken('api-token')->accessToken;

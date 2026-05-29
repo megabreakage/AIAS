@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "name": "Q1 Financial Audit Checklist",
       "quality_controller_id": null,
       "preamble_id": null,

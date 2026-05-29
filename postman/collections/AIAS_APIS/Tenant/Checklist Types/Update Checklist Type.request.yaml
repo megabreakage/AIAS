@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "name": "Pre-Engagement Checklist",
       "description": "Checklist items to complete before commencing an audit engagement.",
       "is_active": true,

@@ -112,3 +112,9 @@ values:
   - key: report_id
     value: ''
     description: Report identifier string
+  - key: user_name
+    value: ''
+  - key: tenant_email
+    value: ''
+  - key: tenant_password
+    value: ''

@@ -10,8 +10,6 @@ headers:
   Accept: application/json
   Content-Type: application/json
 queryParams:
-- key: tenant_id
-  value: '{{tenant_id}}'
   description: Tenant identifier string (required)
 scripts:
 - type: afterResponse

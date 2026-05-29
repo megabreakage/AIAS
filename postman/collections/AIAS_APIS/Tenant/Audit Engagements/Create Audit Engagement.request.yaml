@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "title": "FY2025 Financial Statement Audit \u2014 Apex Manufacturing",
       "client_id": "{{client_id}}",
       "audit_standard_id": "{{audit_standard_id}}",

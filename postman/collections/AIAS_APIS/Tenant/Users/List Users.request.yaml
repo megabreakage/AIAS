@@ -3,17 +3,13 @@ name: List Users
 description: |-
   Retrieve a paginated list of users.
 
-  Supports filtering via `search`, sorting via `sort_by`/`sort_order`, and pagination via `page`/`per_page` (max 100 per page). Pass `show_deleted=1` to include soft-deleted records. Pass `tenant_id` as a query parameter to scope results to the tenant.
+  Supports filtering via `search`, sorting via `sort_by`/`sort_order`, and pagination via `page`/`per_page` (max 100 per page). Pass `show_deleted=1` to include soft-deleted records.
 url: "{{tenant_base_url}}/v1/users"
 method: GET
 headers:
   Accept: application/json
   Content-Type: application/json
-queryParams:
-  - key: tenant_id
-    value: "{{tenant_id}}"
-    description: Tenant identifier string (required)
-  - key: page
+queryParams:  - key: page
     value: "1"
     description: "Page number (min: 1)"
   - key: per_page
@@ -36,7 +32,6 @@ body:
   type: json
   content: |-
     {
-        "tenant_id":"{{tenant_id}}"
     }
 scripts:
   - type: afterResponse

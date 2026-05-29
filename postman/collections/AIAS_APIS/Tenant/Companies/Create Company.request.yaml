@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "name": "Apex Holdings Ltd",
       "address": "123 Business Park, Westlands",
       "office_location": "Nairobi, Kenya",

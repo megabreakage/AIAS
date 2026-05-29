@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "audit_engagement_id": "{{audit_engagement_id}}",
       "title": "Revenue Authorisation Control",
       "description": "All revenue transactions must be authorised by a designated authority",

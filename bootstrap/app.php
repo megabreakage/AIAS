@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Exceptions\ApiException;
 use App\Http\Middleware\EnsureTokenMatchesTenant;
 use App\Http\Middleware\ForceJsonBody;
+use App\Http\Middleware\InitializeTenancyByAuthUser;
+use App\Http\Middleware\InitializeTenancyByBodyParam;
 use App\Providers\AuthServiceProvider;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -31,7 +33,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'tenant.token' => EnsureTokenMatchesTenant::class,
-            'tenant.body'  => \App\Http\Middleware\InitializeTenancyByBodyParam::class,
+            'tenant.body' => InitializeTenancyByBodyParam::class,
+            'tenant.auth' => InitializeTenancyByAuthUser::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

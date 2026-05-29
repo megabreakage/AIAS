@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "compliance_requirement_id": "{{compliance_requirement_id}}",
       "title": "Signed CEO Certification Letter",
       "description": "CEO certification signed and filed with SEC",

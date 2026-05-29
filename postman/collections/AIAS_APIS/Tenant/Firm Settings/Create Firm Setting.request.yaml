@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "firm_name": "Pinnacle Audit Partners LLP",
       "registration_number": "LLP-2020-001",
       "address": "Upper Hill, Nairobi",

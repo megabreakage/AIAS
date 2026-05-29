@@ -14,6 +14,7 @@ class UserResource extends BaseResource
         return [
             'id' => $this->identifier,
             'identifier' => $this->identifier,
+            'tenant_id' => $this->tenant_id,
             'title' => $this->title,
             'first_name' => $this->first_name,
             'middle_name' => $this->middle_name,

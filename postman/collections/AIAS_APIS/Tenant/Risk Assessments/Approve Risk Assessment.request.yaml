@@ -10,7 +10,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}"
     }
 scripts:
 - type: afterResponse

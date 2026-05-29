@@ -3,7 +3,7 @@ name: Login (Tenant User)
 description: |-
   Authenticate as a tenant-scoped user.
 
-  `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`). Returns a Bearer `access_token` saved automatically to `{{access_token}}`. After login, all tenant-scoped requests use `{{tenant_id}}` from the environment.
+  No `tenant_id` required — the system resolves the tenant from the user's `tenant_id` in the central database. Returns a Bearer `access_token` saved automatically to `{{access_token}}`. After login, `{{tenant_id}}` is auto-populated from the response.
 url: "{{tenant_base_url}}/v1/auth/login"
 method: POST
 headers:
@@ -13,7 +13,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "email": "{{tenant_email}}",
       "password": "{{tenant_password}}"
     }

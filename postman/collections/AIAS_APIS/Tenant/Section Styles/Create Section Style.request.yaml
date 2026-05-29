@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "name": "Two Column Layout",
       "description": "A two-column layout for side-by-side checklist items.",
       "columns": 2,

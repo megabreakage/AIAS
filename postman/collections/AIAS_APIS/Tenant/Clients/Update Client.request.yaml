@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "name": "Apex Manufacturing Ltd",
       "registration_number": "PVT-20220001",
       "industry": "Manufacturing",

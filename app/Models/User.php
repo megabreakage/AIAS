@@ -66,7 +66,7 @@ final class User extends Authenticatable implements AuditableContract
             'last_login_at' => 'datetime',
             'is_active' => 'boolean',
             'password' => 'hashed',
-            'tenant_id' => 'integer',
+            'tenant_id' => 'string',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',

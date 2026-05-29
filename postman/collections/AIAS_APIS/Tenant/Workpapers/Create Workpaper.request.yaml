@@ -14,7 +14,6 @@ body:
   type: json
   content: |-
     {
-      "tenant_id": "{{tenant_id}}",
       "audit_engagement_id": "{{audit_engagement_id}}",
       "audit_procedure_id": "{{audit_procedure_id}}",
       "title": "Revenue Substantive Testing \u2014 Q4 2025",
