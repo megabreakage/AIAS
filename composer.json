@@ -10,11 +10,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
+        "bacon/bacon-qr-code": "^3.1",
         "laravel/framework": "^13.8",
         "laravel/mcp": "^0.7.0",
         "laravel/passport": "^13.0",
         "laravel/tinker": "^3.0",
         "owen-it/laravel-auditing": "^14.0",
+        "pragmarx/google2fa": "^9.0",
         "predis/predis": "^2.0",
         "spatie/laravel-data": "^4.0",
         "spatie/laravel-permission": "^6.0|^7.0",
