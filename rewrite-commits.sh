@@ -69,7 +69,11 @@ cleanup() {
 trap cleanup EXIT
 
 # Get commits oldest-first (rebase processes them in that order)
-mapfile -t COMMITS < <(git --no-pager log --format="%H" -n "$N" --reverse)
+# Use while-read instead of mapfile for bash 3.2 compatibility (macOS default)
+COMMITS=()
+while IFS= read -r sha; do
+    COMMITS+=("$sha")
+done < <(git --no-pager log --format="%H" -n "$N" --reverse)
 
 # --- Generate messages ---------------------------------------------------
 DIFF_LIMIT=4000   # max chars of diff body sent to Copilot
