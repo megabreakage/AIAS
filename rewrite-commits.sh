@@ -119,10 +119,9 @@ PROMPT
 
     # Call Copilot non-interactively. --allow-all-tools required for -p mode.
     # Use low reasoning effort for speed.
-    if ! out=$(printf '%s' "$prompt" | copilot \
-            -p /dev/stdin \
+    if ! out=$(copilot \
+            -p "$prompt" \
             --allow-all-tools \
-            --no-banner \
             --effort low 2>"$WORK_DIR/err.log"); then
         echo "  ! copilot failed for $short (see $WORK_DIR/err.log), falling back"
         out="chore: update $(echo "$files" | head -1)"
