@@ -56,7 +56,7 @@ final class User extends Authenticatable implements AuditableContract
     ];
 
     /** @var list<string> */
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['id', 'password', 'remember_token'];
 
     /** @return array<string, string> */
     protected function casts(): array

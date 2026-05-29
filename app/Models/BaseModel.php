@@ -15,6 +15,8 @@ abstract class BaseModel extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $hidden = ['id'];
+
     /** @return array<string, string> */
     protected function casts(): array
     {
