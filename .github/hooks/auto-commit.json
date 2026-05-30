@@ -1,0 +1,11 @@
+{
+    "hooks": {
+        "Stop": [
+            {
+                "type": "command",
+                "command": "./.github/hooks/scripts/auto-commit.mjs",
+                "timeout": 30
+            }
+        ]
+    }
+}
