@@ -14,6 +14,7 @@ body:
   type: json
   content: |-
     {
+      "tenant_id": "{{tenant_id}}",
       "audit_plan_id": "{{audit_plan_id}}",
       "title": "Agree revenue per ledger to source documents",
       "description": "Obtain the revenue ledger and agree totals to the trial balance",

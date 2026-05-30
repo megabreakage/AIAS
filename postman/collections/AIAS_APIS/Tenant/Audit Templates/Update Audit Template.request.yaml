@@ -14,6 +14,7 @@ body:
   type: json
   content: |-
     {
+      "tenant_id": "{{tenant_id}}",
       "name": "Financial Statement Audit Template",
       "audit_standard_id": "{{audit_standard_id}}",
       "description": "Standard template for financial statement audits",

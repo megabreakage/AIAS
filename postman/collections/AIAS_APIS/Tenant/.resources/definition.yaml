@@ -5,13 +5,15 @@ description: '## Tenant Resources
   Resources isolated per organisation (tenant) — each tenant has its own MySQL database.
 
 
-  ### How Tenant Scoping Works
+  ### How to Scope Requests
 
 
-  Tenancy is resolved automatically from the authenticated user''s `tenant_id` column
-  in the central Users table. No `tenant_id` body or query parameter is required.
-  Simply authenticate via **Login (Tenant User)** and all subsequent requests are
-  automatically scoped to the user''s tenant.
+  - **POST / PUT / PATCH:** include `tenant_id` in the JSON body.
+
+  - **GET / DELETE:** pass `tenant_id` as a query parameter.
+
+  - `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`), auto-saved
+  to `{{tenant_id}}` after login.
 
 
   **Base URL:** `{{tenant_base_url}}` (e.g. `http://localhost:8020`)

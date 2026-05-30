@@ -1,0 +1,33 @@
+$kind: http-request
+name: Update Priority Level
+description: 'Update an existing priority level record.
+
+
+  Send only the fields you want to change — all fields are optional on update. Replace
+  `{{priority_level_id}}` with the identifier of the record to update.'
+url: '{{tenant_base_url}}/v1/priority-levels/{{priority_level_id}}'
+method: PUT
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Critical",
+      "description": "Immediate action required \u2014 business-critical impact.",
+      "level": 1,
+      "color": "#FF0000",
+      "is_active": true
+    }
+scripts:
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
+order: 4000

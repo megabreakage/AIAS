@@ -19,4 +19,4 @@ description: 'Manage audit checklists with quality controller assignment, preamb
 
 
   Soft-deleted checklists can be restored via `POST /checklists/{identifier}/restore`.'
-order: 4000
+order: 5000

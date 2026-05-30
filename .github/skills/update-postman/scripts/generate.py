@@ -68,6 +68,7 @@ COLLECTION_DESCRIPTION = (
     "- Countries: full CRUD + restore\n\n"
     "**Tenant API** (`{{tenant_base_url}}/v1/...` — requires `tenant_id`)\n"
     "- Auth: register, login, logout, me\n"
+    "- Priority Levels: full CRUD + restore\n"
     "- Preambles: full CRUD + restore\n"
     "- Users: full CRUD + restore\n"
     "- Checklist Types: full CRUD + restore\n"
@@ -476,6 +477,30 @@ MODULES: list[dict[str, Any]] = [
     },
 
     # ── Tenant-Scoped Reference Data ─────────────────────────────────────────
+    {
+        "name": "Priority Levels",
+        "route": "priority-levels",
+        "param": "priorityLevel",
+        "scope": "tenant",
+        "description": (
+            "Manage priority level definitions used to classify urgency across audits, findings, and tasks.\n\n"
+            "`level` is a required integer ranking (e.g. `1` = highest priority). "
+            "`color` is an optional hex colour code for UI display (e.g. `#FF0000`). "
+            "`is_active` controls visibility in priority level selection dropdowns.\n\n"
+            "Soft-deleted priority levels can be restored via `POST /priority-levels/{identifier}/restore`."
+        ),
+        "sample_body": {
+            "name": "Critical",
+            "description": "Immediate action required — business-critical impact.",
+            "level": 1,
+            "color": "#FF0000",
+            "is_active": True,
+        },
+        "extra_actions": [
+            {"method": "POST", "path": "restore", "name": "Restore Priority Level",
+             "description": "Restore a soft-deleted priority level record."},
+        ],
+    },
     {
         "name": "Preambles",
         "route": "preambles",
@@ -1186,6 +1211,7 @@ RESOURCE_ID_VARS: list[tuple[str, str, str]] = [
     ("service_user_id",             "", "Service User identifier string"),
     ("api_key_id",                  "", "API Key identifier string"),
     # --- Tenant Reference ---
+    ("priority_level_id",           "", "Priority Level identifier string (auto-populated after Create Priority Level)"),
     ("preamble_id",                 "", "Preamble identifier string"),
     ("checklist_type_id",           "", "Checklist Type identifier string"),
     ("section_style_id",            "", "Section Style identifier string"),

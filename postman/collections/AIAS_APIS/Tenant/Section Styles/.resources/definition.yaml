@@ -9,4 +9,4 @@ description: 'Manage section style definitions that control layout and presentat
 
 
   Soft-deleted section styles can be restored via `POST /section-styles/{identifier}/restore`.'
-order: 3000
+order: 4000

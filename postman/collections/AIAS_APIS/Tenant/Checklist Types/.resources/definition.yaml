@@ -8,4 +8,4 @@ description: 'Manage checklist type definitions used across audit engagements.
 
 
   Soft-deleted types can be restored via `POST /checklist-types/{identifier}/restore`.'
-order: 2000
+order: 3000

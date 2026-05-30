@@ -14,6 +14,7 @@ body:
   type: json
   content: |-
     {
+      "tenant_id": "{{tenant_id}}",
       "audit_engagement_id": "{{audit_engagement_id}}",
       "risk_category_id": "{{risk_category_id}}",
       "title": "Revenue Completeness Risk",

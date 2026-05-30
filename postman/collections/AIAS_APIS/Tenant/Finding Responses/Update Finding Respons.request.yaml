@@ -14,6 +14,7 @@ body:
   type: json
   content: |-
     {
+      "tenant_id": "{{tenant_id}}",
       "finding_id": "{{finding_id}}",
       "response": "Management accepts the finding. A formal revenue recognition policy will be developed and staff trained by Q2 2026.",
       "action_plan": "Engage external consultant to develop policy",

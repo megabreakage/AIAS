@@ -14,6 +14,7 @@ body:
   type: json
   content: |-
     {
+      "tenant_id": "{{tenant_id}}",
       "name": "Quality Management Framework Preamble",
       "description": "Establishes the scope and objectives of the quality management framework.",
       "status": "draft",

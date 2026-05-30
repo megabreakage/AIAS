@@ -1,0 +1,12 @@
+$kind: collection
+description: 'Manage priority level definitions used to classify urgency across audits,
+  findings, and tasks.
+
+
+  `level` is a required integer ranking (e.g. `1` = highest priority). `color` is
+  an optional hex colour code for UI display (e.g. `#FF0000`). `is_active` controls
+  visibility in priority level selection dropdowns.
+
+
+  Soft-deleted priority levels can be restored via `POST /priority-levels/{identifier}/restore`.'
+order: 1000

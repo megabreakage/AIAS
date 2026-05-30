@@ -14,6 +14,7 @@ body:
   type: json
   content: |-
     {
+      "tenant_id": "{{tenant_id}}",
       "control_objective_id": "{{control_objective_id}}",
       "title": "Test revenue authorisation approvals",
       "description": "Select a sample of 30 revenue transactions and verify authorisation signatures",

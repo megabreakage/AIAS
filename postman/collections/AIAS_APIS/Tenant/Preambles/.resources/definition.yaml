@@ -9,4 +9,4 @@ description: 'Manage quality management preamble documents.
 
 
   Soft-deleted preambles can be restored via `POST /preambles/{identifier}/restore`.'
-order: 1000
+order: 2000

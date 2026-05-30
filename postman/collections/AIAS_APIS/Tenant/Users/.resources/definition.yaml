@@ -16,4 +16,4 @@ description: 'Manage tenant-scoped user accounts within the audit firm.
 
 
   Soft-deleted users can be restored via `POST /users/{identifier}/restore`.'
-order: 5000
+order: 6000

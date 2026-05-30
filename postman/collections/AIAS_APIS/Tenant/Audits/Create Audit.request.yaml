@@ -14,6 +14,7 @@ body:
   type: json
   content: |-
     {
+      "tenant_id": "{{tenant_id}}",
       "name": "Annual Financial Compliance Audit 2026",
       "audit_start_date": "2026-07-01",
       "audit_end_date": "2026-07-31",

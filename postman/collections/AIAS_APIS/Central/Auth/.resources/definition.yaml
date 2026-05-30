@@ -13,8 +13,8 @@ description: '## Authentication
   2. Call **Login (Central / Super-Admin)** to get a Bearer token for central operations.
   No `tenant_id` needed.
 
-  3. Call **Login (Tenant User)** with email and password only — the system resolves
-  the tenant automatically from the user''s `tenant_id` in the central database.
+  3. Call **Login (Tenant User)** with `tenant_id` in the JSON body to authenticate
+  as a tenant user.
 
   4. Test scripts auto-save `access_token`, `user_id`, and `tenant_id` to the environment.
 
@@ -24,9 +24,9 @@ description: '## Authentication
   ### Tenant Identification
 
 
-  Tenancy is resolved automatically from the authenticated user''s `tenant_id` column
-  in the central Users table. No `tenant_id` body or query parameter is required for
-  any tenant-scoped request.
+  Tenancy uses `InitializeTenancyByBodyParam` middleware — pass `tenant_id` as a body
+  param (POST requests) or query param (GET requests). Central login does **not**
+  require `tenant_id`.
 
 
   **Central login URL:** `{{base_url}}/v1/auth/login`

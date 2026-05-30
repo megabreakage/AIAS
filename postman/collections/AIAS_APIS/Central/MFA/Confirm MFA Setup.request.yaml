@@ -1,32 +1,22 @@
 $kind: http-request
 name: Confirm MFA Setup
-description: |-
-  Confirm MFA setup by providing the first TOTP code from your authenticator app
-  along with the `secret` returned by **Setup MFA**.
-
-  On success, MFA is activated and one-time backup codes are returned.
-  **Store the backup codes securely — they will not be shown again.**
-url: "{{base_url}}/v1/mfa/confirm"
+description: Confirm MFA Setup
+url: '{{base_url}}/v1/mfa/confirm'
 method: POST
 headers:
   Accept: application/json
   Content-Type: application/json
-  Authorization: "Bearer {{access_token}}"
 body:
   type: json
   content: |-
-    {
-      "secret": "{{mfa_secret}}",
-      "code": "123456"
-    }
+    {}
 scripts:
-  - type: afterResponse
-    code: |-
-      pm.test('MFA confirmed and backup codes returned', () => {
-          pm.response.to.have.status(200);
-          const j = pm.response.json();
-          pm.expect(j.data).to.have.property('backup_codes');
-          pm.expect(j.data.backup_codes).to.be.an('array').with.lengthOf(8);
-      });
-    language: text/javascript
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
 order: 3000

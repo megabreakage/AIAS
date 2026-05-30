@@ -25,4 +25,4 @@ description: 'Manage tenant companies — the client organisations being audited
 
 
   Soft-deleted companies can be restored via `POST /companies/{identifier}/restore`.'
-order: 6000
+order: 7000

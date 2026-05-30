@@ -25,4 +25,4 @@ description: 'Manage tenant audit records — the core audit execution entity.
 
   Status progression is tracked via status stages loaded in the response. Soft-deleted
   audits can be restored via `POST /audits/{identifier}/restore`.'
-order: 8000
+order: 9000

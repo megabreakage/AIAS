@@ -17,4 +17,4 @@ description: 'Manage tenant departments with geocoding support, member assignmen
 
 
   Soft-deleted departments can be restored via `POST /departments/{identifier}/restore`.'
-order: 7000
+order: 8000

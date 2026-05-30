@@ -5,13 +5,15 @@ description: 'Retrieve a paginated list of compliance requirements.
 
   Supports filtering via `search`, sorting via `sort_by`/`sort_order`, and pagination
   via `page`/`per_page` (max 100 per page). Pass `show_deleted=1` to include soft-deleted
-  records.'
+  records. Pass `tenant_id` as a query parameter to scope results to the tenant.'
 url: '{{tenant_base_url}}/v1/compliance-requirements'
 method: GET
 headers:
   Accept: application/json
   Content-Type: application/json
 queryParams:
+- key: tenant_id
+  value: '{{tenant_id}}'
   description: Tenant identifier string (required)
 - key: page
   value: '1'

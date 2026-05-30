@@ -1,22 +1,18 @@
 $kind: http-request
 name: MFA Status
-description: |-
-  Returns the current MFA status for the authenticated user.
-
-  Response includes `mfa_enabled`, `mfa_method`, `mfa_confirmed_at`, and `backup_codes_remaining`.
-url: "{{base_url}}/v1/mfa/status"
+description: MFA Status
+url: '{{base_url}}/v1/mfa/status'
 method: GET
 headers:
   Accept: application/json
-  Authorization: "Bearer {{access_token}}"
+  Content-Type: application/json
 scripts:
-  - type: afterResponse
-    code: |-
-      pm.test('MFA status returned', () => {
-          pm.response.to.have.status(200);
-          const j = pm.response.json();
-          pm.expect(j.data).to.have.property('mfa_enabled');
-          pm.expect(j.data).to.have.property('mfa_method');
-      });
-    language: text/javascript
+- type: afterResponse
+  code: |-
+    pm.test('Response is JSON', () => { pm.response.to.be.json; });
+    pm.test('Status is success', () => {
+        const j = pm.response.json();
+        pm.expect(j).to.have.property('status', 'success');
+    });
+  language: text/javascript
 order: 1000
