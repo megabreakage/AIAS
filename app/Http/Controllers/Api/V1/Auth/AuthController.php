@@ -13,6 +13,7 @@ use App\Http\Resources\Central\User\UserResource;
 use App\Models\Central\Tenant;
 use App\Models\User;
 use App\Repositories\Central\CentralUserRepository;
+use App\Services\MfaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,7 @@ final class AuthController extends BaseApiController
     public function __construct(
         protected CentralUserRepository $repository,
         protected Tenancy $tenancy,
+        protected MfaService $mfaService,
     ) {}
 
     public function register(RegisterRequest $request): JsonResponse
@@ -75,6 +77,19 @@ final class AuthController extends BaseApiController
             }
         }
 
+        // If MFA is enabled, return a pending token instead of a full access token
+        if ($user->mfa_enabled) {
+            $mfaToken = $this->mfaService->storePendingSession($user);
+
+            return $this->success([
+                'mfa_required' => true,
+                'mfa_token' => $mfaToken,
+                'mfa_method' => $user->mfa_method,
+                'message' => 'MFA verification required. Provide the code via POST /v1/auth/mfa/verify.',
+            ]);
+        }
+
+        $user->forceFill(['last_login_at' => now()])->save();
         $token = $user->createToken('api-token')->accessToken;
 
         return $this->success([

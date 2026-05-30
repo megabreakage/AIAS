@@ -186,3 +186,13 @@ values:
     value: ''
   - key: tenant_password
     value: ''
+  - key: mfa_secret
+    value: ''
+    description:
+      content: TOTP secret returned by Setup MFA (auto-populated)
+      type: text/plain
+  - key: mfa_pending_token
+    value: ''
+    description:
+      content: Temporary MFA session token returned when login requires MFA (auto-populated)
+      type: text/plain

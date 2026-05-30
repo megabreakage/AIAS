@@ -1,22 +1,28 @@
 $kind: http-request
 name: Update MFA Method
-description: Update MFA Method
-url: '{{base_url}}/v1/mfa/method'
+description: |-
+  Update the preferred MFA method for the authenticated user.
+
+  MFA must be enabled. Allowed values for `method`: `totp`, `email`.
+url: "{{base_url}}/v1/mfa/method"
 method: PUT
 headers:
   Accept: application/json
   Content-Type: application/json
+  Authorization: "Bearer {{access_token}}"
 body:
   type: json
   content: |-
-    {}
+    {
+      "method": "totp"
+    }
 scripts:
-- type: afterResponse
-  code: |-
-    pm.test('Response is JSON', () => { pm.response.to.be.json; });
-    pm.test('Status is success', () => {
-        const j = pm.response.json();
-        pm.expect(j).to.have.property('status', 'success');
-    });
-  language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('MFA method updated', () => {
+          pm.response.to.have.status(200);
+          const j = pm.response.json();
+          pm.expect(j.data).to.have.property('method');
+      });
+    language: text/javascript
 order: 6000

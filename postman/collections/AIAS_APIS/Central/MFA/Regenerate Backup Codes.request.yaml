@@ -1,22 +1,30 @@
 $kind: http-request
 name: Regenerate Backup Codes
-description: Regenerate Backup Codes
-url: '{{base_url}}/v1/mfa/backup-codes'
+description: |-
+  Regenerate MFA backup codes for the authenticated user.
+
+  Requires a valid current TOTP `code`. Previous backup codes are invalidated.
+  **Store the new codes securely — they will not be shown again.**
+url: "{{base_url}}/v1/mfa/backup-codes"
 method: POST
 headers:
   Accept: application/json
   Content-Type: application/json
+  Authorization: "Bearer {{access_token}}"
 body:
   type: json
   content: |-
-    {}
+    {
+      "code": "123456"
+    }
 scripts:
-- type: afterResponse
-  code: |-
-    pm.test('Response is JSON', () => { pm.response.to.be.json; });
-    pm.test('Status is success', () => {
-        const j = pm.response.json();
-        pm.expect(j).to.have.property('status', 'success');
-    });
-  language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('Backup codes regenerated', () => {
+          pm.response.to.have.status(200);
+          const j = pm.response.json();
+          pm.expect(j.data).to.have.property('backup_codes');
+          pm.expect(j.data.backup_codes).to.be.an('array').with.lengthOf(8);
+      });
+    language: text/javascript
 order: 5000

@@ -1,0 +1,45 @@
+$kind: http-request
+name: Verify MFA Login
+description: |-
+  Complete a login that requires MFA verification.
+
+  After a successful credential login where MFA is enabled, the login response returns
+  `mfa_required: true` with a temporary `mfa_token` (valid for 5 minutes).
+
+  Submit that token alongside a valid `code` (TOTP or backup code) to receive the
+  full Bearer `access_token`.
+
+  The test script automatically saves `access_token` and `user_id` to the environment.
+url: "{{base_url}}/v1/auth/mfa/verify"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "mfa_token": "{{mfa_pending_token}}",
+      "code": "123456"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('MFA verification successful', () => {
+          pm.response.to.have.status(200);
+          const j = pm.response.json();
+          pm.expect(j.data).to.have.property('token');
+      });
+      if (pm.response.code === 200) {
+          const j = pm.response.json();
+          if (j.data && j.data.token) {
+              pm.environment.set('access_token', j.data.token);
+              console.log('Token saved:', j.data.token.substring(0, 20) + '...');
+          }
+          if (j.data && j.data.user) {
+              const userId = j.data.user.identifier || j.data.user.id;
+              pm.environment.set('user_id', String(userId));
+          }
+      }
+    language: text/javascript
+order: 3500

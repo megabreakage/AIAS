@@ -1,22 +1,30 @@
 $kind: http-request
 name: Disable MFA
-description: Disable MFA
-url: '{{base_url}}/v1/mfa/disable'
+description: |-
+  Disable MFA for the authenticated user.
+
+  Requires the current account `password` and a valid MFA `code` (TOTP or backup code).
+  After disabling, the login flow will no longer require MFA verification.
+url: "{{base_url}}/v1/mfa/disable"
 method: POST
 headers:
   Accept: application/json
   Content-Type: application/json
+  Authorization: "Bearer {{access_token}}"
 body:
   type: json
   content: |-
-    {}
+    {
+      "password": "{{user_password}}",
+      "code": "123456"
+    }
 scripts:
-- type: afterResponse
-  code: |-
-    pm.test('Response is JSON', () => { pm.response.to.be.json; });
-    pm.test('Status is success', () => {
-        const j = pm.response.json();
-        pm.expect(j).to.have.property('status', 'success');
-    });
-  language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('MFA disabled successfully', () => {
+          pm.response.to.have.status(200);
+          const j = pm.response.json();
+          pm.expect(j.data).to.have.property('message');
+      });
+    language: text/javascript
 order: 4000

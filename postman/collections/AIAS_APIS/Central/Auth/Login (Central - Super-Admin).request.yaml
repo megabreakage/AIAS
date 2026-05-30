@@ -23,15 +23,18 @@ auth:
 scripts:
   - type: afterResponse
     code: |-
-      pm.test('Login successful', () => {
+      pm.test('Login successful or MFA required', () => {
           pm.response.to.have.status(200);
           const j = pm.response.json();
           pm.expect(j).to.have.property('data');
-          pm.expect(j.data).to.have.property('token');
       });
       if (pm.response.code === 200) {
           const j = pm.response.json();
-          if (j.data && j.data.token) {
+          if (j.data && j.data.mfa_required) {
+              // MFA pending — save temporary token for Verify MFA Login request
+              pm.environment.set('mfa_pending_token', j.data.mfa_token);
+              console.log('MFA required. Pending token saved:', j.data.mfa_token);
+          } else if (j.data && j.data.token) {
               pm.environment.set('access_token', j.data.token);
               console.log('Token saved:', j.data.token.substring(0, 20) + '...');
           }

@@ -15,7 +15,7 @@ Priority levels are referenced by audit findings, risks, tasks, and other tenant
 ## Database Table: `priority_levels`
 
 | Column | Type | Nullable | Default | Notes |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `id` | `bigint unsigned` | No | auto | Primary key |
 | `identifier` | `uuid` | No | `uuid()` | Public-facing unique ID used in API routes |
 | `tenant_id` | `varchar(255)` | No | — | Tenant reference (no FK to central DB) |

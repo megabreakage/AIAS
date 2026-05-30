@@ -1,22 +1,33 @@
 $kind: http-request
 name: Setup MFA
-description: Setup MFA
-url: '{{base_url}}/v1/mfa/setup'
+description: |-
+  Generate a TOTP secret and QR code for the authenticated user.
+
+  Returns `secret`, `qr_code_svg`, and `otpauth_url`. The user must scan the QR code
+  with their authenticator app and confirm the setup with a valid 6-digit code via
+  **Confirm MFA Setup** before MFA is activated.
+
+  Save the `secret` value — you will need it for the confirm step.
+url: "{{base_url}}/v1/mfa/setup"
 method: POST
 headers:
   Accept: application/json
   Content-Type: application/json
-body:
-  type: json
-  content: |-
-    {}
+  Authorization: "Bearer {{access_token}}"
 scripts:
-- type: afterResponse
-  code: |-
-    pm.test('Response is JSON', () => { pm.response.to.be.json; });
-    pm.test('Status is success', () => {
-        const j = pm.response.json();
-        pm.expect(j).to.have.property('status', 'success');
-    });
-  language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('MFA setup data returned', () => {
+          pm.response.to.have.status(200);
+          const j = pm.response.json();
+          pm.expect(j.data).to.have.property('secret');
+          pm.expect(j.data).to.have.property('qr_code_svg');
+          pm.expect(j.data).to.have.property('otpauth_url');
+      });
+      if (pm.response.code === 200) {
+          const secret = pm.response.json().data.secret;
+          pm.environment.set('mfa_secret', secret);
+          console.log('MFA secret saved:', secret);
+      }
+    language: text/javascript
 order: 2000

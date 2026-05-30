@@ -51,12 +51,17 @@ final class User extends Authenticatable implements AuditableContract
         'avatar',
         'notes',
         'last_login_at',
+        'mfa_method',
+        'mfa_secret',
+        'mfa_enabled',
+        'mfa_confirmed_at',
+        'mfa_backup_codes',
         'created_by',
         'updated_by',
     ];
 
     /** @var list<string> */
-    protected $hidden = ['id', 'password', 'remember_token'];
+    protected $hidden = ['id', 'password', 'remember_token', 'mfa_secret', 'mfa_backup_codes'];
 
     /** @return array<string, string> */
     protected function casts(): array
@@ -65,6 +70,9 @@ final class User extends Authenticatable implements AuditableContract
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'is_active' => 'boolean',
+            'mfa_enabled' => 'boolean',
+            'mfa_confirmed_at' => 'datetime',
+            'mfa_backup_codes' => 'array',
             'password' => 'hashed',
             'tenant_id' => 'string',
             'created_at' => 'datetime',

@@ -31,6 +31,12 @@ final class CentralUserRepository extends BaseRepository
         return $this->query()->create($data);
     }
 
+    public function findByIdentifier(string $identifier): ?User
+    {
+        /** @var User|null */
+        return $this->query()->where('identifier', $identifier)->first();
+    }
+
     public function findByEmail(string $email): ?User
     {
         /** @var User|null */
