@@ -31,6 +31,9 @@ final class User extends Authenticatable implements AuditableContract
 
     protected $table = 'users';
 
+    /** Force audit records to always write to the central DB, not the active tenant DB. */
+    protected $auditConnection = 'central';
+
     /** @var list<string> */
     protected $fillable = [
         'identifier',
