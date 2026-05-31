@@ -1,5 +1,6 @@
 workspace:
   id: 5631e230-7b84-4940-bbf5-d75dd983b780
+
 localResources:
   collections:
     - ../docs/postman/AIAS-API.postman_collection.json
@@ -8,31 +9,30 @@ localResources:
     - ../docs/postman/AIAS-API.local.postman_environment.json
     - ../docs/postman/AIAS-API.staging.postman_environment.json
     - ../postman/environments/AIAS Development-2.environment.yaml
-    - ../postman/environments/AIAS Local-2.environment.yaml
     - ../postman/environments/AIAS Production-2.environment.yaml
     - ../postman/environments/AIAS Staging-2.environment.yaml
     - ../postman/environments/AIAS Development-1.environment.yaml
     - ../postman/environments/AIAS Development.environment.yaml
     - ../postman/environments/AIAS Local-1.environment.yaml
-    - ../postman/environments/AIAS Local.environment.yaml
     - ../postman/environments/AIAS Production-1.environment.yaml
     - ../postman/environments/AIAS Production.environment.yaml
     - ../postman/environments/AIAS Staging-1.environment.yaml
     - ../postman/environments/AIAS Staging.environment.yaml
   specs:
     - ../postman/specs/AIAS API/AIAS API.yaml
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
 cloudResources:
   collections:
     ../postman/collections/AIAS API: 1f2d24a9-fb3c-4bcd-8f10-eaa93ea35872
   environments:
     ../postman/environments/AIAS Development-2.environment.yaml: 51316521-a0524793-5c5a-40e1-98d3-3da68e1a0f2b
-    ../postman/environments/AIAS Local-2.environment.yaml: 51316521-405c0c70-07a6-4771-a22b-54c4fbf271fb
     ../postman/environments/AIAS Production-2.environment.yaml: 51316521-ac7c2105-f276-4a7b-9ce6-5124ceb5451f
     ../postman/environments/AIAS Staging-2.environment.yaml: 51316521-c4220e0e-2445-422c-bda8-afcc7ec0ad17
     ../postman/environments/AIAS Development-1.environment.yaml: 51316521-b944af7c-cd73-4e09-9572-8040bcfb53d0
     ../postman/environments/AIAS Development.environment.yaml: 51316521-c6f7c8e2-1d62-4e35-a965-016e315ba58d
     ../postman/environments/AIAS Local-1.environment.yaml: 51316521-258dc518-d90f-45da-9039-19309115048d
-    ../postman/environments/AIAS Local.environment.yaml: 51316521-ca48d142-b859-4c64-974e-e8fbf4de0895
     ../postman/environments/AIAS Production-1.environment.yaml: 51316521-0dd342c6-aeae-4966-99e9-ce34a2f5a81e
     ../postman/environments/AIAS Production.environment.yaml: 51316521-fde34740-d528-483a-979a-e00742549e24
     ../postman/environments/AIAS Staging-1.environment.yaml: 51316521-6827a355-ea19-4022-a80d-62a5045eca30

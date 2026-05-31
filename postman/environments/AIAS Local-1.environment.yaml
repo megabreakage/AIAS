@@ -40,9 +40,6 @@ values:
   - key: api_key_id
     value: ''
     description: API Key identifier string
-  - key: priority_level_id
-    value: ''
-    description: Priority Level identifier string (auto-populated after Create Priority Level)
   - key: preamble_id
     value: ''
     description: Preamble identifier string
@@ -115,3 +112,19 @@ values:
   - key: report_id
     value: ''
     description: Report identifier string
+  - key: user_name
+    value: ''
+    description: Authenticated user name (auto-populated)
+  - key: tenant_email
+    value: ''
+    description: Tenant user email for login
+  - key: tenant_password
+    value: ''
+    description: Tenant user password for login
+  - key: mfa_secret
+    value: ''
+    description: TOTP secret returned by Setup MFA (auto-populated)
+  - key: mfa_pending_token
+    value: ''
+    description: Temporary MFA session token returned when login requires MFA (auto-populated)
+color: 0
