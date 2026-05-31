@@ -1,7 +1,7 @@
 $kind: http-request
 name: Approve Engagement
 description: Approve Engagement
-url: '{{tenant_base_url}}/v1/audit-engagements/{{audit_engagement_id}}/approve'
+url: '{{base_url}}/v1/audit-engagements/{{audit_engagement_id}}/approve'
 method: POST
 headers:
   Accept: application/json

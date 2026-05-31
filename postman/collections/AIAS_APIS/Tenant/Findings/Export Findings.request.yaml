@@ -1,7 +1,7 @@
 $kind: http-request
 name: Export Findings
 description: Export Findings
-url: '{{tenant_base_url}}/v1/findings/export'
+url: '{{base_url}}/v1/findings/export'
 method: GET
 headers:
   Accept: application/json

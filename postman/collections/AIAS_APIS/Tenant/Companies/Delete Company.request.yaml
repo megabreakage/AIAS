@@ -2,7 +2,7 @@ $kind: http-request
 name: Delete Company
 description: Soft-delete a company record. The record is not permanently removed.
   Restore it with the corresponding `POST /companies/{{company_id}}/restore` request.
-url: '{{tenant_base_url}}/v1/companies/{{company_id}}'
+url: '{{base_url}}/v1/companies/{{company_id}}'
 method: DELETE
 headers:
   Accept: application/json

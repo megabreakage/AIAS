@@ -3,7 +3,7 @@ name: Delete Audit Procedure
 description: Soft-delete a audit procedure record. The record is not permanently removed.
   Restore it with the corresponding `POST /audit-procedures/{{audit_procedure_id}}/restore`
   request.
-url: '{{tenant_base_url}}/v1/audit-procedures/{{audit_procedure_id}}'
+url: '{{base_url}}/v1/audit-procedures/{{audit_procedure_id}}'
 method: DELETE
 headers:
   Accept: application/json

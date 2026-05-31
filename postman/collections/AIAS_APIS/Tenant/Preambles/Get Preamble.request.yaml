@@ -4,7 +4,7 @@ description: 'Retrieve a single preamble by its `identifier` string.
 
 
   Replace `{{preamble_id}}` with the identifier saved after creation.'
-url: '{{tenant_base_url}}/v1/preambles/{{preamble_id}}'
+url: '{{base_url}}/v1/preambles/{{preamble_id}}'
 method: GET
 headers:
   Accept: application/json

@@ -6,7 +6,7 @@ description: 'Authenticate as a tenant-scoped user.
   `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`). Returns a
   Bearer `access_token` saved automatically to `{{access_token}}`. After login, all
   tenant-scoped requests use `{{tenant_id}}` from the environment.'
-url: '{{tenant_base_url}}/v1/auth/login'
+url: '{{base_url}}/v1/auth/login'
 method: POST
 headers:
   Accept: application/json

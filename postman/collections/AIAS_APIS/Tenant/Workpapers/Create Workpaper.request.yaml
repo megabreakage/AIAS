@@ -5,7 +5,7 @@ description: 'Create a new workpaper record.
 
   On success the `identifier` of the new record is automatically saved to `{{workpaper_id}}`
   in the active environment via the post-response test script.'
-url: '{{tenant_base_url}}/v1/workpapers'
+url: '{{base_url}}/v1/workpapers'
 method: POST
 headers:
   Accept: application/json

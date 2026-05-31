@@ -2,7 +2,7 @@ $kind: http-request
 name: Delete Preamble
 description: Soft-delete a preamble record. The record is not permanently removed.
   Restore it with the corresponding `POST /preambles/{{preamble_id}}/restore` request.
-url: '{{tenant_base_url}}/v1/preambles/{{preamble_id}}'
+url: '{{base_url}}/v1/preambles/{{preamble_id}}'
 method: DELETE
 headers:
   Accept: application/json

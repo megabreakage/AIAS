@@ -4,7 +4,7 @@ description: 'Retrieve a single audit engagement by its `identifier` string.
 
 
   Replace `{{audit_engagement_id}}` with the identifier saved after creation.'
-url: '{{tenant_base_url}}/v1/audit-engagements/{{audit_engagement_id}}'
+url: '{{base_url}}/v1/audit-engagements/{{audit_engagement_id}}'
 method: GET
 headers:
   Accept: application/json

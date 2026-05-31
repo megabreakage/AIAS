@@ -4,7 +4,7 @@ description: 'Retrieve a single checklist by its `identifier` string.
 
 
   Replace `{{checklist_id}}` with the identifier saved after creation.'
-url: '{{tenant_base_url}}/v1/checklists/{{checklist_id}}'
+url: '{{base_url}}/v1/checklists/{{checklist_id}}'
 method: GET
 headers:
   Accept: application/json

@@ -3,7 +3,7 @@ values:
   - key: base_url
     value: 'https://staging.aias.app/api'
   - key: tenant_base_url
-    value: 'https://staging.aias.app'
+    value: 'https://staging.aias.app/api'
   - key: user_email
     value: staging@aias.app
   - key: user_password

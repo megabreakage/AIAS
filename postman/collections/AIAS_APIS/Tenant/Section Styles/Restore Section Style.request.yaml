@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Section Style
 description: Restore a soft-deleted section style record.
-url: '{{tenant_base_url}}/v1/section-styles/{{section_style_id}}/restore'
+url: '{{base_url}}/v1/section-styles/{{section_style_id}}/restore'
 method: POST
 headers:
   Accept: application/json

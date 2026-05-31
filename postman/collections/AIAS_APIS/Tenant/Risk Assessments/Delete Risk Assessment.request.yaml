@@ -3,7 +3,7 @@ name: Delete Risk Assessment
 description: Soft-delete a risk assessment record. The record is not permanently removed.
   Restore it with the corresponding `POST /risk-assessments/{{risk_assessment_id}}/restore`
   request.
-url: '{{tenant_base_url}}/v1/risk-assessments/{{risk_assessment_id}}'
+url: '{{base_url}}/v1/risk-assessments/{{risk_assessment_id}}'
 method: DELETE
 headers:
   Accept: application/json

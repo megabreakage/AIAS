@@ -4,7 +4,7 @@ description: 'Retrieve a single finding respons by its `identifier` string.
 
 
   Replace `{{finding_response_id}}` with the identifier saved after creation.'
-url: '{{tenant_base_url}}/v1/finding-responses/{{finding_response_id}}'
+url: '{{base_url}}/v1/finding-responses/{{finding_response_id}}'
 method: GET
 headers:
   Accept: application/json

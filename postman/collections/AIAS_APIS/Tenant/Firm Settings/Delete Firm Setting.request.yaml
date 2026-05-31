@@ -3,7 +3,7 @@ name: Delete Firm Setting
 description: Soft-delete a firm setting record. The record is not permanently removed.
   Restore it with the corresponding `POST /firm-settings/{{firm_settings_id}}/restore`
   request.
-url: '{{tenant_base_url}}/v1/firm-settings/{{firm_settings_id}}'
+url: '{{base_url}}/v1/firm-settings/{{firm_settings_id}}'
 method: DELETE
 headers:
   Accept: application/json

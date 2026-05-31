@@ -1,7 +1,7 @@
 $kind: http-request
 name: Generate Client Number
 description: Generate Client Number
-url: '{{tenant_base_url}}/v1/clients/generate-number'
+url: '{{base_url}}/v1/clients/generate-number'
 method: GET
 headers:
   Accept: application/json

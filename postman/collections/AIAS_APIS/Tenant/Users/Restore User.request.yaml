@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore User
 description: Restore a soft-deleted tenant user account.
-url: '{{tenant_base_url}}/v1/users/{{tenant_user_id}}/restore'
+url: '{{base_url}}/v1/users/{{tenant_user_id}}/restore'
 method: POST
 headers:
   Accept: application/json

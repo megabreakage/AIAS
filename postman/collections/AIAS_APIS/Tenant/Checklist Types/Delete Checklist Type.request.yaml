@@ -3,7 +3,7 @@ name: Delete Checklist Type
 description: Soft-delete a checklist type record. The record is not permanently removed.
   Restore it with the corresponding `POST /checklist-types/{{checklist_type_id}}/restore`
   request.
-url: '{{tenant_base_url}}/v1/checklist-types/{{checklist_type_id}}'
+url: '{{base_url}}/v1/checklist-types/{{checklist_type_id}}'
 method: DELETE
 headers:
   Accept: application/json

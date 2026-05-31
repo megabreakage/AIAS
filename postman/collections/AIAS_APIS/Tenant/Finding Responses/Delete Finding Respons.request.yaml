@@ -3,7 +3,7 @@ name: Delete Finding Respons
 description: Soft-delete a finding respons record. The record is not permanently removed.
   Restore it with the corresponding `POST /finding-responses/{{finding_response_id}}/restore`
   request.
-url: '{{tenant_base_url}}/v1/finding-responses/{{finding_response_id}}'
+url: '{{base_url}}/v1/finding-responses/{{finding_response_id}}'
 method: DELETE
 headers:
   Accept: application/json

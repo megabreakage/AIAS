@@ -3,7 +3,7 @@ values:
   - key: base_url
     value: 'https://dev.aias.app/api'
   - key: tenant_base_url
-    value: 'https://dev.aias.app'
+    value: 'https://dev.aias.app/api'
   - key: user_email
     value: dev@aias.app
   - key: user_password

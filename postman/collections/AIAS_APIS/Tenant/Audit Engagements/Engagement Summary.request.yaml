@@ -1,7 +1,7 @@
 $kind: http-request
 name: Engagement Summary
 description: Engagement Summary
-url: '{{tenant_base_url}}/v1/audit-engagements/summary'
+url: '{{base_url}}/v1/audit-engagements/summary'
 method: GET
 headers:
   Accept: application/json

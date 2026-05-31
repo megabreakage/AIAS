@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Audit Procedure
 description: Restore Audit Procedure
-url: '{{tenant_base_url}}/v1/audit-procedures/{{audit_procedure_id}}/restore'
+url: '{{base_url}}/v1/audit-procedures/{{audit_procedure_id}}/restore'
 method: POST
 headers:
   Accept: application/json

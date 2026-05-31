@@ -16,7 +16,7 @@ description: '## Tenant Resources
   to `{{tenant_id}}` after login.
 
 
-  **Base URL:** `{{tenant_base_url}}` (e.g. `http://localhost:8020`)
+  **Base URL:** `{{base_url}}` (e.g. `http://localhost:8020/api`)
 
 
   ### ✅ Implemented Endpoints

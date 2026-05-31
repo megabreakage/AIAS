@@ -1,7 +1,7 @@
 $kind: http-request
 name: Escalate Finding
 description: Escalate Finding
-url: '{{tenant_base_url}}/v1/findings/{{finding_id}}/escalate'
+url: '{{base_url}}/v1/findings/{{finding_id}}/escalate'
 method: POST
 headers:
   Accept: application/json

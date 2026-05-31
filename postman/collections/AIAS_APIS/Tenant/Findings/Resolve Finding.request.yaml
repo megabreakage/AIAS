@@ -1,7 +1,7 @@
 $kind: http-request
 name: Resolve Finding
 description: Resolve Finding
-url: '{{tenant_base_url}}/v1/findings/{{finding_id}}/resolve'
+url: '{{base_url}}/v1/findings/{{finding_id}}/resolve'
 method: POST
 headers:
   Accept: application/json

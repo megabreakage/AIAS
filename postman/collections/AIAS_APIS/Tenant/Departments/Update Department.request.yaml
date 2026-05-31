@@ -5,7 +5,7 @@ description: 'Update an existing department record.
 
   Send only the fields you want to change — all fields are optional on update. Replace
   `{{department_id}}` with the identifier of the record to update.'
-url: '{{tenant_base_url}}/v1/departments/{{department_id}}'
+url: '{{base_url}}/v1/departments/{{department_id}}'
 method: PUT
 headers:
   Accept: application/json

@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Company
 description: Restore a soft-deleted company record.
-url: '{{tenant_base_url}}/v1/companies/{{company_id}}/restore'
+url: '{{base_url}}/v1/companies/{{company_id}}/restore'
 method: POST
 headers:
   Accept: application/json

@@ -66,7 +66,7 @@ COLLECTION_DESCRIPTION = (
     "- Users: create (POST only)\n"
     "- Continents: full CRUD + restore\n"
     "- Countries: full CRUD + restore\n\n"
-    "**Tenant API** (`{{tenant_base_url}}/v1/...` — requires `tenant_id`)\n"
+    "**Tenant API** (`{{base_url}}/v1/...` — requires `tenant_id`)\n"
     "- Auth: register, login, logout, me\n"
     "- Priority Levels: full CRUD + restore\n"
     "- Preambles: full CRUD + restore\n"
@@ -87,7 +87,7 @@ COLLECTION_DESCRIPTION = (
     "All protected endpoints require a `Bearer` token in the `Authorization` header.\n\n"
     "**Central login:** `POST {{base_url}}/v1/auth/login` — email + password only. "
     "Returns a token for super-admin operations (tenants, users, reference data).\n\n"
-    "**Tenant login:** `POST {{tenant_base_url}}/v1/auth/login` — requires `tenant_id` in the JSON body "
+    "**Tenant login:** `POST {{base_url}}/v1/auth/login` — requires `tenant_id` in the JSON body "
     "alongside email and password. Returns a token scoped to that tenant's database.\n\n"
     "After login, `access_token`, `user_id`, and `tenant_id` are auto-saved to the environment "
     "by the test script.\n\n"
@@ -96,9 +96,8 @@ COLLECTION_DESCRIPTION = (
     "| Scope | Base Variable | Example URL |\n"
     "|-------|--------------|------------|\n"
     "| Central | `{{base_url}}` | `{{base_url}}/v1/tenants` |\n"
-    "| Tenant | `{{tenant_base_url}}` | `{{tenant_base_url}}/v1/audits` |\n\n"
-    "- `base_url` includes `/api` (e.g. `http://localhost:8020/api`) — used for central routes.\n"
-    "- `tenant_base_url` is without `/api` (e.g. `http://localhost:8020`) — used for tenant routes.\n\n"
+    "| Tenant | `{{base_url}}` | `{{base_url}}/v1/audits` |\n\n"
+    "- `base_url` is `http://localhost:8020/api` — used for all routes (central and tenant).\n\n"
     "---\n\n"
     "## Tenant Identification\n\n"
     "Tenancy is initialised via the `tenant_id` body/query parameter "
@@ -149,7 +148,7 @@ COLLECTION_DESCRIPTION = (
     "Stancl Tenancy v3 (body-param identification) · Spatie Permission v7 · Pest v4"
 )
 DEFAULT_BASE_URL = "http://localhost:8020/api"
-DEFAULT_TENANT_BASE_URL = "http://localhost:8020"
+DEFAULT_TENANT_BASE_URL = "http://localhost:8020/api"
 
 # Output directory (relative to AIAS project root) for the v3 YAML collection.
 DEFAULT_OUTPUT = "postman/collections/AIAS_APIS"
@@ -1158,7 +1157,7 @@ ENVIRONMENTS = [
         "file": "postman/environments/AIAS_Local.postman_environment.json",
         "id": "aias-local-env-0000-0000-0000-000000000001",
         "base_url": "http://localhost:8020/api",
-        "tenant_base_url": "http://localhost:8020",
+        "tenant_base_url": "http://localhost:8020/api",
         "user_email": "superadmin@aias.test",
         "user_password": "password",
     },
@@ -1167,7 +1166,7 @@ ENVIRONMENTS = [
         "file": "postman/environments/AIAS_Development.postman_environment.json",
         "id": "aias-dev-env-00000-0000-0000-000000000002",
         "base_url": "https://dev.aias.app/api",
-        "tenant_base_url": "https://dev.aias.app",
+        "tenant_base_url": "https://dev.aias.app/api",
         "user_email": "dev@aias.app",
         "user_password": "",
     },
@@ -1176,7 +1175,7 @@ ENVIRONMENTS = [
         "file": "postman/environments/AIAS_Staging.postman_environment.json",
         "id": "aias-staging-env-000-0000-0000-000000000003",
         "base_url": "https://staging.aias.app/api",
-        "tenant_base_url": "https://staging.aias.app",
+        "tenant_base_url": "https://staging.aias.app/api",
         "user_email": "staging@aias.app",
         "user_password": "",
     },
@@ -1185,7 +1184,7 @@ ENVIRONMENTS = [
         "file": "postman/environments/AIAS_Production.postman_environment.json",
         "id": "aias-prod-env-00000-0000-0000-000000000004",
         "base_url": "https://app.aias.app/api",
-        "tenant_base_url": "https://app.aias.app",
+        "tenant_base_url": "https://app.aias.app/api",
         "user_email": "",
         "user_password": "",
     },
@@ -1394,7 +1393,7 @@ def singular(name: str) -> str:
 
 def get_host_var(mod: dict) -> str:
     """Return the Postman env variable name for the base URL based on module scope."""
-    return "tenant_base_url" if mod["scope"] == "tenant" else "base_url"
+    return "base_url"
 
 
 # ---------------------------------------------------------------------------
@@ -1622,7 +1621,7 @@ def build_auth_requests() -> list[tuple[str, dict]]:
             description=(
                 "Verify the API server is running and reachable.\n\n"
                 "No authentication required. Returns `200 OK` with a status message when the server is healthy. "
-                "Both central (`{{base_url}}/v1/health`) and tenant (`{{tenant_base_url}}/v1/health`) health "
+                "Both central (`{{base_url}}/v1/health`) and tenant (`{{base_url}}/v1/health`) health "
                 "endpoints are available."
             ),
             url="{{base_url}}/v1/health", method="GET",
@@ -1649,7 +1648,7 @@ def build_auth_requests() -> list[tuple[str, dict]]:
                 "Returns a Bearer `access_token` saved automatically to `{{access_token}}`. "
                 "After login, all tenant-scoped requests use `{{tenant_id}}` from the environment."
             ),
-            url="{{tenant_base_url}}/v1/auth/login", method="POST",
+            url="{{base_url}}/v1/auth/login", method="POST",
             body=_json_body({"tenant_id": "{{tenant_id}}", "email": "{{user_email}}", "password": "{{user_password}}"}),
             exec_lines=LOGIN_TEST_SCRIPT, order=3000,
         ),
@@ -1665,7 +1664,7 @@ def build_auth_requests() -> list[tuple[str, dict]]:
                 "Note: `tenant_id`, `username`, `phone`, `title`, and other profile fields are **not accepted** "
                 "by this endpoint. Use the Create Tenant User endpoint for full profile creation."
             ),
-            url="{{tenant_base_url}}/v1/auth/register", method="POST",
+            url="{{base_url}}/v1/auth/register", method="POST",
             body=_json_body({
                 "first_name": "Jane",
                 "last_name": "Auditor",
@@ -1682,7 +1681,7 @@ def build_auth_requests() -> list[tuple[str, dict]]:
                 "The test script saves `user_id` (identifier string) and `tenant_id` to the active environment. "
                 "Pass `tenant_id` as a query parameter to scope the request."
             ),
-            url="{{tenant_base_url}}/v1/auth/me", method="GET",
+            url="{{base_url}}/v1/auth/me", method="GET",
             query_params=[{"key": "tenant_id", "value": "{{tenant_id}}", "description": "Tenant identifier string"}],
             exec_lines=ME_TEST_SCRIPT, order=5000,
         ),
@@ -1703,7 +1702,7 @@ def build_auth_requests() -> list[tuple[str, dict]]:
                 "After logout the `access_token` is invalidated. "
                 "Pass `tenant_id` to ensure the correct tenant context is used for token revocation."
             ),
-            url="{{tenant_base_url}}/v1/auth/logout", method="POST",
+            url="{{base_url}}/v1/auth/logout", method="POST",
             body=_json_body({"tenant_id": "{{tenant_id}}"}),
             exec_lines=GENERIC_TEST_SCRIPT, order=7000,
         ),
@@ -1738,7 +1737,6 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
         "description": COLLECTION_DESCRIPTION,
         "variables": {
             "base_url": base_url,
-            "tenant_base_url": tenant_base_url,
         },
         "auth": [{
             "id": BEARER_AUTH_ID,
@@ -1789,8 +1787,8 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
             "(POST requests) or query param (GET requests). "
             "Central login does **not** require `tenant_id`.\n\n"
             "**Central login URL:** `{{base_url}}/v1/auth/login`\n"
-            "**Tenant login URL:** `{{tenant_base_url}}/v1/auth/login`\n"
-            "**Tenant register URL:** `{{tenant_base_url}}/v1/auth/register` (public endpoint)"
+            "**Tenant login URL:** `{{base_url}}/v1/auth/login`\n"
+            "**Tenant register URL:** `{{base_url}}/v1/auth/register` (public endpoint)"
         ),
         "order": 1000,
     })
@@ -1819,7 +1817,7 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
             "- **GET / DELETE:** pass `tenant_id` as a query parameter.\n"
             "- `tenant_id` is the tenant identifier string (e.g. `AT.1.1748000000`), "
             "auto-saved to `{{tenant_id}}` after login.\n\n"
-            "**Base URL:** `{{tenant_base_url}}` (e.g. `http://localhost:8020`)\n\n"
+            "**Base URL:** `{{base_url}}` (e.g. `http://localhost:8020/api`)\n\n"
             "### ✅ Implemented Endpoints\n\n"
             "| Resource | Endpoints |\n"
             "|---------|---------|\n"
@@ -1861,7 +1859,6 @@ def write_v3_collection(output_dir: Path, base_url: str, tenant_base_url: str, c
 def build_env_file(env: dict) -> dict:
     base_vars = [
         {"key": "base_url",        "value": env["base_url"],        "enabled": True, "type": "default"},
-        {"key": "tenant_base_url", "value": env["tenant_base_url"], "enabled": True, "type": "default"},
         {"key": "user_email",      "value": env["user_email"],      "enabled": True, "type": "default"},
         {"key": "user_password",   "value": env["user_password"],   "enabled": True, "type": "secret"},
         {"key": "access_token",    "value": "",                     "enabled": True, "type": "secret"},

@@ -4,7 +4,7 @@ description: 'Retrieve a single priority level by its `identifier` string.
 
 
   Replace `{{priority_level_id}}` with the identifier saved after creation.'
-url: '{{tenant_base_url}}/v1/priority-levels/{{priority_level_id}}'
+url: '{{base_url}}/v1/priority-levels/{{priority_level_id}}'
 method: GET
 headers:
   Accept: application/json

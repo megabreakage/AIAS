@@ -8,12 +8,12 @@ description: "# AIAS — Adaptive Intelligent Audit System\n\nA multi-tenant Lar
   \ Stancl Tenancy v3\n\n---\n\n## ✅ Currently Implemented Endpoints\n\n**Central\
   \ API** (`{{base_url}}/v1/...`)\n- Auth: login, logout, me\n- Tenants: CRUD + create\
   \ tenant user\n- Users: create (POST only)\n- Continents: full CRUD + restore\n\
-  - Countries: full CRUD + restore\n\n**Tenant API** (`{{tenant_base_url}}/v1/...`\
-  \ — requires `tenant_id`)\n- Auth: register, login, logout, me\n- Priority Levels:\
-  \ full CRUD + restore\n- Preambles: full CRUD + restore\n- Users: full CRUD + restore\n\
-  - Checklist Types: full CRUD + restore\n- Section Styles: full CRUD + restore\n\
-  - Checklists: full CRUD + restore\n- Companies: full CRUD + restore\n- Departments:\
-  \ full CRUD + restore\n- Audits: full CRUD + restore\n\n**⚠️ Planned / Not Yet Implemented:**\
+  - Countries: full CRUD + restore\n\n**Tenant API** (`{{base_url}}/v1/...` — requires\
+  \ `tenant_id`)\n- Auth: register, login, logout, me\n- Priority Levels: full CRUD\
+  \ + restore\n- Preambles: full CRUD + restore\n- Users: full CRUD + restore\n- Checklist\
+  \ Types: full CRUD + restore\n- Section Styles: full CRUD + restore\n- Checklists:\
+  \ full CRUD + restore\n- Companies: full CRUD + restore\n- Departments: full CRUD\
+  \ + restore\n- Audits: full CRUD + restore\n\n**⚠️ Planned / Not Yet Implemented:**\
   \ Roles, Service Users, API Keys, MFA, Audit Standards, Regulation Frameworks, Risk\
   \ Categories, Clients, Audit Templates, Audit Engagements, Audit Plans, Audit Procedures,\
   \ Workpapers, Findings, Finding Responses, Risk Assessments, Risk Matrices, Compliance\
@@ -21,25 +21,24 @@ description: "# AIAS — Adaptive Intelligent Audit System\n\nA multi-tenant Lar
   \ Firm Settings.\n\n---\n\n## Authentication\n\nAll protected endpoints require\
   \ a `Bearer` token in the `Authorization` header.\n\n**Central login:** `POST {{base_url}}/v1/auth/login`\
   \ — email + password only. Returns a token for super-admin operations (tenants,\
-  \ users, reference data).\n\n**Tenant login:** `POST {{tenant_base_url}}/v1/auth/login`\
+  \ users, reference data).\n\n**Tenant login:** `POST {{base_url}}/v1/auth/login`\
   \ — requires `tenant_id` in the JSON body alongside email and password. Returns\
   \ a token scoped to that tenant's database.\n\nAfter login, `access_token`, `user_id`,\
   \ and `tenant_id` are auto-saved to the environment by the test script.\n\n---\n\
   \n## Route Prefixes\n\n| Scope | Base Variable | Example URL |\n|-------|--------------|------------|\n\
-  | Central | `{{base_url}}` | `{{base_url}}/v1/tenants` |\n| Tenant | `{{tenant_base_url}}`\
-  \ | `{{tenant_base_url}}/v1/audits` |\n\n- `base_url` includes `/api` (e.g. `http://localhost:8020/api`)\
-  \ — used for central routes.\n- `tenant_base_url` is without `/api` (e.g. `http://localhost:8020`)\
-  \ — used for tenant routes.\n\n---\n\n## Tenant Identification\n\nTenancy is initialised\
-  \ via the `tenant_id` body/query parameter (`InitializeTenancyByBodyParam` middleware).\n\
-  \nPass `tenant_id` (identifier string, e.g. `AT.1.1748000000`) in every tenant-scoped\
-  \ request:\n- **POST / PUT / PATCH** — include `tenant_id` in the JSON body\n- **GET\
-  \ / DELETE** — include `tenant_id` as a query parameter\n\nThe `{{tenant_id}}` variable\
-  \ is auto-populated after login and stored in the environment.\n\n---\n\n## Response\
-  \ Envelope\n\nAll responses follow a consistent `BaseResource` envelope:\n```json\n\
-  {\n  \"status\": \"success\",\n  \"message\": \"Resource retrieved successfully\"\
-  ,\n  \"data\": { ... }\n}\n```\nPaginated list responses include `metadata` with\
-  \ `current_page`, `last_page`, `per_page`, `total`.\n\n---\n\n## Pagination\n\n\
-  List endpoints accept: `?page=1&per_page=15&search=&sort_by=created_at&sort_order=desc&show_deleted=0`\n\
+  | Central | `{{base_url}}` | `{{base_url}}/v1/tenants` |\n| Tenant | `{{base_url}}`\
+  \ | `{{base_url}}/v1/audits` |\n\n- `base_url` is `http://localhost:8020/api` —\
+  \ used for all routes (central and tenant).\n\n---\n\n## Tenant Identification\n\
+  \nTenancy is initialised via the `tenant_id` body/query parameter (`InitializeTenancyByBodyParam`\
+  \ middleware).\n\nPass `tenant_id` (identifier string, e.g. `AT.1.1748000000`) in\
+  \ every tenant-scoped request:\n- **POST / PUT / PATCH** — include `tenant_id` in\
+  \ the JSON body\n- **GET / DELETE** — include `tenant_id` as a query parameter\n\
+  \nThe `{{tenant_id}}` variable is auto-populated after login and stored in the environment.\n\
+  \n---\n\n## Response Envelope\n\nAll responses follow a consistent `BaseResource`\
+  \ envelope:\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Resource retrieved\
+  \ successfully\",\n  \"data\": { ... }\n}\n```\nPaginated list responses include\
+  \ `metadata` with `current_page`, `last_page`, `per_page`, `total`.\n\n---\n\n##\
+  \ Pagination\n\nList endpoints accept: `?page=1&per_page=15&search=&sort_by=created_at&sort_order=desc&show_deleted=0`\n\
   \n---\n\n## Soft Deletes\n\nAll resources support soft-delete. Deleted records are\
   \ hidden by default. Restore with `POST /{identifier}/restore`. Pass `?show_deleted=1`\
   \ to include deleted records in lists.\n\n---\n\n## ID / Identifier Convention\n\
@@ -63,7 +62,6 @@ description: "# AIAS — Adaptive Intelligent Audit System\n\nA multi-tenant Lar
   \ · Pest v4"
 variables:
   base_url: http://localhost:8020/api
-  tenant_base_url: http://localhost:8020
 auth:
 - id: cba390d9-dacd-4cef-8639-728436a27ea3
   type: bearer

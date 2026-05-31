@@ -5,7 +5,7 @@ description: 'Update an existing finding record.
 
   Send only the fields you want to change — all fields are optional on update. Replace
   `{{finding_id}}` with the identifier of the record to update.'
-url: '{{tenant_base_url}}/v1/findings/{{finding_id}}'
+url: '{{base_url}}/v1/findings/{{finding_id}}'
 method: PUT
 headers:
   Accept: application/json

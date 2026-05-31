@@ -5,7 +5,7 @@ description: 'Create a new risk matrice record.
 
   On success the `identifier` of the new record is automatically saved to `{{risk_matrix_id}}`
   in the active environment via the post-response test script.'
-url: '{{tenant_base_url}}/v1/risk-matrices'
+url: '{{base_url}}/v1/risk-matrices'
 method: POST
 headers:
   Accept: application/json

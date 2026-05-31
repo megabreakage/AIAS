@@ -3,7 +3,7 @@ values:
   - key: base_url
     value: 'http://localhost:8020/api'
   - key: tenant_base_url
-    value: 'http://localhost:8020'
+    value: 'http://localhost:8020/api'
   - key: user_email
     value: superadmin@aias.test
   - key: user_password

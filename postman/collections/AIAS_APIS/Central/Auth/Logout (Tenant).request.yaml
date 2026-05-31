@@ -5,7 +5,7 @@ description: 'Revoke the current Bearer access token for a tenant user.
 
   After logout the `access_token` is invalidated. Pass `tenant_id` to ensure the correct
   tenant context is used for token revocation.'
-url: '{{tenant_base_url}}/v1/auth/logout'
+url: '{{base_url}}/v1/auth/logout'
 method: POST
 headers:
   Accept: application/json

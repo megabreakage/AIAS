@@ -1,7 +1,7 @@
 $kind: http-request
 name: Review Control Test
 description: Review Control Test
-url: '{{tenant_base_url}}/v1/control-tests/{{control_test_id}}/review'
+url: '{{base_url}}/v1/control-tests/{{control_test_id}}/review'
 method: POST
 headers:
   Accept: application/json

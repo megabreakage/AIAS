@@ -3,7 +3,7 @@ name: Delete Compliance Evidence
 description: Soft-delete a compliance evidence record. The record is not permanently
   removed. Restore it with the corresponding `POST /compliance-evidence/{{compliance_evidence_id}}/restore`
   request.
-url: '{{tenant_base_url}}/v1/compliance-evidence/{{compliance_evidence_id}}'
+url: '{{base_url}}/v1/compliance-evidence/{{compliance_evidence_id}}'
 method: DELETE
 headers:
   Accept: application/json

@@ -3,7 +3,7 @@ name: Delete Section Style
 description: Soft-delete a section style record. The record is not permanently removed.
   Restore it with the corresponding `POST /section-styles/{{section_style_id}}/restore`
   request.
-url: '{{tenant_base_url}}/v1/section-styles/{{section_style_id}}'
+url: '{{base_url}}/v1/section-styles/{{section_style_id}}'
 method: DELETE
 headers:
   Accept: application/json

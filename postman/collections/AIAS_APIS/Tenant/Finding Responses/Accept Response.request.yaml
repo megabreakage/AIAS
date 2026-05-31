@@ -1,7 +1,7 @@
 $kind: http-request
 name: Accept Response
 description: Accept Response
-url: '{{tenant_base_url}}/v1/finding-responses/{{finding_response_id}}/accept'
+url: '{{base_url}}/v1/finding-responses/{{finding_response_id}}/accept'
 method: POST
 headers:
   Accept: application/json

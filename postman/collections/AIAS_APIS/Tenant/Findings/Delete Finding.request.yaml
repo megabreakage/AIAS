@@ -2,7 +2,7 @@ $kind: http-request
 name: Delete Finding
 description: Soft-delete a finding record. The record is not permanently removed.
   Restore it with the corresponding `POST /findings/{{finding_id}}/restore` request.
-url: '{{tenant_base_url}}/v1/findings/{{finding_id}}'
+url: '{{base_url}}/v1/findings/{{finding_id}}'
 method: DELETE
 headers:
   Accept: application/json

@@ -3,7 +3,7 @@ name: Delete Priority Level
 description: Soft-delete a priority level record. The record is not permanently removed.
   Restore it with the corresponding `POST /priority-levels/{{priority_level_id}}/restore`
   request.
-url: '{{tenant_base_url}}/v1/priority-levels/{{priority_level_id}}'
+url: '{{base_url}}/v1/priority-levels/{{priority_level_id}}'
 method: DELETE
 headers:
   Accept: application/json

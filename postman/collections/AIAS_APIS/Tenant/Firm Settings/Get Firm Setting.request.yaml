@@ -4,7 +4,7 @@ description: 'Retrieve a single firm setting by its `identifier` string.
 
 
   Replace `{{firm_settings_id}}` with the identifier saved after creation.'
-url: '{{tenant_base_url}}/v1/firm-settings/{{firm_settings_id}}'
+url: '{{base_url}}/v1/firm-settings/{{firm_settings_id}}'
 method: GET
 headers:
   Accept: application/json

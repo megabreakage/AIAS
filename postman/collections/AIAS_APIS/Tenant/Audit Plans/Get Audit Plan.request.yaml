@@ -4,7 +4,7 @@ description: 'Retrieve a single audit plan by its `identifier` string.
 
 
   Replace `{{audit_plan_id}}` with the identifier saved after creation.'
-url: '{{tenant_base_url}}/v1/audit-plans/{{audit_plan_id}}'
+url: '{{base_url}}/v1/audit-plans/{{audit_plan_id}}'
 method: GET
 headers:
   Accept: application/json

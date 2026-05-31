@@ -17,7 +17,7 @@ description: 'Register a new user account within a tenant context (public endpoi
   Note: `tenant_id`, `username`, `phone`, `title`, and other profile fields are **not
   accepted** by this endpoint. Use the Create Tenant User endpoint for full profile
   creation.'
-url: '{{tenant_base_url}}/v1/auth/register'
+url: '{{base_url}}/v1/auth/register'
 method: POST
 headers:
   Accept: application/json

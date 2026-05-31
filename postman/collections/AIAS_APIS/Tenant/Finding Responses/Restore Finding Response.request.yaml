@@ -1,7 +1,7 @@
 $kind: http-request
 name: Restore Finding Response
 description: Restore Finding Response
-url: '{{tenant_base_url}}/v1/finding-responses/{{finding_response_id}}/restore'
+url: '{{base_url}}/v1/finding-responses/{{finding_response_id}}/restore'
 method: POST
 headers:
   Accept: application/json

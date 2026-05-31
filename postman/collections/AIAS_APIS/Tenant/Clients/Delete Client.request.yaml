@@ -2,7 +2,7 @@ $kind: http-request
 name: Delete Client
 description: Soft-delete a client record. The record is not permanently removed. Restore
   it with the corresponding `POST /clients/{{client_id}}/restore` request.
-url: '{{tenant_base_url}}/v1/clients/{{client_id}}'
+url: '{{base_url}}/v1/clients/{{client_id}}'
 method: DELETE
 headers:
   Accept: application/json

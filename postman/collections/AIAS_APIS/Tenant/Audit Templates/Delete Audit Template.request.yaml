@@ -3,7 +3,7 @@ name: Delete Audit Template
 description: Soft-delete a audit template record. The record is not permanently removed.
   Restore it with the corresponding `POST /audit-templates/{{audit_template_id}}/restore`
   request.
-url: '{{tenant_base_url}}/v1/audit-templates/{{audit_template_id}}'
+url: '{{base_url}}/v1/audit-templates/{{audit_template_id}}'
 method: DELETE
 headers:
   Accept: application/json

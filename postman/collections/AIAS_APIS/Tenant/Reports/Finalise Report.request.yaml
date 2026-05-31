@@ -1,7 +1,7 @@
 $kind: http-request
 name: Finalise Report
 description: Finalise Report
-url: '{{tenant_base_url}}/v1/reports/{{report_id}}/finalise'
+url: '{{base_url}}/v1/reports/{{report_id}}/finalise'
 method: POST
 headers:
   Accept: application/json

@@ -5,7 +5,7 @@ description: 'Update an existing compliance evidence record.
 
   Send only the fields you want to change — all fields are optional on update. Replace
   `{{compliance_evidence_id}}` with the identifier of the record to update.'
-url: '{{tenant_base_url}}/v1/compliance-evidence/{{compliance_evidence_id}}'
+url: '{{base_url}}/v1/compliance-evidence/{{compliance_evidence_id}}'
 method: PUT
 headers:
   Accept: application/json

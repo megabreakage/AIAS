@@ -31,7 +31,7 @@ description: '## Authentication
 
   **Central login URL:** `{{base_url}}/v1/auth/login`
 
-  **Tenant login URL:** `{{tenant_base_url}}/v1/auth/login`
+  **Tenant login URL:** `{{base_url}}/v1/auth/login`
 
-  **Tenant register URL:** `{{tenant_base_url}}/v1/auth/register` (public endpoint)'
+  **Tenant register URL:** `{{base_url}}/v1/auth/register` (public endpoint)'
 order: 1000

@@ -5,7 +5,7 @@ description: 'Create a new control objective record.
 
   On success the `identifier` of the new record is automatically saved to `{{control_objective_id}}`
   in the active environment via the post-response test script.'
-url: '{{tenant_base_url}}/v1/control-objectives'
+url: '{{base_url}}/v1/control-objectives'
 method: POST
 headers:
   Accept: application/json
