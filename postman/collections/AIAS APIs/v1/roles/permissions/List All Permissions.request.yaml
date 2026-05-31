@@ -1,0 +1,8 @@
+$kind: http-request
+description: List All Permissions
+url: "{{baseUrl}}/v1/roles/permissions"
+method: GET
+body:
+  type: text
+  content: ""
+order: 1000

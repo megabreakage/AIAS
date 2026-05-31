@@ -1,0 +1,26 @@
+$kind: http-request
+description: |-
+  Retrieve a single tenant by its `identifier` string.
+
+  Replace `{{tenant_id}}` with the identifier saved after creation.
+url: "{{baseUrl}}/v1/tenants/:tenant_id"
+method: GET
+pathVariables:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 1000

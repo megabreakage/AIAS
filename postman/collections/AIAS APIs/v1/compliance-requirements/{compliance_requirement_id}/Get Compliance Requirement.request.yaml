@@ -1,0 +1,31 @@
+$kind: http-request
+description: |-
+  Retrieve a single compliance requirement by its `identifier` string.
+
+  Replace `{{compliance_requirement_id}}` with the identifier saved after creation.
+url: "{{baseUrl}}/v1/compliance-requirements/:compliance_requirement_id?tenant_id={{tenant_id}}"
+method: GET
+queryParams:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    description: Tenant identifier string (required)
+    $type: string
+pathVariables:
+  - key: compliance_requirement_id
+    value: "{{compliance_requirement_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 1000

@@ -1,0 +1,29 @@
+$kind: http-request
+description: Restore API Key
+url: "{{baseUrl}}/v1/api-keys/:id_id/restore"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id_id
+    value: "{{id_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: "{}"
+  $type: |-
+    {
+      "type": "object"
+    }
+order: 1000

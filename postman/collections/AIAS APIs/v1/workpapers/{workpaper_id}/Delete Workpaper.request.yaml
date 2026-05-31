@@ -1,0 +1,28 @@
+$kind: http-request
+description: Soft-delete a workpaper record. The record is not permanently removed. Restore it with the corresponding `POST /workpapers/{{workpaper_id}}/restore` request.
+url: "{{baseUrl}}/v1/workpapers/:workpaper_id?tenant_id={{tenant_id}}"
+method: DELETE
+queryParams:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    description: Tenant identifier string (required)
+    $type: string
+pathVariables:
+  - key: workpaper_id
+    value: "{{workpaper_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 3000

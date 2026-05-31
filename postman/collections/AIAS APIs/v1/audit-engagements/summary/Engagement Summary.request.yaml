@@ -1,0 +1,13 @@
+$kind: http-request
+description: Engagement Summary
+url: "{{baseUrl}}/v1/audit-engagements/summary?tenant_id={{tenant_id}}"
+method: GET
+queryParams:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    description: Tenant identifier string (required)
+    $type: string
+body:
+  type: text
+  content: ""
+order: 1000

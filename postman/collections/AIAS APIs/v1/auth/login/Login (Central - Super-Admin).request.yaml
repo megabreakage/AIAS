@@ -1,0 +1,30 @@
+$kind: http-request
+name: Login (Central / Super-Admin)
+description: |-
+  Authenticate as a central super-admin user.
+
+  Returns a Bearer `access_token` in `data.token`. The test script automatically saves `access_token`, `user_id`, and `tenant_id` to the active environment. Use `{{base_url}}/v1/auth/login` — no `tenant_id` is required for central login.
+url: "{{baseUrl}}/v1/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{user_email}}",
+      "password": "{{user_password}}"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+order: 1000

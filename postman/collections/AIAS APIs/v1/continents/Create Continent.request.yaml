@@ -1,0 +1,41 @@
+$kind: http-request
+description: |-
+  Create a new continent record.
+
+  On success the `identifier` of the new record is automatically saved to `{{continent_id}}` in the active environment via the post-response test script.
+url: "{{baseUrl}}/v1/continents"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Africa",
+      "slug": "africa",
+      "short_code": "AF",
+      "iso_code": "AF",
+      "status": true
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "short_code": {
+          "type": "string"
+        },
+        "iso_code": {
+          "type": "string"
+        },
+        "status": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 2000

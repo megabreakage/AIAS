@@ -1,0 +1,61 @@
+$kind: http-request
+description: |-
+  Update an existing compliance evidence record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{compliance_evidence_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/compliance-evidence/:compliance_evidence_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: compliance_evidence_id
+    value: "{{compliance_evidence_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "compliance_requirement_id": "{{compliance_requirement_id}}",
+      "title": "Signed CEO Certification Letter",
+      "description": "CEO certification signed and filed with SEC",
+      "evidence_date": "2026-03-25",
+      "collected_by": "{{user_id}}"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "compliance_requirement_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "collected_by": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

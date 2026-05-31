@@ -1,0 +1,45 @@
+$kind: http-request
+description: |-
+  Create a new tenant record.
+
+  On success the `identifier` of the new record is automatically saved to `{{tenant_id}}` in the active environment via the post-response test script.
+url: "{{baseUrl}}/v1/tenants"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Pinnacle Audit Partners",
+      "owner_id": "{{user_id}}",
+      "domain": "pinnacleaudit.aias.app",
+      "country_id": 1,
+      "data_center": "us-east-1",
+      "status": "active"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "owner_id": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "country_id": {
+          "type": "integer"
+        },
+        "data_center": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

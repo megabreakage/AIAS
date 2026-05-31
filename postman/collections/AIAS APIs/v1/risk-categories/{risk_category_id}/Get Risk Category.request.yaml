@@ -1,0 +1,26 @@
+$kind: http-request
+description: |-
+  Retrieve a single risk category by its `identifier` string.
+
+  Replace `{{risk_category_id}}` with the identifier saved after creation.
+url: "{{baseUrl}}/v1/risk-categories/:risk_category_id"
+method: GET
+pathVariables:
+  - key: risk_category_id
+    value: "{{risk_category_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 1000

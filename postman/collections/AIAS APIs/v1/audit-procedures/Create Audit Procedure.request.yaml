@@ -1,0 +1,50 @@
+$kind: http-request
+description: |-
+  Create a new audit procedure record.
+
+  On success the `identifier` of the new record is automatically saved to `{{audit_procedure_id}}` in the active environment via the post-response test script.
+url: "{{baseUrl}}/v1/audit-procedures"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_plan_id": "{{audit_plan_id}}",
+      "title": "Agree revenue per ledger to source documents",
+      "description": "Obtain the revenue ledger and agree totals to the trial balance",
+      "procedure_type": "substantive",
+      "assigned_to": "{{user_id}}",
+      "due_date": "2026-01-25"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "audit_plan_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "procedure_type": {
+          "type": "string"
+        },
+        "assigned_to": {
+          "type": "string"
+        },
+        "due_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+order: 2000

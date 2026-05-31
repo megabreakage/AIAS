@@ -1,0 +1,28 @@
+$kind: http-request
+description: Soft-delete a risk assessment record. The record is not permanently removed. Restore it with the corresponding `POST /risk-assessments/{{risk_assessment_id}}/restore` request.
+url: "{{baseUrl}}/v1/risk-assessments/:risk_assessment_id?tenant_id={{tenant_id}}"
+method: DELETE
+queryParams:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    description: Tenant identifier string (required)
+    $type: string
+pathVariables:
+  - key: risk_assessment_id
+    value: "{{risk_assessment_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 3000

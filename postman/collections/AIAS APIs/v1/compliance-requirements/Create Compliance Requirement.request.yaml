@@ -1,0 +1,50 @@
+$kind: http-request
+description: |-
+  Create a new compliance requirement record.
+
+  On success the `identifier` of the new record is automatically saved to `{{compliance_requirement_id}}` in the active environment via the post-response test script.
+url: "{{baseUrl}}/v1/compliance-requirements"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "regulation_framework_id": "{{regulation_framework_id}}",
+      "title": "Section 302 CEO/CFO Certification",
+      "description": "Chief executives must certify accuracy of financial reports",
+      "compliance_type": "mandatory",
+      "due_date": "2026-03-31"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "audit_engagement_id": {
+          "type": "string"
+        },
+        "regulation_framework_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "compliance_type": {
+          "type": "string"
+        },
+        "due_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+order: 2000

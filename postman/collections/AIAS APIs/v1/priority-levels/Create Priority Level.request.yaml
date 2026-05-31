@@ -1,0 +1,45 @@
+$kind: http-request
+description: |-
+  Create a new priority level record.
+
+  On success the `identifier` of the new record is automatically saved to `{{priority_level_id}}` in the active environment via the post-response test script.
+url: "{{baseUrl}}/v1/priority-levels"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Critical",
+      "description": "Immediate action required — business-critical impact.",
+      "level": 1,
+      "color": "#FF0000",
+      "is_active": true
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "level": {
+          "type": "integer"
+        },
+        "color": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 2000

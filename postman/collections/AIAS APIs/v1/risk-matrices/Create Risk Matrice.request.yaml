@@ -1,0 +1,41 @@
+$kind: http-request
+description: |-
+  Create a new risk matrice record.
+
+  On success the `identifier` of the new record is automatically saved to `{{risk_matrix_id}}` in the active environment via the post-response test script.
+url: "{{baseUrl}}/v1/risk-matrices"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "name": "FY2025 Risk Matrix",
+      "likelihood_scale": 5,
+      "impact_scale": 5
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "audit_engagement_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "likelihood_scale": {
+          "type": "integer"
+        },
+        "impact_scale": {
+          "type": "integer"
+        }
+      }
+    }
+order: 2000

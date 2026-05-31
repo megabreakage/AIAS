@@ -1,0 +1,41 @@
+$kind: http-request
+description: |-
+  Create a new checklist type record.
+
+  On success the `identifier` of the new record is automatically saved to `{{checklist_type_id}}` in the active environment via the post-response test script.
+url: "{{baseUrl}}/v1/checklist-types"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Pre-Engagement Checklist",
+      "description": "Checklist items to complete before commencing an audit engagement.",
+      "is_active": true,
+      "is_featured": false
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "is_featured": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 2000

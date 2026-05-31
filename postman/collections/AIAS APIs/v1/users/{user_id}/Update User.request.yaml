@@ -1,0 +1,85 @@
+$kind: http-request
+description: |-
+  Update an existing user record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{user_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/users/:user_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: user_id
+    value: "{{user_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "title": "Dr",
+      "first_name": "Jane",
+      "middle_name": "",
+      "last_name": "Auditor",
+      "username": "jane.auditor",
+      "email": "jane.auditor@pinnacleaudit.test",
+      "country_code": "+254",
+      "phone": "0712345678",
+      "password": "Password123!",
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": "Nairobi, Kenya",
+      "is_active": true
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "middle_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "preferred_timezone": {
+          "type": "string"
+        },
+        "office_location": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 2000

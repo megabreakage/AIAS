@@ -1,0 +1,95 @@
+$kind: http-request
+description: |-
+  Create a new user account scoped to this tenant and assign them a role.
+
+  The user is created in the tenant's isolated database. `role` is **required** and must be one of: `tenant`, `auditor`, `client`, `viewer`.
+
+  Required fields: `first_name`, `last_name`, `username` (unique within tenant), `email` (unique within tenant), `password` (min 8 chars, letters + numbers), `role`.
+
+  Optional: `title`, `middle_name`, `country_code`, `phone`, `preferred_timezone`, `office_location`, `avatar`, `notes`, `is_active`.
+
+  On success the user `identifier` is saved to `{{tenant_user_id}}` in the active environment.
+url: "{{baseUrl}}/v1/tenants/:tenant_id/users"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "title": "Ms",
+      "first_name": "Jane",
+      "middle_name": "",
+      "last_name": "Auditor",
+      "username": "jane.auditor",
+      "email": "jane.auditor@pinnacleaudit.test",
+      "country_code": "+254",
+      "phone": "0712345678",
+      "password": "Password123!",
+      "preferred_timezone": "Africa/Nairobi",
+      "office_location": "Nairobi, Kenya",
+      "is_active": true,
+      "role": "auditor"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "middle_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "preferred_timezone": {
+          "type": "string"
+        },
+        "office_location": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    }
+order: 1000

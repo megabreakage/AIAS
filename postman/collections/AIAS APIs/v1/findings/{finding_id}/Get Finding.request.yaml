@@ -1,0 +1,31 @@
+$kind: http-request
+description: |-
+  Retrieve a single finding by its `identifier` string.
+
+  Replace `{{finding_id}}` with the identifier saved after creation.
+url: "{{baseUrl}}/v1/findings/:finding_id?tenant_id={{tenant_id}}"
+method: GET
+queryParams:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    description: Tenant identifier string (required)
+    $type: string
+pathVariables:
+  - key: finding_id
+    value: "{{finding_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 1000

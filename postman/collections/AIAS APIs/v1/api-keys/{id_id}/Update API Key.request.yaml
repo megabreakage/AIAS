@@ -1,0 +1,49 @@
+$kind: http-request
+description: |-
+  Update an existing api key record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{id_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/api-keys/:id_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id_id
+    value: "{{id_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "service_user_id": "{{service_user_id}}",
+      "name": "Production Key",
+      "expires_at": "2027-12-31"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "service_user_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+order: 2000

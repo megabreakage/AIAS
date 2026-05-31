@@ -1,0 +1,49 @@
+$kind: http-request
+description: |-
+  Update an existing service user record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{id_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/service-users/:id_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id_id
+    value: "{{id_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "name": "Integration Bot",
+      "email": "bot@pinnacleaudit.test",
+      "status": true
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "status": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 2000

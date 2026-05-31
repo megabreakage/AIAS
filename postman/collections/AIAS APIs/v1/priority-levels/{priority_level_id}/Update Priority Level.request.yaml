@@ -1,0 +1,60 @@
+$kind: http-request
+description: |-
+  Update an existing priority level record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{priority_level_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/priority-levels/:priority_level_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: priority_level_id
+    value: "{{priority_level_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Critical",
+      "description": "Immediate action required — business-critical impact.",
+      "level": 1,
+      "color": "#FF0000",
+      "is_active": true
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "level": {
+          "type": "integer"
+        },
+        "color": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 2000

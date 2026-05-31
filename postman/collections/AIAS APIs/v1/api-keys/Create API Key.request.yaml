@@ -1,0 +1,34 @@
+$kind: http-request
+description: |-
+  Create a new api key record.
+
+  On success the `identifier` of the new record is automatically saved to `{{id_id}}` in the active environment via the post-response test script.
+url: "{{baseUrl}}/v1/api-keys"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "service_user_id": "{{service_user_id}}",
+      "name": "Production Key",
+      "expires_at": "2027-12-31"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "service_user_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+order: 2000

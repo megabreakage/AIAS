@@ -1,0 +1,28 @@
+$kind: http-request
+description: Export Report (PDF)
+url: "{{baseUrl}}/v1/reports/:report_id/export?tenant_id={{tenant_id}}"
+method: GET
+queryParams:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    description: Tenant identifier string (required)
+    $type: string
+pathVariables:
+  - key: report_id
+    value: "{{report_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 1000

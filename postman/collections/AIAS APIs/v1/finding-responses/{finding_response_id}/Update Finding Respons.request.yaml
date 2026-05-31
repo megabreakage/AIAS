@@ -1,0 +1,61 @@
+$kind: http-request
+description: |-
+  Update an existing finding respons record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{finding_response_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/finding-responses/:finding_response_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: finding_response_id
+    value: "{{finding_response_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "finding_id": "{{finding_id}}",
+      "response": "Management accepts the finding. A formal revenue recognition policy will be developed and staff trained by Q2 2026.",
+      "action_plan": "Engage external consultant to develop policy",
+      "target_date": "2026-06-30",
+      "responsible_person": "CFO"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "finding_id": {
+          "type": "string"
+        },
+        "response": {
+          "type": "string"
+        },
+        "action_plan": {
+          "type": "string"
+        },
+        "target_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "responsible_person": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

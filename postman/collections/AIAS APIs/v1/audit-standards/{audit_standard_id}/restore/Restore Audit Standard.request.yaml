@@ -1,0 +1,29 @@
+$kind: http-request
+description: Restore Audit Standard
+url: "{{baseUrl}}/v1/audit-standards/:audit_standard_id/restore"
+method: POST
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: audit_standard_id
+    value: "{{audit_standard_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: "{}"
+  $type: |-
+    {
+      "type": "object"
+    }
+order: 1000

@@ -1,0 +1,60 @@
+$kind: http-request
+description: |-
+  Update an existing section style record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{section_style_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/section-styles/:section_style_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: section_style_id
+    value: "{{section_style_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Two Column Layout",
+      "description": "A two-column layout for side-by-side checklist items.",
+      "columns": 2,
+      "is_active": true,
+      "is_featured": false
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "is_featured": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 2000

@@ -1,0 +1,40 @@
+$kind: http-request
+description: |-
+  Retrieve a paginated list of finding responses.
+
+  Supports filtering via `search`, sorting via `sort_by`/`sort_order`, and pagination via `page`/`per_page` (max 100 per page). Pass `show_deleted=1` to include soft-deleted records. Pass `tenant_id` as a query parameter to scope results to the tenant.
+url: "{{baseUrl}}/v1/finding-responses?tenant_id={{tenant_id}}&page=1&per_page=15&search=&sort_by=created_at&sort_order=desc&show_deleted=0"
+method: GET
+queryParams:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    description: Tenant identifier string (required)
+    $type: string
+  - key: page
+    value: "1"
+    description: "Page number (min: 1)"
+    $type: integer
+  - key: per_page
+    value: "15"
+    description: "Items per page (max: 100)"
+    $type: integer
+  - key: search
+    value: ""
+    description: Full-text search term
+    $type: string
+  - key: sort_by
+    value: created_at
+    description: Sort column
+    $type: string
+  - key: sort_order
+    value: desc
+    description: asc | desc
+    $type: string
+  - key: show_deleted
+    value: "0"
+    description: "Include soft-deleted: 0|1"
+    $type: integer
+body:
+  type: text
+  content: ""
+order: 1000

@@ -1,0 +1,72 @@
+$kind: http-request
+description: |-
+  Update an existing risk assessment record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{risk_assessment_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/risk-assessments/:risk_assessment_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: risk_assessment_id
+    value: "{{risk_assessment_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "audit_engagement_id": "{{audit_engagement_id}}",
+      "risk_category_id": "{{risk_category_id}}",
+      "title": "Revenue Completeness Risk",
+      "description": "Risk that revenue is not completely recorded",
+      "inherent_risk_level": "high",
+      "control_risk_level": "medium",
+      "detection_risk_level": "low",
+      "assessed_risk_level": "high"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "audit_engagement_id": {
+          "type": "string"
+        },
+        "risk_category_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "inherent_risk_level": {
+          "type": "string"
+        },
+        "control_risk_level": {
+          "type": "string"
+        },
+        "detection_risk_level": {
+          "type": "string"
+        },
+        "assessed_risk_level": {
+          "type": "string"
+        }
+      }
+    }
+order: 2000

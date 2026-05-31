@@ -1,0 +1,50 @@
+$kind: http-request
+description: |-
+  Update an existing role record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{role_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/roles/:role_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: role_id
+    value: "{{role_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "name": "auditor",
+      "permissions": [
+        "view audit-engagements",
+        "create workpapers"
+      ]
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+order: 2000

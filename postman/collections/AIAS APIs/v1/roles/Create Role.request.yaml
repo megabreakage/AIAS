@@ -1,0 +1,35 @@
+$kind: http-request
+description: |-
+  Create a new role record.
+
+  On success the `identifier` of the new record is automatically saved to `{{role_id}}` in the active environment via the post-response test script.
+url: "{{baseUrl}}/v1/roles"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "auditor",
+      "permissions": [
+        "view audit-engagements",
+        "create workpapers"
+      ]
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+order: 2000

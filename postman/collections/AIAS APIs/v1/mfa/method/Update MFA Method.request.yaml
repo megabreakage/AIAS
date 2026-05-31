@@ -1,0 +1,14 @@
+$kind: http-request
+description: Update MFA Method
+url: "{{baseUrl}}/v1/mfa/method"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{}"
+  $type: |-
+    {
+      "type": "object"
+    }
+order: 1000

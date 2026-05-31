@@ -1,0 +1,56 @@
+$kind: http-request
+description: |-
+  Update an existing audit standard record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{audit_standard_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/audit-standards/:audit_standard_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: audit_standard_id
+    value: "{{audit_standard_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "name": "ISA 315",
+      "code": "ISA-315",
+      "description": "Identifying and Assessing Risks of Material Misstatement",
+      "issuing_body": "IAASB",
+      "status": true
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "issuing_body": {
+          "type": "string"
+        },
+        "status": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 2000

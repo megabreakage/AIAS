@@ -1,0 +1,28 @@
+$kind: http-request
+description: Soft-delete a control objective record. The record is not permanently removed. Restore it with the corresponding `POST /control-objectives/{{control_objective_id}}/restore` request.
+url: "{{baseUrl}}/v1/control-objectives/:control_objective_id?tenant_id={{tenant_id}}"
+method: DELETE
+queryParams:
+  - key: tenant_id
+    value: "{{tenant_id}}"
+    description: Tenant identifier string (required)
+    $type: string
+pathVariables:
+  - key: control_objective_id
+    value: "{{control_objective_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: text
+  content: ""
+order: 3000

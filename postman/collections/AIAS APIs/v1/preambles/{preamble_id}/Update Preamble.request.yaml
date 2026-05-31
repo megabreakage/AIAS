@@ -1,0 +1,61 @@
+$kind: http-request
+description: |-
+  Update an existing preamble record.
+
+  Send only the fields you want to change — all fields are optional on update. Replace `{{preamble_id}}` with the identifier of the record to update.
+url: "{{baseUrl}}/v1/preambles/:preamble_id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: preamble_id
+    value: "{{preamble_id}}"
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "tenant_id": "{{tenant_id}}",
+      "name": "Quality Management Framework Preamble",
+      "description": "Establishes the scope and objectives of the quality management framework.",
+      "status": "draft",
+      "effective_date": "2026-01-01",
+      "is_featured": false
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "effective_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "is_featured": {
+          "type": "boolean"
+        }
+      }
+    }
+order: 2000
