@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('v1')->group(function () {
+Route::prefix('api/v1')->group(function () {
     // Health check (per-tenant, requires auth to resolve tenant)
     Route::middleware(['auth:api', 'tenant.auth'])->get('/health', function () {
         return response()->json([
