@@ -7,7 +7,7 @@
         "dev": "vite",
         "docs:export": "php artisan scramble:export --path=storage/api-docs/openapi.json",
         "docs:build": "npm run docs:export && npx @redocly/cli build-docs storage/api-docs/openapi.json --output=public/docs/index.html",
-        "docs:preview": "npx @redocly/cli preview-docs storage/api-docs/openapi.json"
+        "docs:preview": "npx @redocly/cli preview-docs storage/api-docs/openapi.json --port=8020 --host=localhost"
     },
     "devDependencies": {
         "@redocly/cli": "^1.34.15",
