@@ -10,7 +10,7 @@
         "docs:preview": "npx @redocly/cli preview-docs storage/api-docs/openapi.json"
     },
     "devDependencies": {
-        "@redocly/cli": "^1.34.0",
+        "@redocly/cli": "^1.34.15",
         "@tailwindcss/vite": "^4.0.0",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^3.1",

@@ -6,11 +6,10 @@ theme:
   openapi:
     showExtensions: false
 
-lint:
-  rules:
-    no-unused-components: warn
-    operation-operationId: warn
-    operation-summary: warn
-    info-contact: off
-    info-license: off
-    tag-description: off
+rules:
+  no-unused-components: warn
+  operation-operationId: warn
+  operation-summary: warn
+  info-contact: off
+  info-license: off
+  tag-description: off
