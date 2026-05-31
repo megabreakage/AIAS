@@ -18,7 +18,7 @@ return [
      * Multiple includes or wildcards → server defaults to / and paths stay full (/api/users).
      * Override with `servers`, or use Scramble::registerApi() for separate bases.
      */
-    'api_path' => 'api',
+    'api_path' => 'api/v1',
 
     /*
      * Your API domain. By default, app domain is used. This is also a part of the default API routes
@@ -29,18 +29,39 @@ return [
     /*
      * The path where your OpenAPI specification will be exported.
      */
-    'export_path' => 'api.json',
+    'export_path' => 'storage/api-docs/openapi.json',
 
     'info' => [
         /*
          * API version.
          */
-        'version' => env('API_VERSION', '0.0.1'),
+        'version' => env('API_VERSION', '1.0.0'),
 
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => '',
+        'description' => <<<'MD'
+        ## AIAS — Adaptive Intelligent Audit System
+
+        Multi-tenant audit management API built on Laravel 13 with Passport OAuth2 authentication.
+
+        ### Authentication
+        All protected endpoints require a **Bearer token** obtained via `POST /auth/login`.
+        Include it in the `Authorization` header: `Authorization: Bearer <token>`.
+
+        ### Multi-Tenancy
+        Tenant-scoped endpoints automatically resolve the tenant context from the authenticated
+        user's `tenant_id`. No explicit tenant parameter is required in request bodies.
+
+        ### Response Envelope
+        All responses follow a consistent envelope:
+        ```json
+        { "data": { ... }, "meta": { "request_id": "...", "version": "v1", "tenant": "..." } }
+        ```
+
+        ### Pagination
+        List endpoints accept `page` and `per_page` query parameters.
+        MD,
     ],
 
     /*
