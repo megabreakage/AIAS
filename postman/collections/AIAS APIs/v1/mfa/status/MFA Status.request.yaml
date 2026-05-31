@@ -1,8 +1,0 @@
-$kind: http-request
-description: MFA Status
-url: "{{baseUrl}}/v1/mfa/status"
-method: GET
-body:
-  type: text
-  content: ""
-order: 1000

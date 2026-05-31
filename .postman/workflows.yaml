@@ -9,16 +9,8 @@ workflows:
       collection: ../postman/collections/AIAS_APIS
       options:
         syncExamples: false
-    - spec: ../postman/specs/AIAS API/AIAS API.yaml
-      collection: ../postman/collections/AIAS APIs
-      options:
-        syncExamples: false
   syncCollectionToSpec:
     - spec: ../postman/specs/AIAS API/AIAS API.yaml
       collection: ../postman/collections/AIAS_APIS
-      options:
-        syncExamples: false
-    - spec: ../postman/specs/AIAS API/AIAS API.yaml
-      collection: ../postman/collections/AIAS APIs
       options:
         syncExamples: false
