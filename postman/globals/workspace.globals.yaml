@@ -1,5 +1,2 @@
 name: Globals
-values:
-  - key: access_token
-    value: ''
-    enabled: true
+values: []

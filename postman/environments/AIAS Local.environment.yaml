@@ -5,7 +5,7 @@ values:
   - key: tenant_base_url
     value: 'http://localhost:8020/api'
   - key: user_email
-    value: superadmin@aias.test
+    value: davin@company.test
   - key: user_password
     value: password
   - key: access_token

@@ -122,11 +122,6 @@ description: |-
   ## Tech Stack
 
   Laravel 13 · PHP 8.4 · MySQL · Passport OAuth2 (Personal Access Tokens) · Stancl Tenancy v3 (body-param identification) · Spatie Permission v7 · Pest v4
-variables:
-  base_url: http://localhost:8020/api
-  tenant_base_url: ""
-  user_password: ""
-  user_email: ""
 auth:
   - id: cba390d9-dacd-4cef-8639-728436a27ea3
     type: bearer
