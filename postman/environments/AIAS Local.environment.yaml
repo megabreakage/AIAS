@@ -40,6 +40,9 @@ values:
   - key: api_key_id
     value: ''
     description: API Key identifier string
+  - key: priority_level_id
+    value: ''
+    description: Priority Level identifier string (auto-populated after Create Priority Level)
   - key: preamble_id
     value: ''
     description: Preamble identifier string
