@@ -11,6 +11,9 @@ final class UserPolicy
 {
     use HandlesAuthorization;
 
+    /** Roles permitted to manage all users within their tenant. */
+    private const ADMIN_ROLES = ['tenant-admin', 'admin', 'tenant'];
+
     public function before(User $user, string $ability): ?bool
     {
         if ($user->hasRole('super-admin')) {
@@ -22,13 +25,21 @@ final class UserPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('users.view');
+        return $user->hasAnyRole(self::ADMIN_ROLES) && $user->hasPermissionTo('users.view');
     }
 
     public function view(User $user, User $target): bool
     {
-        return $user->hasPermissionTo('users.view')
-            && $user->tenant_id === $target->tenant_id;
+        if ($user->tenant_id !== $target->tenant_id) {
+            return false;
+        }
+
+        if ($user->hasAnyRole(self::ADMIN_ROLES)) {
+            return $user->hasPermissionTo('users.view');
+        }
+
+        // Non-admin users may only view their own account
+        return $user->id === $target->id;
     }
 
     public function create(User $user): bool

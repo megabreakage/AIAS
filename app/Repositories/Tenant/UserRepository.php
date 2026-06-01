@@ -18,6 +18,9 @@ class UserRepository extends BaseRepository
         return User::class;
     }
 
+    /** Admin-level roles that can browse all users within a tenant. */
+    private const ADMIN_ROLES = ['tenant-admin', 'admin', 'tenant'];
+
     /**
      * Browse users with filters, sorting, and pagination.
      * Scoped to the current tenant database automatically.
@@ -30,6 +33,17 @@ class UserRepository extends BaseRepository
         bool $sortDesc = false,
     ): LengthAwarePaginator {
         $query = $this->newQuery()->with(['createdBy', 'updatedBy', 'roles']);
+
+        /** @var User $authUser */
+        $authUser = auth()->user();
+
+        // Always scope to authenticated user's tenant
+        $query->where('tenant_id', $authUser->tenant_id);
+
+        // Non-admin users may only see their own record
+        if (!$authUser->hasAnyRole(self::ADMIN_ROLES)) {
+            $query->where('id', $authUser->id);
+        }
 
         $filters->apply($query);
 

@@ -28,7 +28,13 @@ final class TenantPolicy
 
     public function view(User $user, Tenant $tenant): bool
     {
-        return $user->hasPermissionTo('tenants.view');
+        // Central admins with explicit permission can view any tenant
+        if ($user->hasPermissionTo('tenants.view')) {
+            return true;
+        }
+
+        // Tenant users can only view their own tenant
+        return $user->tenant_id === $tenant->getTenantKey();
     }
 
     public function create(User $user): bool
