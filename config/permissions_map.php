@@ -175,7 +175,9 @@ return [
 
         'preambles' => ['view', 'create', 'update', 'delete', 'restore'],
 
-        'users' => ['view', 'create', 'update', 'delete', 'restore'],
+        'users' => ['view', 'create', 'edit', 'delete', 'restore'],
+
+        'priority-levels' => ['view', 'create', 'edit', 'delete', 'restore'],
 
     ],
 
