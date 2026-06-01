@@ -20,6 +20,43 @@ localResources:
     - ../postman/environments/AIAS Staging.environment.yaml
   specs:
     - ../postman/specs/AIAS API/AIAS API.yaml
+  docs:
+    - ../docs/prompts/models/tenant/09-Audit.md
+    - ../docs/prompts/models/tenant/08-PriorityLevel.md
+    - ../docs/prompts/models/tenant/06-Company.md
+    - ../docs/prompts/models/tenant/05-ChecklistSectionStyle.md
+    - ../docs/prompts/models/tenant/07-Department.md
+    - ../docs/prompts/models/tenant/03-SectionStyle.md
+    - ../docs/prompts/models/tenant/04-Checklist.md
+    - ../docs/prompts/models/tenant/02-ChecklistType.md
+    - ../docs/prompts/models/tenant/01-Preamble.md
+    - ../docs/prompts/models/central/02-Country.md
+    - ../docs/prompts/models/central/01-Continent.md
+    - ../docs/update-postman/examples/auth-management.md
+    - ../docs/update-postman/reference.md
+    - ../docs/update-postman/SKILL.md
+    - ../docs/features/README.md
+    - ../docs/prompts/TaskList.md
+    - ../docs/features/priority-levels.md
+    - ../docs/architecture/TENANT_MODEL.md
+    - ../docs/architecture/CENTRAL_MODEL.md
+    - ../docs/aias/references.md
+    - ../docs/aias/pre-execution-dry-principles.md
+    - ../docs/architecture/GUIDELINES.md
+    - ../docs/architecture/ARCH_CHECKLIST.md
+    - ../docs/aias_pre_execution_hook.md
+    - ../docs/aias/generate-module-script.md
+    - ../docs/aias/architectural-patterns.md
+    - ../docs/aias/WARP.md
+    - ../docs/aias/copilot-instructions.md
+    - ../docs/aias/PROMPT.md
+    - ../docs/aias/GEMINI.md
+    - ../docs/aias/CLAUDE.md
+    - ../docs/aias/AGENTS.md
+    - ../CLAUDE.md
+    - ../README.md
+    - ../WARP.md
+    - ../AGENTS.md
 
 # Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
 
